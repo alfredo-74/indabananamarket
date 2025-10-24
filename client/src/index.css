@@ -132,67 +132,73 @@
   --elevate-1: rgba(255,255,255, .04);
   --elevate-2: rgba(255,255,255, .09);
 
-  --background: 0 0% 8%;
+  --background: 210 20% 7%;
 
-  --foreground: 0 0% 92%;
+  --foreground: 210 10% 92%;
 
-  --border: 0 0% 18%;
+  --border: 210 15% 18%;
 
-  --card: 0 0% 10%;
+  --card: 210 18% 9%;
 
-  --card-foreground: 0 0% 90%;
+  --card-foreground: 210 10% 90%;
 
-  --card-border: 0 0% 16%;
+  --card-border: 210 15% 16%;
 
-  --sidebar: 0 0% 12%;
+  --sidebar: 210 20% 10%;
 
-  --sidebar-foreground: 0 0% 88%;
+  --sidebar-foreground: 210 10% 88%;
 
-  --sidebar-border: 0 0% 20%;
+  --sidebar-border: 210 15% 20%;
 
-  --sidebar-primary: 210 85% 32%;
+  --sidebar-primary: 210 90% 45%;
 
-  --sidebar-primary-foreground: 210 85% 98%;
+  --sidebar-primary-foreground: 210 90% 98%;
 
-  --sidebar-accent: 0 0% 18%;
+  --sidebar-accent: 210 15% 18%;
 
-  --sidebar-accent-foreground: 0 0% 85%;
+  --sidebar-accent-foreground: 210 10% 85%;
 
-  --sidebar-ring: 210 85% 45%;
+  --sidebar-ring: 210 90% 50%;
 
-  --popover: 0 0% 14%;
+  --popover: 210 18% 12%;
 
-  --popover-foreground: 0 0% 86%;
+  --popover-foreground: 210 10% 86%;
 
-  --popover-border: 0 0% 22%;
+  --popover-border: 210 15% 22%;
 
-  --primary: 210 85% 32%;
+  --primary: 210 90% 45%;
 
-  --primary-foreground: 210 85% 98%;
+  --primary-foreground: 210 90% 98%;
 
-  --secondary: 0 0% 20%;
+  --secondary: 210 10% 20%;
 
-  --secondary-foreground: 0 0% 82%;
+  --secondary-foreground: 210 10% 82%;
 
-  --muted: 0 2% 16%;
+  --muted: 210 12% 16%;
 
-  --muted-foreground: 0 2% 75%;
+  --muted-foreground: 210 10% 70%;
 
-  --accent: 0 3% 18%;
+  --accent: 210 15% 18%;
 
-  --accent-foreground: 0 3% 80%;
+  --accent-foreground: 210 10% 80%;
 
-  --destructive: 0 72% 35%;
+  --destructive: 0 75% 45%;
 
-  --destructive-foreground: 0 72% 98%;
+  --destructive-foreground: 0 75% 98%;
 
-  --input: 0 0% 32%;
-  --ring: 210 85% 45%;
-  --chart-1: 210 75% 75%;
-  --chart-2: 195 65% 73%;
-  --chart-3: 180 55% 70%;
-  --chart-4: 165 60% 72%;
-  --chart-5: 150 50% 70%;
+  --input: 210 10% 25%;
+  --ring: 210 90% 50%;
+  --chart-1: 210 80% 65%;
+  --chart-2: 195 70% 63%;
+  --chart-3: 180 60% 60%;
+  --chart-4: 165 65% 62%;
+  --chart-5: 150 55% 60%;
+
+  --trading-bullish: 142 76% 36%;
+  --trading-bearish: 0 84% 60%;
+  --trading-rotational: 45 93% 47%;
+  --trading-profit: 142 71% 45%;
+  --trading-loss: 0 84% 60%;
 
   --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.40);
   --shadow-xs: 0px 1px 3px 0px hsl(0 0% 0% / 0.45);
