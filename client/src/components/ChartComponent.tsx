@@ -75,7 +75,7 @@ export function ChartComponent({ candles, vwap, isLoading = false }: ChartCompon
     ];
 
     if (vwap && vwap.vwap !== null) {
-      const vwapLine = candles.map(() => vwap.vwap);
+      const vwapLine = candles.map((c, i) => ({ x: labels[i], y: vwap.vwap }));
       datasets.push({
         label: "VWAP",
         data: vwapLine,
@@ -91,7 +91,7 @@ export function ChartComponent({ candles, vwap, isLoading = false }: ChartCompon
         datasets.push(
           {
             label: "+1 SD",
-            data: candles.map(() => vwap.sd1_upper),
+            data: candles.map((c, i) => ({ x: labels[i], y: vwap.sd1_upper })),
             type: "line",
             borderColor: "rgba(59, 130, 246, 0.5)",
             borderWidth: 1,
@@ -101,7 +101,7 @@ export function ChartComponent({ candles, vwap, isLoading = false }: ChartCompon
           },
           {
             label: "-1 SD",
-            data: candles.map(() => vwap.sd1_lower),
+            data: candles.map((c, i) => ({ x: labels[i], y: vwap.sd1_lower })),
             type: "line",
             borderColor: "rgba(59, 130, 246, 0.5)",
             borderWidth: 1,
@@ -116,7 +116,7 @@ export function ChartComponent({ candles, vwap, isLoading = false }: ChartCompon
         datasets.push(
           {
             label: "+2 SD",
-            data: candles.map(() => vwap.sd2_upper),
+            data: candles.map((c, i) => ({ x: labels[i], y: vwap.sd2_upper })),
             type: "line",
             borderColor: "rgba(59, 130, 246, 0.3)",
             borderWidth: 1,
@@ -126,7 +126,7 @@ export function ChartComponent({ candles, vwap, isLoading = false }: ChartCompon
           },
           {
             label: "-2 SD",
-            data: candles.map(() => vwap.sd2_lower),
+            data: candles.map((c, i) => ({ x: labels[i], y: vwap.sd2_lower })),
             type: "line",
             borderColor: "rgba(59, 130, 246, 0.3)",
             borderWidth: 1,
@@ -141,7 +141,7 @@ export function ChartComponent({ candles, vwap, isLoading = false }: ChartCompon
         datasets.push(
           {
             label: "+3 SD",
-            data: candles.map(() => vwap.sd3_upper),
+            data: candles.map((c, i) => ({ x: labels[i], y: vwap.sd3_upper })),
             type: "line",
             borderColor: "rgba(59, 130, 246, 0.2)",
             borderWidth: 1,
@@ -151,7 +151,7 @@ export function ChartComponent({ candles, vwap, isLoading = false }: ChartCompon
           },
           {
             label: "-3 SD",
-            data: candles.map(() => vwap.sd3_lower),
+            data: candles.map((c, i) => ({ x: labels[i], y: vwap.sd3_lower })),
             type: "line",
             borderColor: "rgba(59, 130, 246, 0.2)",
             borderWidth: 1,
