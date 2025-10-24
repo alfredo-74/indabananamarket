@@ -5,6 +5,7 @@ import { storage } from "./storage";
 import { VolumetricCandleBuilder } from "./volumetric_candle_builder";
 import { VWAPCalculator } from "./vwap_calculator";
 import { RegimeDetector } from "./regime_detector";
+import { AutoTrader } from "./auto_trader";
 import type {
   SystemStatus,
   MarketData,
@@ -25,6 +26,7 @@ const __dirname = dirname(__filename);
 const candleBuilder = new VolumetricCandleBuilder(60000); // 1-minute candles
 const vwapCalculator = new VWAPCalculator(10); // 10-candle lookback
 const regimeDetector = new RegimeDetector(50); // ±50 CD threshold
+const autoTrader = new AutoTrader(); // Automated trading strategy
 
 // IBKR Python bridge process
 let ibkrProcess: any = null;
@@ -213,6 +215,98 @@ export async function registerRoutes(app: Express): Promise<Server> {
           cumulative_delta: latestCandle.cumulative_delta,
         },
       });
+
+      // Auto-trading logic (if enabled)
+      const status = await storage.getSystemStatus();
+      const position = await storage.getPosition();
+      
+      if (status && status.auto_trading_enabled && position) {
+        const signal = autoTrader.analyzeMarket(
+          marketData,
+          vwap,
+          regime,
+          position
+        );
+
+        // Execute trade if signal is not NONE
+        if (signal.action !== "NONE" && signal.action !== "CLOSE") {
+          // Open new position
+          const trade = await storage.addTrade({
+            timestamp,
+            type: signal.action,
+            entry_price: signal.entry_price,
+            exit_price: null,
+            contracts: signal.quantity,
+            pnl: null,
+            duration_ms: null,
+            regime,
+            cumulative_delta: latestCandle.cumulative_delta,
+            status: "OPEN",
+          });
+
+          // Update position
+          if (signal.action === "BUY") {
+            position.contracts = signal.quantity;
+            position.side = "LONG";
+            position.entry_price = signal.entry_price;
+          } else if (signal.action === "SELL") {
+            position.contracts = -signal.quantity;
+            position.side = "SHORT";
+            position.entry_price = signal.entry_price;
+          }
+
+          await storage.setPosition(position);
+
+          console.log(`[AUTO-TRADE] ${signal.action} ${signal.quantity} @ ${signal.entry_price.toFixed(2)} - ${signal.reason}`);
+          
+          broadcast({
+            type: "trade_executed",
+            data: trade,
+          });
+        } else if (signal.action === "CLOSE" && position.contracts !== 0) {
+          // Close existing position
+          const exitPrice = marketData.last_price;
+          const priceDiff = position.side === "LONG"
+            ? exitPrice - position.entry_price!
+            : position.entry_price! - exitPrice;
+          const pnl = priceDiff * Math.abs(position.contracts) * 5; // MES multiplier $5/point
+
+          const trade = await storage.addTrade({
+            timestamp,
+            type: position.side === "LONG" ? "SELL" : "BUY",
+            entry_price: exitPrice,
+            exit_price: exitPrice,
+            contracts: Math.abs(position.contracts),
+            pnl,
+            duration_ms: null,
+            regime,
+            cumulative_delta: latestCandle.cumulative_delta,
+            status: "CLOSED",
+          });
+
+          // Update position
+          position.realized_pnl += pnl;
+          position.contracts = 0;
+          position.side = "FLAT";
+          position.entry_price = null;
+          position.unrealized_pnl = 0;
+
+          await storage.setPosition(position);
+
+          // Update daily P&L in system status
+          if (status) {
+            status.daily_pnl += pnl;
+            await storage.setSystemStatus(status);
+          }
+
+          console.log(`[AUTO-TRADE] CLOSE @ ${exitPrice.toFixed(2)} - ${signal.reason} - P&L: $${pnl.toFixed(2)}`);
+          
+          broadcast({
+            type: "trade_executed",
+            data: trade,
+          });
+        }
+      }
     }
 
     // Update system status
