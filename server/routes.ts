@@ -31,7 +31,8 @@ let ibkrProcess: any = null;
 let ibkrConnected = false;
 
 // Mock data generator for development (until IBKR connects)
-let mockPrice = 4850.0;
+// Using current MES price levels (Dec 2024)
+let mockPrice = 5838.0;
 let mockTick = 0;
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -66,13 +67,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   }
 
-  // Initialize system status
+  // Initialize system status with $2,000 starting capital
   await storage.setSystemStatus({
     ibkr_connected: false,
     market_data_active: false,
     auto_trading_enabled: false,
     last_update: Date.now(),
-    capital: 100000,
+    capital: 2000,
     daily_pnl: 0,
   });
 
