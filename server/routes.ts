@@ -6,6 +6,7 @@ import { VolumetricCandleBuilder } from "./volumetric_candle_builder";
 import { VWAPCalculator } from "./vwap_calculator";
 import { RegimeDetector } from "./regime_detector";
 import { AutoTrader } from "./auto_trader";
+import { BacktestEngine } from "./backtest_engine";
 import type {
   SystemStatus,
   MarketData,
@@ -514,6 +515,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     res.json({ success: true, message: "Emergency stop executed" });
+  });
+
+  // POST /api/backtest/run - Run a backtest with given parameters
+  app.post("/api/backtest/run", async (req, res) => {
+    try {
+      const { cd_threshold, vwap_lookback, num_candles, initial_capital } = req.body;
+
+      if (!cd_threshold || !vwap_lookback || !num_candles || !initial_capital) {
+        return res.status(400).json({ 
+          error: "Missing required parameters: cd_threshold, vwap_lookback, num_candles, initial_capital" 
+        });
+      }
+
+      const backtestEngine = new BacktestEngine();
+      const result = await backtestEngine.runBacktest({
+        cd_threshold,
+        vwap_lookback,
+        num_candles,
+        initial_capital,
+      });
+
+      res.json(result);
+    } catch (error) {
+      console.error("Backtest error:", error);
+      res.status(500).json({ error: "Backtest failed" });
+    }
+  });
+
+  // POST /api/backtest/optimize - Run parameter optimization
+  app.post("/api/backtest/optimize", async (req, res) => {
+    try {
+      const { 
+        cd_thresholds, 
+        vwap_lookbacks, 
+        num_candles, 
+        initial_capital 
+      } = req.body;
+
+      if (!cd_thresholds || !vwap_lookbacks || !num_candles || !initial_capital) {
+        return res.status(400).json({ 
+          error: "Missing required parameters: cd_thresholds, vwap_lookbacks, num_candles, initial_capital" 
+        });
+      }
+
+      const backtestEngine = new BacktestEngine();
+      const results = await backtestEngine.optimizeParameters(
+        cd_thresholds,
+        vwap_lookbacks,
+        num_candles,
+        initial_capital
+      );
+
+      res.json(results);
+    } catch (error) {
+      console.error("Optimization error:", error);
+      res.status(500).json({ error: "Optimization failed" });
+    }
   });
 
   return httpServer;

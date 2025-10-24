@@ -78,6 +78,38 @@ export const controlSettingsSchema = z.object({
   symbol: z.string(),
 });
 
+export const backtestParametersSchema = z.object({
+  cd_threshold: z.number(),
+  vwap_lookback: z.number(),
+  num_candles: z.number(), // How many historical candles to test with
+  initial_capital: z.number(),
+});
+
+export const backtestMetricsSchema = z.object({
+  total_trades: z.number(),
+  winning_trades: z.number(),
+  losing_trades: z.number(),
+  win_rate: z.number(),
+  total_pnl: z.number(),
+  avg_win: z.number(),
+  avg_loss: z.number(),
+  profit_factor: z.number(),
+  max_drawdown: z.number(),
+  sharpe_ratio: z.number().nullable(),
+  final_capital: z.number(),
+  return_pct: z.number(),
+});
+
+export const backtestResultSchema = z.object({
+  parameters: backtestParametersSchema,
+  metrics: backtestMetricsSchema,
+  trades: z.array(tradeSchema),
+  equity_curve: z.array(z.object({
+    timestamp: z.number(),
+    equity: z.number(),
+  })),
+});
+
 export type VolumetricCandle = z.infer<typeof volumetricCandleSchema>;
 export type VWAPData = z.infer<typeof vwapDataSchema>;
 export type RegimeState = z.infer<typeof regimeStateSchema>;
@@ -86,6 +118,9 @@ export type Trade = z.infer<typeof tradeSchema>;
 export type MarketData = z.infer<typeof marketDataSchema>;
 export type SystemStatus = z.infer<typeof systemStatusSchema>;
 export type ControlSettings = z.infer<typeof controlSettingsSchema>;
+export type BacktestParameters = z.infer<typeof backtestParametersSchema>;
+export type BacktestMetrics = z.infer<typeof backtestMetricsSchema>;
+export type BacktestResult = z.infer<typeof backtestResultSchema>;
 
 export const webSocketMessageSchema = z.discriminatedUnion("type", [
   z.object({

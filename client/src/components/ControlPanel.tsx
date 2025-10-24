@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import type { ControlSettings } from "@shared/schema";
-import { Power, AlertTriangle } from "lucide-react";
+import { Power, AlertTriangle, BarChart3 } from "lucide-react";
+import { Link } from "wouter";
 
 interface ControlPanelProps {
   settings: ControlSettings;
@@ -93,7 +94,7 @@ export function ControlPanel({ settings, onSettingsChange, onEmergencyStop }: Co
 
       <Separator className="my-6" />
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         <div className="flex flex-col gap-1">
           <p className="text-sm font-medium font-sans">Emergency Stop</p>
           <p className="text-xs text-muted-foreground">
@@ -101,16 +102,30 @@ export function ControlPanel({ settings, onSettingsChange, onEmergencyStop }: Co
           </p>
         </div>
 
-        <Button
-          variant="destructive"
-          size="lg"
-          onClick={onEmergencyStop}
-          className="gap-2"
-          data-testid="button-emergency-stop"
-        >
-          <AlertTriangle className="h-5 w-5" />
-          <span className="font-semibold">STOP</span>
-        </Button>
+        <div className="flex gap-2">
+          <Link href="/backtest">
+            <Button
+              variant="outline"
+              size="lg"
+              className="gap-2"
+              data-testid="button-backtest"
+            >
+              <BarChart3 className="h-5 w-5" />
+              <span className="font-semibold">Backtest</span>
+            </Button>
+          </Link>
+
+          <Button
+            variant="destructive"
+            size="lg"
+            onClick={onEmergencyStop}
+            className="gap-2"
+            data-testid="button-emergency-stop"
+          >
+            <AlertTriangle className="h-5 w-5" />
+            <span className="font-semibold">STOP</span>
+          </Button>
+        </div>
       </div>
     </Card>
   );
