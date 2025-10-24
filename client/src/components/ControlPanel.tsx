@@ -5,8 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import type { ControlSettings } from "@shared/schema";
-import { Power, AlertTriangle, BarChart3 } from "lucide-react";
-import { Link } from "wouter";
+import { AlertTriangle } from "lucide-react";
 
 interface ControlPanelProps {
   settings: ControlSettings;
@@ -102,30 +101,16 @@ export function ControlPanel({ settings, onSettingsChange, onEmergencyStop }: Co
           </p>
         </div>
 
-        <div className="flex gap-2">
-          <Link href="/backtest">
-            <Button
-              variant="outline"
-              size="lg"
-              className="gap-2"
-              data-testid="button-backtest"
-            >
-              <BarChart3 className="h-5 w-5" />
-              <span className="font-semibold">Backtest</span>
-            </Button>
-          </Link>
-
-          <Button
-            variant="destructive"
-            size="lg"
-            onClick={onEmergencyStop}
-            className="gap-2"
-            data-testid="button-emergency-stop"
-          >
-            <AlertTriangle className="h-5 w-5" />
-            <span className="font-semibold">STOP</span>
-          </Button>
-        </div>
+        <Button
+          variant="destructive"
+          size="lg"
+          onClick={onEmergencyStop}
+          className="gap-2"
+          data-testid="button-emergency-stop"
+        >
+          <AlertTriangle className="h-5 w-5" />
+          <span className="font-semibold">STOP</span>
+        </Button>
       </div>
     </Card>
   );

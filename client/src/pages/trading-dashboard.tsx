@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useWebSocket } from "@/lib/useWebSocket";
 import { useToast } from "@/hooks/use-toast";
+import { NavigationHeader } from "@/components/NavigationHeader";
 import { SystemHeader } from "@/components/SystemHeader";
 import { ChartComponent } from "@/components/ChartComponent";
 import { RegimeIndicator } from "@/components/RegimeIndicator";
@@ -108,9 +109,10 @@ export default function TradingDashboard() {
 
   return (
     <div className="flex flex-col h-screen w-full bg-background" data-testid="page-trading-dashboard">
+      <NavigationHeader />
       <SystemHeader status={systemStatus ?? null} marketData={marketData ?? null} />
 
-      <div className="flex-1 overflow-hidden p-4 gap-4 grid grid-cols-1 lg:grid-cols-[1fr_320px] grid-rows-[auto_1fr_auto]">
+      <div className="flex-1 overflow-auto p-4 gap-4 grid grid-cols-1 lg:grid-cols-[1fr_320px] grid-rows-[auto_1fr_auto]">
         <div className="lg:col-span-2 flex items-center justify-between gap-4">
           {regimeData && (
             <RegimeIndicator
