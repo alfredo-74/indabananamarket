@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import type { VolumetricCandle, VWAPData } from "@shared/schema";
 import {
   Chart as ChartJS,
@@ -278,10 +279,12 @@ export function ChartComponent({ candles, vwap, isLoading = false }: ChartCompon
   }
 
   return (
-    <Card className="p-4 h-full" data-testid="container-chart">
-      <div className="h-full">
-        <Chart ref={chartRef} type="line" data={chartData} options={options} />
-      </div>
-    </Card>
+    <ErrorBoundary>
+      <Card className="p-4 h-full" data-testid="container-chart">
+        <div className="h-full">
+          <Chart ref={chartRef} type="line" data={chartData} options={options} />
+        </div>
+      </Card>
+    </ErrorBoundary>
   );
 }
