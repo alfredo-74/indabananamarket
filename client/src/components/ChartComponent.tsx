@@ -45,7 +45,10 @@ export function ChartComponent({ candles, vwap, isLoading = false }: ChartCompon
   const [chartData, setChartData] = useState<any>(null);
 
   useEffect(() => {
-    if (candles.length === 0) return;
+    if (candles.length === 0) {
+      setChartData(null);
+      return;
+    }
 
     const labels = candles.map((c) => new Date(c.timestamp));
 
