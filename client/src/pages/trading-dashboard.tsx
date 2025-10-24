@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useWebSocket } from "@/lib/useWebSocket";
+import { useToast } from "@/hooks/use-toast";
 import { SystemHeader } from "@/components/SystemHeader";
 import { ChartComponent } from "@/components/ChartComponent";
 import { RegimeIndicator } from "@/components/RegimeIndicator";
@@ -24,6 +26,18 @@ export default function TradingDashboard() {
     cd_threshold: 50,
     symbol: "MES",
   });
+
+  const { isConnected } = useWebSocket();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (isConnected) {
+      toast({
+        title: "Connected",
+        description: "Real-time data streaming active",
+      });
+    }
+  }, [isConnected, toast]);
 
   const { data: systemStatus } = useQuery<SystemStatus>({
     queryKey: ["/api/status"],
@@ -69,11 +83,26 @@ export default function TradingDashboard() {
       const response = await fetch("/api/emergency-stop", {
         method: "POST",
       });
-      if (!response.ok) {
-        console.error("Emergency stop failed");
+      if (response.ok) {
+        toast({
+          title: "Emergency Stop Executed",
+          description: "All positions closed and trading halted",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Emergency stop failed",
+          variant: "destructive",
+        });
       }
     } catch (error) {
       console.error("Emergency stop error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to execute emergency stop",
+        variant: "destructive",
+      });
     }
   };
 

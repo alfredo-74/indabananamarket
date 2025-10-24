@@ -15,7 +15,11 @@ import type {
   WebSocketMessage,
 } from "@shared/schema";
 import { spawn } from "child_process";
-import { join } from "path";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 // Initialize business logic modules
 const candleBuilder = new VolumetricCandleBuilder(60000); // 1-minute candles
