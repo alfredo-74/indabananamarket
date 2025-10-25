@@ -46,6 +46,9 @@ export interface IStorage {
   
   getStartingCapital(): Promise<number>;
   setStartingCapital(capital: number): Promise<void>;
+  
+  getHistoricalBars(): Promise<VolumetricCandle[]>;
+  setHistoricalBars(bars: VolumetricCandle[]): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -60,6 +63,7 @@ export class MemStorage implements IStorage {
   private keyLevels: KeyLevels | undefined;
   private previousDayCandles: VolumetricCandle[] = [];
   private startingCapital: number = 2000; // Default starting capital
+  private historicalBars: VolumetricCandle[] = [];
 
   async getCandles(): Promise<VolumetricCandle[]> {
     return this.candles;
@@ -165,6 +169,14 @@ export class MemStorage implements IStorage {
 
   async setStartingCapital(capital: number): Promise<void> {
     this.startingCapital = capital;
+  }
+
+  async getHistoricalBars(): Promise<VolumetricCandle[]> {
+    return this.historicalBars;
+  }
+
+  async setHistoricalBars(bars: VolumetricCandle[]): Promise<void> {
+    this.historicalBars = bars;
   }
 }
 

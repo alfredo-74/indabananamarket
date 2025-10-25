@@ -559,6 +559,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // POST /api/ibkr-historical - Receive historical data from IBKR bridge
+  app.post("/api/ibkr-historical", async (req, res) => {
+    try {
+      const { bars } = req.body;
+      
+      if (!bars || !Array.isArray(bars)) {
+        return res.status(400).json({ error: "Invalid bars data" });
+      }
+
+      console.log(`Received ${bars.length} historical bars from IBKR`);
+
+      // Convert IBKR bars to volumetric candles
+      const volumetricCandles: VolumetricCandle[] = bars.map((bar: any, index: number) => {
+        // Estimate buy/sell volume (since IBKR doesn't provide this for historical data)
+        const totalVolume = bar.volume || 0;
+        const isUpCandle = bar.close > bar.open;
+        const buyVolume = isUpCandle ? Math.ceil(totalVolume * 0.6) : Math.floor(totalVolume * 0.4);
+        const sellVolume = totalVolume - buyVolume;
+        const delta = buyVolume - sellVolume;
+        
+        // Calculate cumulative delta
+        const prevCumulativeDelta = index > 0 
+          ? (bars[index - 1] as any).cumulative_delta || 0 
+          : 0;
+        const cumulativeDelta = prevCumulativeDelta + delta;
+
+        return {
+          timestamp: bar.timestamp,
+          open: bar.open,
+          high: bar.high,
+          low: bar.low,
+          close: bar.close,
+          accumulated_volume: totalVolume,
+          buy_volume: buyVolume,
+          sell_volume: sellVolume,
+          cumulative_delta: cumulativeDelta,
+        };
+      });
+
+      // Store historical bars
+      await storage.setHistoricalBars(volumetricCandles);
+
+      console.log(`✓ Stored ${volumetricCandles.length} historical candles for backtesting`);
+
+      res.json({ 
+        success: true, 
+        message: `Stored ${volumetricCandles.length} historical candles`,
+        bars_count: volumetricCandles.length
+      });
+    } catch (error) {
+      console.error("Historical data error:", error);
+      res.status(500).json({ error: "Failed to process historical data" });
+    }
+  });
+
   // POST /api/trade - Execute trade
   app.post("/api/trade", async (req, res) => {
     const { action, quantity } = req.body;
@@ -696,13 +751,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Fetch real historical data from storage (if available)
+      const historicalBars = await storage.getHistoricalBars();
+
       const backtestEngine = new BacktestEngine();
       const result = await backtestEngine.runBacktest({
         cd_threshold,
         vwap_lookback,
         num_candles,
         initial_capital,
-      });
+      }, historicalBars);
 
       res.json(result);
     } catch (error) {
@@ -727,12 +785,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Fetch real historical data from storage (if available)
+      const historicalBars = await storage.getHistoricalBars();
+
       const backtestEngine = new BacktestEngine();
       const results = await backtestEngine.optimizeParameters(
         cd_thresholds,
         vwap_lookbacks,
         num_candles,
-        initial_capital
+        initial_capital,
+        historicalBars
       );
 
       res.json(results);

@@ -17,16 +17,24 @@ export class BacktestEngine {
    * Run a backtest with given parameters
    * Simulates the trading strategy on historical/generated data
    */
-  async runBacktest(params: BacktestParameters): Promise<BacktestResult> {
+  async runBacktest(params: BacktestParameters, historicalData?: VolumetricCandle[]): Promise<BacktestResult> {
     // Initialize modules with backtest parameters
     const candleBuilder = new VolumetricCandleBuilder(60000);
     const vwapCalculator = new VWAPCalculator(params.vwap_lookback);
     const regimeDetector = new RegimeDetector(params.cd_threshold);
     const autoTrader = new AutoTrader();
 
-    // Generate mock historical data for backtesting
-    // In production, this would load real historical tick data
-    const candles = this.generateMockCandles(params.num_candles);
+    // Use real historical data if available, otherwise generate mock data
+    let candles: VolumetricCandle[];
+    if (historicalData && historicalData.length > 0) {
+      // Use real IBKR historical data
+      candles = historicalData.slice(0, params.num_candles);
+      console.log(`Running backtest on ${candles.length} real IBKR candles`);
+    } else {
+      // Fallback to mock data generation
+      candles = this.generateMockCandles(params.num_candles);
+      console.log(`Running backtest on ${candles.length} mock candles (no IBKR data available)`);
+    }
 
     // Track trading state
     let position: Position = {
@@ -310,7 +318,8 @@ export class BacktestEngine {
     cdThresholds: number[],
     vwapLookbacks: number[],
     numCandles: number,
-    initialCapital: number
+    initialCapital: number,
+    historicalData?: VolumetricCandle[]
   ): Promise<BacktestResult[]> {
     const results: BacktestResult[] = [];
 
@@ -323,7 +332,7 @@ export class BacktestEngine {
           initial_capital: initialCapital,
         };
 
-        const result = await this.runBacktest(params);
+        const result = await this.runBacktest(params, historicalData);
         results.push(result);
       }
     }
