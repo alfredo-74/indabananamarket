@@ -496,6 +496,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(trades);
   });
 
+  // POST /api/ibkr-bridge - Receive data from local IBKR bridge
+  app.post("/api/ibkr-bridge", async (req, res) => {
+    try {
+      const data = req.body;
+      
+      if (data.type === "connection") {
+        // Update connection status and account balance
+        const status = await storage.getSystemStatus();
+        if (status) {
+          status.ibkr_connected = data.connected;
+          status.market_data_active = data.connected;
+          if (data.account_balance) {
+            status.capital = data.account_balance;
+          }
+          await storage.setSystemStatus(status);
+          
+          broadcast({
+            type: "system_status",
+            data: status,
+          });
+        }
+      } else if (data.type === "market_data") {
+        // Store and broadcast real market data from IB Gateway
+        const marketData: MarketData = {
+          symbol: data.symbol,
+          last_price: data.last_price,
+          bid: data.bid,
+          ask: data.ask,
+          volume: data.volume,
+          timestamp: data.timestamp,
+        };
+        
+        await storage.setMarketData(marketData);
+        broadcast({
+          type: "market_data",
+          data: marketData,
+        });
+        
+        // Process through candle builder
+        const isBuy = Math.random() > 0.5; // We don't have tick direction from delayed data
+        const completedCandle = candleBuilder.processTick(
+          data.last_price,
+          1,
+          isBuy,
+          data.timestamp
+        );
+        
+        if (completedCandle) {
+          await storage.addCandle(completedCandle);
+          broadcast({
+            type: "candle_update",
+            data: completedCandle,
+          });
+        }
+      }
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error("IBKR bridge error:", error);
+      res.status(500).json({ error: "Failed to process bridge data" });
+    }
+  });
+
   // POST /api/trade - Execute trade
   app.post("/api/trade", async (req, res) => {
     const { action, quantity } = req.body;
