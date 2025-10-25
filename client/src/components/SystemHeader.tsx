@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import type { SystemStatus, MarketData } from "@shared/schema";
-import { Activity, TrendingUp, DollarSign, Clock } from "lucide-react";
+import { Activity, TrendingUp, DollarSign, Clock, AlertCircle } from "lucide-react";
 
 interface SystemHeaderProps {
   status: SystemStatus | null;
@@ -55,6 +55,27 @@ export function SystemHeader({ status, marketData }: SystemHeaderProps) {
             <div className={`h-2 w-2 rounded-full ${marketDataStatus === "online" ? "bg-status-online" : "bg-status-offline"}`} />
             <span className="text-xs font-medium">Market Data</span>
           </Badge>
+          
+          {status?.account_type && (
+            <Badge
+              variant={status.account_type === "PAPER" ? "outline" : "destructive"}
+              className="gap-1.5"
+              data-testid="badge-account-type"
+            >
+              <span className="text-xs font-medium">{status.account_type}</span>
+            </Badge>
+          )}
+          
+          {status?.data_delay_seconds && status.data_delay_seconds > 0 && (
+            <Badge
+              variant="outline"
+              className="gap-1.5"
+              data-testid="badge-data-delay"
+            >
+              <AlertCircle className="h-3 w-3" />
+              <span className="text-xs font-medium">{status.data_delay_seconds / 60}min delay</span>
+            </Badge>
+          )}
         </div>
       </div>
 

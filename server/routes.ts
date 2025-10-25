@@ -538,6 +538,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ success: true, message: "Emergency stop executed" });
   });
 
+  // POST /api/trading/apply-params - Apply backtest parameters to live trading
+  app.post("/api/trading/apply-params", async (req, res) => {
+    try {
+      const { cd_threshold, vwap_lookback } = req.body;
+
+      if (!cd_threshold || !vwap_lookback) {
+        return res.status(400).json({ 
+          error: "Missing required parameters: cd_threshold, vwap_lookback" 
+        });
+      }
+
+      // Update regime detector with new threshold
+      regimeDetector.threshold = cd_threshold;
+
+      // Update VWAP calculator with new lookback
+      vwapCalculator.lookbackPeriod = vwap_lookback;
+
+      res.json({ 
+        success: true, 
+        message: "Parameters applied to live trading",
+        parameters: { cd_threshold, vwap_lookback }
+      });
+    } catch (error) {
+      console.error("Apply parameters error:", error);
+      res.status(500).json({ error: "Failed to apply parameters" });
+    }
+  });
+
   // POST /api/backtest/run - Run a backtest with given parameters
   app.post("/api/backtest/run", async (req, res) => {
     try {

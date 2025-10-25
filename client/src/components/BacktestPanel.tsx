@@ -5,13 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 import type { BacktestResult } from "@shared/schema";
-import { PlayCircle, Settings2, TrendingUp, TrendingDown, Activity } from "lucide-react";
+import { PlayCircle, Settings2, TrendingUp, TrendingDown, Activity, Check } from "lucide-react";
 
 export function BacktestPanel() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<BacktestResult | null>(null);
   const [optimizeResults, setOptimizeResults] = useState<BacktestResult[]>([]);
+  const { toast } = useToast();
 
   // Backtest parameters
   const [cdThreshold, setCdThreshold] = useState(50);
@@ -70,6 +72,32 @@ export function BacktestPanel() {
       console.error("Optimization error:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const applyParameters = async (params: { cd_threshold: number; vwap_lookback: number }) => {
+    try {
+      const response = await fetch("/api/trading/apply-params", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(params),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to apply parameters");
+      }
+
+      toast({
+        title: "Parameters Applied",
+        description: `CD Threshold: ${params.cd_threshold}, VWAP Lookback: ${params.vwap_lookback}`,
+      });
+    } catch (error) {
+      console.error("Apply parameters error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to apply parameters to live trading",
+        variant: "destructive",
+      });
     }
   };
 
@@ -220,6 +248,36 @@ export function BacktestPanel() {
                       label="Avg Loss"
                       value={`£${(results.metrics.avg_loss * 0.79).toFixed(2)}`}
                     />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Apply to Live Trading</CardTitle>
+                  <CardDescription>
+                    Use these tested parameters for automated trading
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium">Parameters</p>
+                      <p className="text-xs text-muted-foreground">
+                        CD Threshold: {results.parameters.cd_threshold} | VWAP Lookback: {results.parameters.vwap_lookback}
+                      </p>
+                    </div>
+                    <Button
+                      onClick={() => applyParameters({
+                        cd_threshold: results.parameters.cd_threshold,
+                        vwap_lookback: results.parameters.vwap_lookback,
+                      })}
+                      className="gap-2"
+                      data-testid="button-apply-params"
+                    >
+                      <Check className="w-4 h-4" />
+                      Apply to Live
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
