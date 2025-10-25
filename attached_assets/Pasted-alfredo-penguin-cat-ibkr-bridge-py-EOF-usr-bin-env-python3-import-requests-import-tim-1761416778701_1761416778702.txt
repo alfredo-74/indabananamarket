@@ -1,0 +1,65 @@
+alfredo@penguin:~$ cat > ~/ibkr_bridge.py << 'EOF'
+#!/usr/bin/env python3
+import requests
+import time
+from datetime import datetime
+from ib_insync import IB, Future, util
+
+class SimpleBridge:
+    def __init__(self, replit_url):
+        self.replit_url = replit_url
+        self.ib = IB()
+        self.es_contract = None
+        
+    def connect(self):
+        try:
+            print("Connecting to IB Gateway on localhost:4002...")
+            self.ib.connect('127.0.0.1', 4002, clientId=1)
+            self.ib.reqMarketDataType(3)
+            print("✓ Connected to IB Gateway (PAPER)")
+            
+            account_values = self.ib.accountSummary()
+            balance = 0
+            for item in account_values:
+                if item.tag == 'NetLiquidation':
+                    balance = float(item.value)
+                    print(f"✓ Account Balance: ${balance:,.2f}")
+            
+            self.send_to_replit({"type": "connection", "connected": True, "account_balance": balance})
+            return True
+        except Exception as e:
+            print(f"✗ Connection failed: {e}")
+            return False
+    
+    def setup_es_contract(self):
+        try:
+            print("\n🔍 Finding ES contract...")
+            es = Future(symbol='ES', exchange='CME')
+            contracts = self.ib.reqContractDetails(es)
+            if not contracts:
+                print("✗ No ES contracts found")
+                return False
+            sorted_contracts = sorted(contracts, key=lambda c: c.contract.lastTradeDateOrContractMonth)
+            self.es_contract = sorted_contracts[0].contract
+            print(f"✓ Using {self.es_contract.localSymbol}")
+            self.ib.reqMktData(self.es_contract, '', False, False)
+            print("✓ Subscribed to ES market data")
+            return True
+        except Exception as e:
+            print(f"✗ ES contract setup failed: {e}")
+            return False
+python3 ~/ibkr_bridge.pye(url)p"):it URL: ").strip()it")lit", end='\r')000)ticker.ask) else ticker.last + 0.25,
+============================================================
+IBKR Bridge - Connects IB Gateway to Replit
+============================================================
+
+Enter your Replit URL: https://bananamarket.replit.app
+Connecting to IB Gateway on localhost:4002...
+✓ Connected to IB Gateway (PAPER)
+✓ Account Balance: $2,193.78
+
+🔍 Finding ES contract...
+✓ Using ESZ5
+✓ Subscribed to ES market data
+
+📊 Streaming live data to Replit...
