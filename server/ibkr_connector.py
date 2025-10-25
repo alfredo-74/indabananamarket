@@ -9,7 +9,7 @@ import json
 import sys
 import os
 from datetime import datetime
-from ib_insync import IB, Stock, Future, MarketOrder, util
+from ib_insync import IB, Stock, Future, Forex, MarketOrder, util
 import nest_asyncio
 
 nest_asyncio.apply()
@@ -23,13 +23,20 @@ class IBKRConnector:
         self.bid = 0.0
         self.ask = 0.0
         self.volume = 0
+        self.account_currency = "USD"  # Default to USD
+        self.usd_to_gbp_rate = 0.79  # Default exchange rate (will be updated from IB)
+        self.port = 7497  # Track which port we're connected to
         
     async def connect(self, username: str, password: str):
         """Connect to IBKR Paper Trading"""
         try:
-            # Connect to IB Gateway or TWS (Paper Trading port 7497)
-            await self.ib.connectAsync('127.0.0.1', 7497, clientId=1)
+            # Connect to IB Gateway or TWS (Paper Trading port 7497, Live port 7496)
+            self.port = 7497  # Paper trading by default
+            await self.ib.connectAsync('127.0.0.1', self.port, clientId=1)
             self.connected = True
+            
+            # Get account information
+            await self.update_account_info()
             
             # Set up MES futures contract (Micro E-mini S&P 500)
             # Auto-select front month (most liquid contract)
@@ -56,6 +63,48 @@ class IBKRConnector:
         except Exception as e:
             self.connected = False
             return {"success": False, "error": str(e)}
+    
+    async def update_account_info(self):
+        """Get account currency and exchange rates from IB"""
+        try:
+            if not self.connected:
+                return
+            
+            # Get account summary to find base currency
+            account_values = self.ib.accountSummary()
+            
+            for item in account_values:
+                if item.tag == 'AccountType':
+                    # Detect if this is a paper or live account based on port
+                    # Port 7497 = paper, 7496 = live
+                    pass
+                if item.tag == 'Currency':
+                    self.account_currency = item.value
+                    print(f"Account currency: {self.account_currency}", file=sys.stderr)
+            
+            # If account is in GBP, get USD/GBP exchange rate
+            if self.account_currency == 'GBP':
+                try:
+                    # Create GBP.USD forex pair contract
+                    fx_contract = Forex('GBPUSD')
+                    await self.ib.qualifyContractsAsync(fx_contract)
+                    
+                    # Request market data for the forex pair
+                    self.ib.reqMktData(fx_contract, '', False, False)
+                    await asyncio.sleep(1)  # Wait for data
+                    
+                    ticker = self.ib.ticker(fx_contract)
+                    if ticker and ticker.last and not util.isNan(ticker.last):
+                        # GBP.USD gives us 1 GBP = X USD
+                        # We want USD to GBP, so we invert it
+                        gbp_per_usd = 1.0 / float(ticker.last)
+                        self.usd_to_gbp_rate = gbp_per_usd
+                        print(f"Updated USD/GBP rate: {self.usd_to_gbp_rate:.4f}", file=sys.stderr)
+                except Exception as e:
+                    print(f"Could not get forex rate, using default: {e}", file=sys.stderr)
+                    self.usd_to_gbp_rate = 0.79  # Fallback rate
+        except Exception as e:
+            print(f"Error updating account info: {e}", file=sys.stderr)
     
     async def get_market_data(self):
         """Get current market data"""
@@ -173,6 +222,15 @@ async def main():
                     
                 elif command['action'] == 'get_position':
                     data = await connector.get_position()
+                    print(json.dumps(data))
+                    sys.stdout.flush()
+                
+                elif command['action'] == 'get_account_info':
+                    data = {
+                        "account_currency": connector.account_currency,
+                        "usd_to_account_rate": connector.usd_to_gbp_rate if connector.account_currency == 'GBP' else 1.0,
+                        "account_type": "PAPER" if connector.port == 7497 else "LIVE"
+                    }
                     print(json.dumps(data))
                     sys.stdout.flush()
                     

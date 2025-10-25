@@ -78,6 +78,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     last_update: Date.now(),
     capital: 2000,
     daily_pnl: 0,
+    account_currency: "GBP", // Default to GBP (will be updated from IBKR)
+    usd_to_account_rate: 0.79, // Default GBP/USD rate (will be updated from IBKR)
+    account_type: null, // Will be detected when IBKR connects
+    data_delay_seconds: 900, // Assume 15-minute delay for delayed data (will be updated)
   });
 
   // Initialize position
@@ -116,6 +120,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 if (status) {
                   status.ibkr_connected = response.success;
                   status.market_data_active = response.success;
+                  await storage.setSystemStatus(status);
+                  
+                  // If connected, request account info
+                  if (response.success && ibkrProcess) {
+                    ibkrProcess.stdin.write(JSON.stringify({ action: 'get_account_info' }) + '\n');
+                  }
+                }
+              }
+              
+              // Handle account info response
+              if (response.account_currency) {
+                const status = await storage.getSystemStatus();
+                if (status) {
+                  status.account_currency = response.account_currency;
+                  status.usd_to_account_rate = response.usd_to_account_rate;
+                  status.account_type = response.account_type;
+                  status.data_delay_seconds = 900; // 15-minute delay for delayed data
                   await storage.setSystemStatus(status);
                 }
               }

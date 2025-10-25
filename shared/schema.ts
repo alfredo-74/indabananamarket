@@ -69,6 +69,10 @@ export const systemStatusSchema = z.object({
   last_update: z.number(),
   capital: z.number(),
   daily_pnl: z.number(),
+  account_currency: z.string(), // Account base currency (GBP, USD, etc.)
+  usd_to_account_rate: z.number(), // Exchange rate for USD to account currency
+  account_type: z.enum(["PAPER", "LIVE"]).nullable(), // Account type
+  data_delay_seconds: z.number().nullable(), // Market data delay in seconds (null = real-time)
 });
 
 export const controlSettingsSchema = z.object({
@@ -90,7 +94,9 @@ export const backtestMetricsSchema = z.object({
   winning_trades: z.number(),
   losing_trades: z.number(),
   win_rate: z.number(),
-  total_pnl: z.number(),
+  gross_pnl: z.number(), // P&L before commissions
+  total_commissions: z.number(), // Total commission costs
+  total_pnl: z.number(), // Net P&L after commissions
   avg_win: z.number(),
   avg_loss: z.number(),
   profit_factor: z.number(),

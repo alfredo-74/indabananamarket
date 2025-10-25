@@ -118,7 +118,11 @@ export class BacktestEngine {
         const priceDiff = position.side === "LONG"
           ? exitPrice - position.entry_price!
           : position.entry_price! - exitPrice;
-        const pnl = priceDiff * Math.abs(position.contracts) * 5; // MES multiplier
+        const grossPnl = priceDiff * Math.abs(position.contracts) * 5; // MES multiplier
+        
+        // Deduct commission: $0.62 per contract per side = $1.24 round trip
+        const commission = 1.24 * Math.abs(position.contracts);
+        const netPnl = grossPnl - commission;
 
         const closeTrade: Trade = {
           id: `bt_${tradeIdCounter++}`,
@@ -127,7 +131,7 @@ export class BacktestEngine {
           entry_price: exitPrice,
           exit_price: exitPrice,
           contracts: Math.abs(position.contracts),
-          pnl,
+          pnl: netPnl, // Store net P&L (after commission)
           duration_ms: null,
           regime: regime,
           cumulative_delta: currentCandle.cumulative_delta,
@@ -136,9 +140,9 @@ export class BacktestEngine {
 
         trades.push(closeTrade);
 
-        // Update capital and position
-        capital += pnl;
-        position.realized_pnl += pnl;
+        // Update capital and position (using net P&L)
+        capital += netPnl;
+        position.realized_pnl += netPnl;
         position.contracts = 0;
         position.side = "FLAT";
         position.entry_price = null;
@@ -180,7 +184,14 @@ export class BacktestEngine {
 
     const winRate = totalTrades > 0 ? winningTrades / totalTrades : 0;
 
+    // Calculate commissions: $1.24 per round trip
+    const totalCommissions = totalTrades * 1.24;
+    
+    // Total P&L is already net (after commissions) from our trade calculation
     const totalPnl = closedTrades.reduce((sum, t) => sum + (t.pnl || 0), 0);
+    
+    // Gross P&L = Net P&L + Commissions
+    const grossPnl = totalPnl + totalCommissions;
 
     const wins = closedTrades.filter(t => t.pnl! > 0);
     const losses = closedTrades.filter(t => t.pnl! < 0);
@@ -233,7 +244,9 @@ export class BacktestEngine {
       winning_trades: winningTrades,
       losing_trades: losingTrades,
       win_rate: winRate,
-      total_pnl: totalPnl,
+      gross_pnl: grossPnl,
+      total_commissions: totalCommissions,
+      total_pnl: totalPnl, // Net P&L after commissions
       avg_win: avgWin,
       avg_loss: avgLoss,
       profit_factor: profitFactor,
