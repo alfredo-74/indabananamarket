@@ -1,0 +1,93 @@
+alfredo@penguin:~$ cat > ~/ibkr_bridge.py << 'EOF'
+#!/usr/bin/env python3
+import requests
+import time
+from datetime import datetime
+from ib_insync import IB, Future, util
+
+class SimpleBridge:
+    def __init__(self, replit_url):
+        self.replit_url = replit_url
+        self.ib = IB()
+        self.es_contract = None
+        
+    def connect(self):
+        try:
+            print("Connecting to IB Gateway on localhost:4002...")
+            self.ib.connect('127.0.0.1', 4002, clientId=1)
+            self.ib.reqMarketDataType(3)
+            print("✓ Connected to IB Gateway (PAPER)")
+            
+            account_values = self.ib.accountSummary()
+            balance = 0
+            for item in account_values:
+                if item.tag == 'NetLiquidation':
+                    balance = float(item.value)
+                    print(f"✓ Account Balance: ${balance:,.2f}")
+            
+            self.send_to_replit({"type": "connection", "connected": True, "account_balance": balance})
+            return True
+        except Exception as e:
+            print(f"✗ Connection failed: {e}")
+            return False
+    
+    def setup_es_contract(self):
+        try:
+            print("\n🔍 Finding ES contract...")
+            es = Future(symbol='ES', exchange='CME', currency='USD')
+            contracts = self.ib.qualifyContracts(es)
+            if not contracts:
+                print("✗ No ES contracts found")
+                return False
+            sorted_contracts = sorted(contracts, key=lambda c: c.lastTradeDateOrContractMonth)
+            self.es_contract = sorted_contracts[0]
+            print(f"✓ Using {self.es_contract.localSymbol}")
+            self.ib.reqMktData(self.es_contract, '', False, False)
+            print("✓ Subscribed to ES market data")
+            return True
+        except Exception as e:
+            print(f"✗ ES contract setup failed: {e}")
+            return False
+pip install --user ib-insync requests && python3 ~/ibkr_bridge.py='\r')000)ticker.ask) else ticker.last + 0.25,
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try apt install
+    python3-xyz, where xyz is the package you are trying to
+    install.
+    
+    If you wish to install a non-Debian-packaged Python package,
+    create a virtual environment using python3 -m venv path/to/venv.
+    Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+    sure you have python3-full installed.
+    
+    If you wish to install a non-Debian packaged Python application,
+    it may be easiest to use pipx install xyz, which will manage a
+    virtual environment for you. Make sure you have pipx installed.
+    
+    See /usr/share/doc/python3.11/README.venv for more information.
+
+note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+hint: See PEP 668 for the detailed specification.
+alfredo@penguin:~$ pip install --user ib-insync requests && python3 ~/ibkr_bridge.py
+error: externally-managed-environment
+
+× This environment is externally managed
+╰─> To install Python packages system-wide, try apt install
+    python3-xyz, where xyz is the package you are trying to
+    install.
+    
+    If you wish to install a non-Debian-packaged Python package,
+    create a virtual environment using python3 -m venv path/to/venv.
+    Then use path/to/venv/bin/python and path/to/venv/bin/pip. Make
+    sure you have python3-full installed.
+    
+    If you wish to install a non-Debian packaged Python application,
+    it may be easiest to use pipx install xyz, which will manage a
+    virtual environment for you. Make sure you have pipx installed.
+    
+    See /usr/share/doc/python3.11/README.venv for more information.
+
+note: If you believe this is a mistake, please contact your Python installation or OS distribution provider. You can override this, at the risk of breaking your Python installation or OS, by passing --break-system-packages.
+hint: See PEP 668 for the detailed specification.
+alfredo@penguin:~$ 
