@@ -5,6 +5,9 @@ import { storage } from "./storage";
 import { VolumetricCandleBuilder } from "./volumetric_candle_builder";
 import { VWAPCalculator } from "./vwap_calculator";
 import { RegimeDetector } from "./regime_detector";
+import { SessionAwareRegimeManager } from "./session_aware_regime_manager";
+import { SessionDetector } from "./session_detector";
+import { KeyLevelsDetector } from "./key_levels_detector";
 import { AutoTrader } from "./auto_trader";
 import { BacktestEngine } from "./backtest_engine";
 import type {
@@ -15,6 +18,8 @@ import type {
   Position,
   Trade,
   WebSocketMessage,
+  SessionStats,
+  KeyLevels,
 } from "@shared/schema";
 import { spawn } from "child_process";
 import { join, dirname } from "path";
@@ -26,7 +31,10 @@ const __dirname = dirname(__filename);
 // Initialize business logic modules
 const candleBuilder = new VolumetricCandleBuilder(60000); // 1-minute candles
 const vwapCalculator = new VWAPCalculator(10); // 10-candle lookback
-const regimeDetector = new RegimeDetector(50); // ±50 CD threshold
+const regimeDetector = new RegimeDetector(50); // ±50 CD threshold (legacy, replaced by session-aware)
+const sessionRegimeManager = new SessionAwareRegimeManager(30, 50); // ETH ±30, RTH ±50
+const sessionDetector = new SessionDetector();
+const keyLevelsDetector = new KeyLevelsDetector(20); // 20-candle lookback for swing levels
 const autoTrader = new AutoTrader(); // Automated trading strategy
 
 // IBKR Python bridge process
@@ -621,6 +629,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Optimization error:", error);
       res.status(500).json({ error: "Optimization failed" });
     }
+  });
+
+  // GET /api/session - Get current session stats
+  app.get("/api/session", async (req, res) => {
+    const sessionStats = await storage.getSessionStats();
+    
+    if (!sessionStats) {
+      // Return default session stats if not initialized yet
+      return res.json({
+        current_session: "RTH",
+        session_start_time: Date.now(),
+        next_session_time: Date.now() + 3600000, // 1 hour from now
+        eth_cumulative_delta: 0,
+        rth_cumulative_delta: 0,
+        eth_regime: null,
+        rth_regime: null,
+      });
+    }
+
+    res.json(sessionStats);
+  });
+
+  // GET /api/key-levels - Get current key levels
+  app.get("/api/key-levels", async (req, res) => {
+    const keyLevels = await storage.getKeyLevels();
+    
+    if (!keyLevels) {
+      // Return empty key levels if not initialized yet
+      return res.json({
+        previous_day_high: null,
+        previous_day_low: null,
+        previous_day_close: null,
+        previous_day_vwap: null,
+        swing_high: null,
+        swing_low: null,
+        volume_poc: null,
+        last_updated: Date.now(),
+      });
+    }
+
+    res.json(keyLevels);
   });
 
   return httpServer;
