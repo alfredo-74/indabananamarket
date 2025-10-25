@@ -78,16 +78,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   }
 
-  // Initialize system status with $2,000 starting capital
+  // Initialize system status with $2,000 starting capital (default before IBKR connection)
+  // NOTE: Capital will be updated from IBKR account balance when connection is established
   await storage.setSystemStatus({
     ibkr_connected: false,
     market_data_active: false,
     auto_trading_enabled: false,
     last_update: Date.now(),
-    capital: 2000,
+    capital: 2000, // Default fallback - will be replaced by real IBKR balance
     daily_pnl: 0,
-    account_currency: "GBP", // Default to GBP (will be updated from IBKR)
-    usd_to_account_rate: 0.79, // Default GBP/USD rate (will be updated from IBKR)
+    account_currency: "USD", // Default to USD for ES/MES futures
+    usd_to_account_rate: 1.0, // 1:1 for USD accounts
     account_type: null, // Will be detected when IBKR connects
     data_delay_seconds: 900, // Assume 15-minute delay for delayed data (will be updated)
   });
@@ -145,7 +146,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   status.usd_to_account_rate = response.usd_to_account_rate;
                   status.account_type = response.account_type;
                   status.data_delay_seconds = 900; // 15-minute delay for delayed data
+                  
+                  // Update capital from IBKR account balance
+                  if (response.account_balance && response.account_balance > 0) {
+                    status.capital = response.account_balance;
+                    console.log(`Updated capital from IBKR: $${response.account_balance.toFixed(2)}`);
+                  }
+                  
                   await storage.setSystemStatus(status);
+                  
+                  // Broadcast status update with real balance
+                  broadcast({
+                    type: "status_update",
+                    data: status,
+                  });
                 }
               }
               
