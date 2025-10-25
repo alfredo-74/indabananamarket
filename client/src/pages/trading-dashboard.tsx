@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useWebSocket } from "@/lib/useWebSocket";
 import { useToast } from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp, BarChart3 } from "lucide-react";
 import { NavigationHeader } from "@/components/NavigationHeader";
 import { SystemHeader } from "@/components/SystemHeader";
 import { ChartComponent } from "@/components/ChartComponent";
@@ -10,6 +12,7 @@ import { SessionIndicator } from "@/components/SessionIndicator";
 import { LiveStatsPanel } from "@/components/LiveStatsPanel";
 import { TradeHistoryTable } from "@/components/TradeHistoryTable";
 import { ControlPanel } from "@/components/ControlPanel";
+import { AccountAnalysisPanel } from "@/components/AccountAnalysisPanel";
 import type {
   SystemStatus,
   MarketData,
@@ -30,6 +33,7 @@ export default function TradingDashboard() {
     cd_threshold: 50,
     symbol: "MES",
   });
+  const [showAnalysis, setShowAnalysis] = useState(false);
 
   const { isConnected } = useWebSocket();
   const { toast } = useToast();
@@ -164,6 +168,25 @@ export default function TradingDashboard() {
             onEmergencyStop={handleEmergencyStop}
           />
         </div>
+
+        <div className="lg:col-span-2">
+          <Button
+            variant="outline"
+            className="w-full gap-2"
+            onClick={() => setShowAnalysis(!showAnalysis)}
+            data-testid="button-toggle-analysis"
+          >
+            <BarChart3 className="h-4 w-4" />
+            <span>{showAnalysis ? "Hide" : "Show"} Performance Analysis</span>
+            {showAnalysis ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </Button>
+        </div>
+
+        {showAnalysis && (
+          <div className="lg:col-span-2">
+            <AccountAnalysisPanel />
+          </div>
+        )}
       </div>
     </div>
   );
