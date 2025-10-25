@@ -142,6 +142,66 @@ export const backtestResultSchema = z.object({
   })),
 });
 
+export const sessionPerformanceSchema = z.object({
+  session_type: sessionTypeSchema,
+  total_trades: z.number(),
+  winning_trades: z.number(),
+  losing_trades: z.number(),
+  win_rate: z.number(),
+  total_pnl: z.number(),
+  avg_trade_pnl: z.number(),
+  largest_win: z.number(),
+  largest_loss: z.number(),
+});
+
+export const regimePerformanceSchema = z.object({
+  regime: regimeStateSchema,
+  total_trades: z.number(),
+  winning_trades: z.number(),
+  losing_trades: z.number(),
+  win_rate: z.number(),
+  total_pnl: z.number(),
+  avg_trade_pnl: z.number(),
+  largest_win: z.number(),
+  largest_loss: z.number(),
+});
+
+export const accountAnalysisSchema = z.object({
+  // Overall Performance
+  starting_capital: z.number(),
+  current_capital: z.number(),
+  total_pnl: z.number(),
+  roi_percent: z.number(),
+  
+  // Trade Statistics
+  total_trades: z.number(),
+  winning_trades: z.number(),
+  losing_trades: z.number(),
+  win_rate: z.number(),
+  profit_factor: z.number(),
+  avg_win: z.number(),
+  avg_loss: z.number(),
+  largest_win: z.number(),
+  largest_loss: z.number(),
+  
+  // Risk Metrics
+  max_drawdown: z.number(),
+  max_drawdown_percent: z.number(),
+  sharpe_ratio: z.number().nullable(),
+  
+  // Session Breakdown
+  eth_performance: sessionPerformanceSchema,
+  rth_performance: sessionPerformanceSchema,
+  
+  // Regime Breakdown
+  regime_performance: z.array(regimePerformanceSchema),
+  
+  // Time Period
+  period_start: z.number(),
+  period_end: z.number(),
+  trading_days: z.number(),
+});
+
 export type VolumetricCandle = z.infer<typeof volumetricCandleSchema>;
 export type VWAPData = z.infer<typeof vwapDataSchema>;
 export type RegimeState = z.infer<typeof regimeStateSchema>;
@@ -156,6 +216,9 @@ export type ControlSettings = z.infer<typeof controlSettingsSchema>;
 export type BacktestParameters = z.infer<typeof backtestParametersSchema>;
 export type BacktestMetrics = z.infer<typeof backtestMetricsSchema>;
 export type BacktestResult = z.infer<typeof backtestResultSchema>;
+export type SessionPerformance = z.infer<typeof sessionPerformanceSchema>;
+export type RegimePerformance = z.infer<typeof regimePerformanceSchema>;
+export type AccountAnalysis = z.infer<typeof accountAnalysisSchema>;
 
 export const webSocketMessageSchema = z.discriminatedUnion("type", [
   z.object({

@@ -157,7 +157,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                   
                   // Broadcast status update with real balance
                   broadcast({
-                    type: "status_update",
+                    type: "system_status",
                     data: status,
                   });
                 }
