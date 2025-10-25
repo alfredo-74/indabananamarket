@@ -34,8 +34,8 @@ let ibkrProcess: any = null;
 let ibkrConnected = false;
 
 // Mock data generator for development (until IBKR connects)
-// Using current MES price levels (Dec 2024)
-let mockPrice = 5838.0;
+// Using current ES price levels (Dec 2024) - display ES prices, trade MES
+let mockPrice = 6004.0;  // ES contract pricing for display
 let mockTick = 0;
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -184,9 +184,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const isBuy = Math.random() > 0.5;
     const timestamp = Date.now();
 
-    // Update market data
+    // Update market data (ES pricing for display)
     const marketData: MarketData = {
-      symbol: "MES",
+      symbol: "ES",  // Display ES symbol (professional standard)
       last_price: mockPrice,
       bid: mockPrice - 0.25,
       ask: mockPrice + 0.25,
@@ -382,7 +382,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/market-data", async (req, res) => {
     const data = await storage.getMarketData();
     res.json(data || {
-      symbol: "MES",
+      symbol: "ES",  // Display ES symbol
       last_price: mockPrice,
       bid: mockPrice - 0.25,
       ask: mockPrice + 0.25,
