@@ -1,0 +1,73 @@
+alfredo@penguin:~$ cat > ~/ibkr_bridge.py << 'EOF'
+#!/usr/bin/env python3
+import requests
+import time
+from datetime import datetime
+from ib_insync import IB, Future, util
+
+class SimpleBridge:
+    def __init__(self, replit_url):
+        self.replit_url = replit_url
+        self.ib = IB()
+        self.es_contract = None
+        
+    def connect(self):
+        try:
+            print("Connecting to IB Gateway on localhost:4002...")
+            self.ib.connect('127.0.0.1', 4002, clientId=1)
+            self.ib.reqMarketDataType(3)
+            print("✓ Connected to IB Gateway (PAPER)")
+            
+            account_values = self.ib.accountSummary()
+            balance = 0
+            for item in account_values:
+                if item.tag == 'NetLiquidation':
+                    balance = float(item.value)
+                    print(f"✓ Account Balance: ${balance:,.2f}")
+            
+            self.send_to_replit({"type": "connection", "connected": True, "account_balance": balance})
+            return True
+        except Exception as e:
+            print(f"✗ Connection failed: {e}")
+            return False
+    
+    def setup_es_contract(self):
+        try:
+            print("\n🔍 Finding ES contract...")
+            es = Future(symbol='ES', exchange='CME', currency='USD')
+            contracts = self.ib.qualifyContracts(es)
+            if not contracts:
+                print("✗ No ES contracts found")
+                return False
+            sorted_contracts = sorted(contracts, key=lambda c: c.lastTradeDateOrContractMonth)
+            self.es_contract = sorted_contracts[0]
+            print(f"✓ Using {self.es_contract.localSymbol}")
+            self.ib.reqMktData(self.es_contract, '', False, False)
+            print("✓ Subscribed to ES market data")
+            return True
+        except Exception as e:
+            print(f"✗ ES contract setup failed: {e}")
+            return False
+pip install --user --break-system-packages ib-insync requests && python3 ~/ibkr_bridge.pyse ticker.last + 0.25,
+Requirement already satisfied: ib-insync in ./.local/lib/python3.11/site-packages (0.9.86)
+Requirement already satisfied: requests in ./.local/lib/python3.11/site-packages (2.32.5)
+Requirement already satisfied: eventkit in ./.local/lib/python3.11/site-packages (from ib-insync) (1.0.3)
+Requirement already satisfied: nest-asyncio in ./.local/lib/python3.11/site-packages (from ib-insync) (1.6.0)
+Requirement already satisfied: charset_normalizer<4,>=2 in ./.local/lib/python3.11/site-packages (from requests) (3.4.4)
+Requirement already satisfied: idna<4,>=2.5 in ./.local/lib/python3.11/site-packages (from requests) (3.11)
+Requirement already satisfied: urllib3<3,>=1.21.1 in ./.local/lib/python3.11/site-packages (from requests) (2.5.0)
+Requirement already satisfied: certifi>=2017.4.17 in ./.local/lib/python3.11/site-packages (from requests) (2025.10.5)
+Requirement already satisfied: numpy in /usr/lib/python3/dist-packages (from eventkit->ib-insync) (1.24.2)
+============================================================
+IBKR Bridge - Connects IB Gateway to Replit
+============================================================
+
+Enter your Replit URL: https://bananamarket.replit.app
+Connecting to IB Gateway on localhost:4002...
+✓ Connected to IB Gateway (PAPER)
+✓ Account Balance: $2,193.78
+
+🔍 Finding ES contract...
+Ambiguous contract: Future(symbol='ES', exchange='CME', currency='USD'), possibles are [Contract(secType='FUT', conId=495512563, symbol='ES', lastTradeDateOrContractMonth='20251219', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ5', tradingClass='ES'), Contract(secType='FUT', conId=515416632, symbol='ES', lastTradeDateOrContractMonth='20261218', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ6', tradingClass='ES'), Contract(secType='FUT', conId=586139767, symbol='ES', lastTradeDateOrContractMonth='20271217', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ7', tradingClass='ES'), Contract(secType='FUT', conId=649180661, symbol='ES', lastTradeDateOrContractMonth='20270617', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM7', tradingClass='ES'), Contract(secType='FUT', conId=649180666, symbol='ES', lastTradeDateOrContractMonth='20280317', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH8', tradingClass='ES'), Contract(secType='FUT', conId=649180671, symbol='ES', lastTradeDateOrContractMonth='20260918', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU6', tradingClass='ES'), Contract(secType='FUT', conId=649180675, symbol='ES', lastTradeDateOrContractMonth='20280915', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU8', tradingClass='ES'), Contract(secType='FUT', conId=649180678, symbol='ES', lastTradeDateOrContractMonth='20260618', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM6', tradingClass='ES'), Contract(secType='FUT', conId=649180681, symbol='ES', lastTradeDateOrContractMonth='20270917', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU7', tradingClass='ES'), Contract(secType='FUT', conId=649180684, symbol='ES', lastTradeDateOrContractMonth='20270319', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH7', tradingClass='ES'), Contract(secType='FUT', conId=649180690, symbol='ES', lastTradeDateOrContractMonth='20280616', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM8', tradingClass='ES'), Contract(secType='FUT', conId=649180695, symbol='ES', lastTradeDateOrContractMonth='20260320', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH6', tradingClass='ES'), Contract(secType='FUT', conId=654503299, symbol='ES', lastTradeDateOrContractMonth='20281215', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ8', tradingClass='ES'), Contract(secType='FUT', conId=672387437, symbol='ES', lastTradeDateOrContractMonth='20290316', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH9', tradingClass='ES'), Contract(secType='FUT', conId=691171642, symbol='ES', lastTradeDateOrContractMonth='20290615', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM9', tradingClass='ES'), Contract(secType='FUT', conId=711280049, symbol='ES', lastTradeDateOrContractMonth='20290921', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU9', tradingClass='ES'), Contract(secType='FUT', conId=730283071, symbol='ES', lastTradeDateOrContractMonth='20291221', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ9', tradingClass='ES'), Contract(secType='FUT', conId=750150169, symbol='ES', lastTradeDateOrContractMonth='20300315', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH0', tradingClass='ES'), Contract(secType='FUT', conId=770561177, symbol='ES', lastTradeDateOrContractMonth='20300621', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM0', tradingClass='ES'), Contract(secType='FUT', conId=793356200, symbol='ES', lastTradeDateOrContractMonth='20300920', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU0', tradingClass='ES'), Contract(secType='FUT', conId=815824241, symbol='ES', lastTradeDateOrContractMonth='20301220', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ0', tradingClass='ES')]
+✗ No ES contracts found
+alfredo@penguin:~$ 
