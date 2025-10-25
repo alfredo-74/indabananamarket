@@ -43,6 +43,9 @@ export interface IStorage {
   
   getPreviousDayCandles(): Promise<VolumetricCandle[]>;
   setPreviousDayCandles(candles: VolumetricCandle[]): Promise<void>;
+  
+  getStartingCapital(): Promise<number>;
+  setStartingCapital(capital: number): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -56,6 +59,7 @@ export class MemStorage implements IStorage {
   private sessionStats: SessionStats | undefined;
   private keyLevels: KeyLevels | undefined;
   private previousDayCandles: VolumetricCandle[] = [];
+  private startingCapital: number = 2000; // Default starting capital
 
   async getCandles(): Promise<VolumetricCandle[]> {
     return this.candles;
@@ -153,6 +157,14 @@ export class MemStorage implements IStorage {
 
   async setPreviousDayCandles(candles: VolumetricCandle[]): Promise<void> {
     this.previousDayCandles = candles;
+  }
+
+  async getStartingCapital(): Promise<number> {
+    return this.startingCapital;
+  }
+
+  async setStartingCapital(capital: number): Promise<void> {
+    this.startingCapital = capital;
   }
 }
 
