@@ -6,6 +6,7 @@ import { NavigationHeader } from "@/components/NavigationHeader";
 import { SystemHeader } from "@/components/SystemHeader";
 import { ChartComponent } from "@/components/ChartComponent";
 import { RegimeIndicator } from "@/components/RegimeIndicator";
+import { SessionIndicator } from "@/components/SessionIndicator";
 import { LiveStatsPanel } from "@/components/LiveStatsPanel";
 import { TradeHistoryTable } from "@/components/TradeHistoryTable";
 import { ControlPanel } from "@/components/ControlPanel";
@@ -18,6 +19,8 @@ import type {
   Position,
   Trade,
   ControlSettings,
+  SessionStats,
+  KeyLevels,
 } from "@shared/schema";
 
 export default function TradingDashboard() {
@@ -75,6 +78,16 @@ export default function TradingDashboard() {
     refetchInterval: 2000,
   });
 
+  const { data: sessionStats } = useQuery<SessionStats>({
+    queryKey: ["/api/session"],
+    refetchInterval: 1000,
+  });
+
+  const { data: keyLevels } = useQuery<KeyLevels>({
+    queryKey: ["/api/key-levels"],
+    refetchInterval: 5000,
+  });
+
   const handleSettingsChange = (newSettings: Partial<ControlSettings>) => {
     setSettings((prev) => ({ ...prev, ...newSettings }));
   };
@@ -113,19 +126,21 @@ export default function TradingDashboard() {
       <SystemHeader status={systemStatus ?? null} marketData={marketData ?? null} />
 
       <div className="flex-1 overflow-auto p-4 gap-4 grid grid-cols-1 lg:grid-cols-[1fr_320px] grid-rows-[auto_1fr_auto]">
-        <div className="lg:col-span-2 flex items-center justify-between gap-4">
+        <div className="lg:col-span-2 flex items-center justify-between gap-4 flex-wrap">
           {regimeData && (
             <RegimeIndicator
               regime={regimeData.regime}
               cumulativeDelta={regimeData.cumulative_delta}
             />
           )}
+          <SessionIndicator sessionStats={sessionStats ?? null} />
         </div>
 
         <div className="row-span-2 min-h-[400px]">
           <ChartComponent
             candles={candles ?? []}
             vwap={vwapData ?? null}
+            keyLevels={keyLevels ?? null}
             isLoading={candlesLoading}
           />
         </div>

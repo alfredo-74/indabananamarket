@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import type { VolumetricCandle, VWAPData } from "@shared/schema";
+import type { VolumetricCandle, VWAPData, KeyLevels } from "@shared/schema";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -37,10 +37,11 @@ ChartJS.register(
 interface ChartComponentProps {
   candles: VolumetricCandle[];
   vwap: VWAPData | null;
+  keyLevels: KeyLevels | null;
   isLoading?: boolean;
 }
 
-export function ChartComponent({ candles, vwap, isLoading = false }: ChartComponentProps) {
+export function ChartComponent({ candles, vwap, keyLevels, isLoading = false }: ChartComponentProps) {
   const chartRef = useRef<ChartJS>(null);
   const [chartData, setChartData] = useState<any>(null);
 
@@ -167,11 +168,101 @@ export function ChartComponent({ candles, vwap, isLoading = false }: ChartCompon
       }
     }
 
+    // Add key levels as horizontal lines
+    if (keyLevels) {
+      const keyLevelColors = {
+        previousDayHigh: "rgba(168, 85, 247, 0.6)", // Purple
+        previousDayLow: "rgba(168, 85, 247, 0.6)",
+        previousDayClose: "rgba(168, 85, 247, 0.4)",
+        swingHigh: "rgba(249, 115, 22, 0.5)", // Orange
+        swingLow: "rgba(249, 115, 22, 0.5)",
+        volumePOC: "rgba(251, 191, 36, 0.7)", // Amber
+      };
+
+      if (keyLevels.previous_day_high !== null) {
+        datasets.push({
+          label: "Prev Day High",
+          data: candles.map((c, i) => ({ x: labels[i], y: keyLevels.previous_day_high })),
+          type: "line",
+          borderColor: keyLevelColors.previousDayHigh,
+          borderWidth: 2,
+          borderDash: [8, 4],
+          pointRadius: 0,
+          fill: false,
+        });
+      }
+
+      if (keyLevels.previous_day_low !== null) {
+        datasets.push({
+          label: "Prev Day Low",
+          data: candles.map((c, i) => ({ x: labels[i], y: keyLevels.previous_day_low })),
+          type: "line",
+          borderColor: keyLevelColors.previousDayLow,
+          borderWidth: 2,
+          borderDash: [8, 4],
+          pointRadius: 0,
+          fill: false,
+        });
+      }
+
+      if (keyLevels.previous_day_close !== null) {
+        datasets.push({
+          label: "Prev Day Close",
+          data: candles.map((c, i) => ({ x: labels[i], y: keyLevels.previous_day_close })),
+          type: "line",
+          borderColor: keyLevelColors.previousDayClose,
+          borderWidth: 1,
+          borderDash: [4, 8],
+          pointRadius: 0,
+          fill: false,
+        });
+      }
+
+      if (keyLevels.swing_high !== null) {
+        datasets.push({
+          label: "Swing High",
+          data: candles.map((c, i) => ({ x: labels[i], y: keyLevels.swing_high })),
+          type: "line",
+          borderColor: keyLevelColors.swingHigh,
+          borderWidth: 1.5,
+          borderDash: [6, 3],
+          pointRadius: 0,
+          fill: false,
+        });
+      }
+
+      if (keyLevels.swing_low !== null) {
+        datasets.push({
+          label: "Swing Low",
+          data: candles.map((c, i) => ({ x: labels[i], y: keyLevels.swing_low })),
+          type: "line",
+          borderColor: keyLevelColors.swingLow,
+          borderWidth: 1.5,
+          borderDash: [6, 3],
+          pointRadius: 0,
+          fill: false,
+        });
+      }
+
+      if (keyLevels.volume_poc !== null) {
+        datasets.push({
+          label: "Volume POC",
+          data: candles.map((c, i) => ({ x: labels[i], y: keyLevels.volume_poc })),
+          type: "line",
+          borderColor: keyLevelColors.volumePOC,
+          borderWidth: 2,
+          borderDash: [10, 5],
+          pointRadius: 0,
+          fill: false,
+        });
+      }
+    }
+
     setChartData({
       labels,
       datasets,
     });
-  }, [candles, vwap]);
+  }, [candles, vwap, keyLevels]);
 
   const options: ChartOptions = {
     responsive: true,
