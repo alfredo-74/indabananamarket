@@ -16,12 +16,13 @@ export function LiveStatsPanel({ vwap, position, marketData }: LiveStatsPanelPro
   };
 
   const formatCurrency = (value: number) => {
-    // ES/MES futures are traded in USD
-    return new Intl.NumberFormat("en-US", {
+    // Convert USD to GBP (assuming 0.79 rate)
+    const gbpValue = value * 0.79;
+    return new Intl.NumberFormat("en-GB", {
       style: "currency",
-      currency: "USD",
+      currency: "GBP",
       minimumFractionDigits: 2,
-    }).format(value);
+    }).format(gbpValue);
   };
 
   return (
@@ -138,7 +139,7 @@ export function LiveStatsPanel({ vwap, position, marketData }: LiveStatsPanelPro
               className={`text-xl font-bold font-mono tabular-nums ${position && position.unrealized_pnl >= 0 ? "text-trading-profit" : "text-trading-loss"}`}
               data-testid="text-unrealized-pnl"
             >
-              {position ? formatCurrency(position.unrealized_pnl) : "$0.00"}
+              {position ? formatCurrency(position.unrealized_pnl) : "£0.00"}
             </span>
           </div>
 
@@ -148,7 +149,7 @@ export function LiveStatsPanel({ vwap, position, marketData }: LiveStatsPanelPro
               className={`text-base font-semibold font-mono tabular-nums ${position && position.realized_pnl >= 0 ? "text-trading-profit" : "text-trading-loss"}`}
               data-testid="text-realized-pnl"
             >
-              {position ? formatCurrency(position.realized_pnl) : "$0.00"}
+              {position ? formatCurrency(position.realized_pnl) : "£0.00"}
             </span>
           </div>
         </div>
