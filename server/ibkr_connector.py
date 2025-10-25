@@ -18,7 +18,8 @@ class IBKRConnector:
     def __init__(self):
         self.ib = IB()
         self.connected = False
-        self.contract = None
+        self.display_contract = None  # ES contract for price display
+        self.trade_contract = None    # MES contract for actual trading
         self.last_price = 0.0
         self.bid = 0.0
         self.ask = 0.0
@@ -38,28 +39,40 @@ class IBKRConnector:
             # Get account information
             await self.update_account_info()
             
-            # Set up MES futures contract (Micro E-mini S&P 500)
+            # Set up ES futures contract for DISPLAY (what traders watch)
             # Auto-select front month (most liquid contract)
-            # Request all MES contracts and filter for front month
-            self.contract = Future('MES', exchange='CME')
-            contracts = await self.ib.qualifyContractsAsync(self.contract)
+            self.display_contract = Future('ES', exchange='CME')
+            display_contracts = await self.ib.qualifyContractsAsync(self.display_contract)
             
-            if contracts:
+            if display_contracts:
                 # Select the contract with nearest expiry (front month)
-                self.contract = sorted(contracts, key=lambda c: c.lastTradeDateOrContractMonth)[0]
-                print(f"Selected front month contract: {self.contract.lastTradeDateOrContractMonth}", file=sys.stderr)
+                self.display_contract = sorted(display_contracts, key=lambda c: c.lastTradeDateOrContractMonth)[0]
+                print(f"Selected ES display contract: {self.display_contract.lastTradeDateOrContractMonth}", file=sys.stderr)
             else:
                 # Fallback to specific contract if auto-selection fails
-                self.contract = Future('MES', '202503', 'CME')
-                await self.ib.qualifyContractsAsync(self.contract)
+                self.display_contract = Future('ES', '202503', 'CME')
+                await self.ib.qualifyContractsAsync(self.display_contract)
+            
+            # Set up MES futures contract for TRADING (cheaper execution)
+            self.trade_contract = Future('MES', exchange='CME')
+            trade_contracts = await self.ib.qualifyContractsAsync(self.trade_contract)
+            
+            if trade_contracts:
+                # Select the contract with nearest expiry (front month)
+                self.trade_contract = sorted(trade_contracts, key=lambda c: c.lastTradeDateOrContractMonth)[0]
+                print(f"Selected MES trading contract: {self.trade_contract.lastTradeDateOrContractMonth}", file=sys.stderr)
+            else:
+                # Fallback to specific contract if auto-selection fails
+                self.trade_contract = Future('MES', '202503', 'CME')
+                await self.ib.qualifyContractsAsync(self.trade_contract)
             
             # Request delayed market data (delayed quotes - free)
             self.ib.reqMarketDataType(3)  # 3 = delayed data
             
-            # Subscribe to market data
-            self.ib.reqMktData(self.contract, '', False, False)
+            # Subscribe to ES market data for display
+            self.ib.reqMktData(self.display_contract, '', False, False)
             
-            return {"success": True, "message": f"Connected to IBKR Paper Trading - {self.contract.lastTradeDateOrContractMonth}"}
+            return {"success": True, "message": f"Connected to IBKR Paper Trading - Display: {self.display_contract.lastTradeDateOrContractMonth}, Trade: {self.trade_contract.lastTradeDateOrContractMonth}"}
         except Exception as e:
             self.connected = False
             return {"success": False, "error": str(e)}
@@ -107,14 +120,14 @@ class IBKRConnector:
             print(f"Error updating account info: {e}", file=sys.stderr)
     
     async def get_market_data(self):
-        """Get current market data"""
+        """Get current market data from ES contract for display"""
         try:
-            if not self.connected or not self.contract:
+            if not self.connected or not self.display_contract:
                 return None
                 
-            ticker = self.ib.ticker(self.contract)
+            ticker = self.ib.ticker(self.display_contract)
             
-            # Update from ticker
+            # Update from ticker (ES prices for display)
             if ticker and ticker.last and not util.isNan(ticker.last):
                 self.last_price = float(ticker.last)
             if ticker and ticker.bid and not util.isNan(ticker.bid):
@@ -125,7 +138,7 @@ class IBKRConnector:
                 self.volume = int(ticker.volume)
             
             return {
-                "symbol": "MES",
+                "symbol": "ES",  # Display ES symbol
                 "last_price": self.last_price,
                 "bid": self.bid,
                 "ask": self.ask,
@@ -137,13 +150,13 @@ class IBKRConnector:
             return None
     
     async def place_order(self, action: str, quantity: int):
-        """Place a market order"""
+        """Place a market order on MES contract"""
         try:
-            if not self.connected or not self.contract:
+            if not self.connected or not self.trade_contract:
                 return {"success": False, "error": "Not connected to IBKR"}
             
             order = MarketOrder(action, quantity)
-            trade = self.ib.placeOrder(self.contract, order)
+            trade = self.ib.placeOrder(self.trade_contract, order)
             
             # Wait for order to be filled
             await asyncio.sleep(1)
