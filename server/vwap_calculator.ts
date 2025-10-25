@@ -94,4 +94,15 @@ export class VWAPCalculator {
       lookback_candles: this.lookbackCandles,
     };
   }
+
+  /**
+   * Update lookback period dynamically if needed
+   */
+  setLookback(lookback: number): void {
+    this.lookbackCandles = lookback;
+  }
+
+  getLookback(): number {
+    return this.lookbackCandles;
+  }
 }

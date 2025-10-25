@@ -550,10 +550,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Update regime detector with new threshold
-      regimeDetector.threshold = cd_threshold;
+      regimeDetector.setThreshold(cd_threshold);
 
       // Update VWAP calculator with new lookback
-      vwapCalculator.lookbackPeriod = vwap_lookback;
+      vwapCalculator.setLookback(vwap_lookback);
 
       res.json({ 
         success: true, 

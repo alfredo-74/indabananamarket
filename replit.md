@@ -2,9 +2,14 @@
 
 ## Overview
 
-OrderFlowAI is a professional automated trading system for futures markets (ES/MES contracts) that uses order flow analysis and market regime detection. The application provides real-time market data visualization, automated trade execution via Interactive Brokers (IBKR), and sophisticated risk management based on VWAP, cumulative delta, and volumetric candle analysis.
+OrderFlowAI is a professional automated trading system for futures markets that uses order flow analysis and market regime detection. The application displays **ES (E-mini S&P 500)** pricing while executing trades on **MES (Micro E-mini S&P 500)** contracts - the industry standard approach. This provides real-time market data visualization, automated trade execution via Interactive Brokers (IBKR), and sophisticated risk management based on VWAP, cumulative delta, and volumetric candle analysis.
 
 The system implements a dual-strategy approach: **Rotational Trading** for range-bound markets and **Directional Trading** for trending markets, with regime transitions determined by cumulative delta thresholds.
+
+**Display vs Trading Architecture**:
+- **Price Display**: ES contract (~6000 points) - what professional traders watch
+- **Trade Execution**: MES contract - cheaper margin requirement ($1,250 vs $12,500)
+- **P&L Calculation**: MES multiplier ($5/point) ensures accurate profit/loss tracking
 
 ## User Preferences
 
@@ -103,9 +108,10 @@ Not currently implemented - system designed for single-user paper trading enviro
 - Python bridge script (`server/ibkr_connector.py`) using `ib_insync` library
 - Connection to IB Gateway/TWS on port 7497 (paper trading)
 - Market data type 3 (delayed data - 15-minute delay, free tier)
-- Futures contract: MES (Micro E-mini S&P 500) with auto front-month selection
-- Order execution: Market orders for entry/exit
-- Real-time tick data subscription with bid/ask tracking
+- Display contract: ES (E-mini S&P 500) with auto front-month selection - for price display
+- Trading contract: MES (Micro E-mini S&P 500) with auto front-month selection - for order execution
+- Order execution: Market orders for entry/exit on MES
+- Real-time tick data subscription with bid/ask tracking from ES
 
 ### Third-Party Services
 
