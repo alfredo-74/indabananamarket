@@ -30,6 +30,32 @@ export const regimeStateSchema = z.enum([
   "TRANSITIONING",
 ]);
 
+export const sessionTypeSchema = z.enum([
+  "ETH", // Extended Trading Hours (6 PM - 9:30 AM ET)
+  "RTH", // Regular Trading Hours (9:30 AM - 4 PM ET)
+]);
+
+export const sessionStatsSchema = z.object({
+  current_session: sessionTypeSchema,
+  session_start_time: z.number(),
+  next_session_time: z.number(),
+  eth_cumulative_delta: z.number(),
+  rth_cumulative_delta: z.number(),
+  eth_regime: regimeStateSchema.nullable(),
+  rth_regime: regimeStateSchema.nullable(),
+});
+
+export const keyLevelsSchema = z.object({
+  previous_day_high: z.number().nullable(),
+  previous_day_low: z.number().nullable(),
+  previous_day_close: z.number().nullable(),
+  previous_day_vwap: z.number().nullable(),
+  swing_high: z.number().nullable(),
+  swing_low: z.number().nullable(),
+  volume_poc: z.number().nullable(), // Point of Control - highest volume price
+  last_updated: z.number(),
+});
+
 export const positionSchema = z.object({
   contracts: z.number(),
   entry_price: z.number().nullable(),
@@ -119,6 +145,9 @@ export const backtestResultSchema = z.object({
 export type VolumetricCandle = z.infer<typeof volumetricCandleSchema>;
 export type VWAPData = z.infer<typeof vwapDataSchema>;
 export type RegimeState = z.infer<typeof regimeStateSchema>;
+export type SessionType = z.infer<typeof sessionTypeSchema>;
+export type SessionStats = z.infer<typeof sessionStatsSchema>;
+export type KeyLevels = z.infer<typeof keyLevelsSchema>;
 export type Position = z.infer<typeof positionSchema>;
 export type Trade = z.infer<typeof tradeSchema>;
 export type MarketData = z.infer<typeof marketDataSchema>;
@@ -159,6 +188,14 @@ export const webSocketMessageSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("system_status"),
     data: systemStatusSchema,
+  }),
+  z.object({
+    type: z.literal("session_update"),
+    data: sessionStatsSchema,
+  }),
+  z.object({
+    type: z.literal("key_levels_update"),
+    data: keyLevelsSchema,
   }),
 ]);
 
