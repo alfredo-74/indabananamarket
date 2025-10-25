@@ -1,0 +1,75 @@
+"""Sistema Order Flow Semplificato"""
+import numpy as np
+from datetime import datetime
+from dataclasses import dataclass
+from typing import Dict, Optional
+from collections import deque
+
+@dataclass
+class AutoTrade:
+    entry_time: datetime
+    entry_price: float
+    direction: str
+    contracts: int
+    stop_loss: float
+    take_profit: float
+    signal_type: str
+    confidence: float
+    exit_time: Optional[datetime] = None
+    exit_price: Optional[float] = None
+    exit_reason: str = ''
+    pnl: float = 0.0
+
+class AutomatedExecutionEngine:
+    def __init__(self, initial_capital=10000.0, auto_trade_enabled=True):
+        self.initial_capital = initial_capital
+        self.current_capital = initial_capital
+        self.auto_trade_enabled = auto_trade_enabled
+        self.open_trades = []
+        self.closed_trades = []
+        self.daily_pnl = 0.0
+        self.daily_trades = 0
+
+class FullyAutomatedOrderFlowSystem:
+    def __init__(self, initial_capital=10000.0, auto_trade_enabled=True):
+        self.execution_engine = AutomatedExecutionEngine(initial_capital, auto_trade_enabled)
+        self.cd_history = deque(maxlen=100)
+        self.price_history = deque(maxlen=100)
+    
+    def process_tick(self, timestamp, price, volume, cumulative_delta, high, low):
+        self.price_history.append(price)
+        self.cd_history.append(cumulative_delta)
+        
+        class Regime:
+            def __init__(self, val):
+                self.value = val
+        
+        if len(self.cd_history) < 20:
+            return Regime("TRANSITIONING"), "Collecting data..."
+        
+        recent_cd = list(self.cd_history)[-20:]
+        cd_change = recent_cd[-1] - recent_cd[0]
+        
+        if cd_change > 500:
+            regime = "DIRECTIONAL_BULLISH"
+            reasoning = f"CD positive ({cd_change:+.0f}), bullish flow"
+        elif cd_change < -500:
+            regime = "DIRECTIONAL_BEARISH"
+            reasoning = f"CD negative ({cd_change:+.0f}), bearish flow"
+        else:
+            regime = "ROTATIONAL"
+            reasoning = f"CD neutral ({cd_change:+.0f}), range-bound"
+        
+        return Regime(regime), reasoning
+    
+    def get_status(self):
+        return {
+            'capital': self.execution_engine.current_capital,
+            'daily_pnl': self.execution_engine.daily_pnl,
+            'open_trades': len(self.execution_engine.open_trades),
+            'closed_trades': len(self.execution_engine.closed_trades),
+            'daily_trades': self.execution_engine.daily_trades
+        }
+
+if __name__ == "__main__":
+    print("✅ Sistema caricato!")

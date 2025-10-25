@@ -1,0 +1,428 @@
+"""
+IBKR Connector - Interactive Brokers API Wrapper
+Gestisce connessione, market data, ordini
+"""
+from ib_insync import *
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+class IBKRConnector:
+    """Wrapper per Interactive Brokers API con ib_insync"""
+    
+    def __init__(self, paper_trading=True):
+        """
+        Inizializza connector
+        
+        Args:
+            paper_trading: True per paper, False per live
+        """
+        self.ib = IB()
+        self.paper_trading = paper_trading
+        self.port = 4002 if paper_trading else 4001
+        self.client_id = 1
+        
+    def connect(self):
+        """Connetti a IBKR Gateway/TWS"""
+        try:
+            self.ib.connect('127.0.0.1', self.port, clientId=self.client_id)
+            
+            # Set delayed data (Type 3 - free)
+            self.ib.reqMarketDataType(3)
+            
+            mode = "PAPER" if self.paper_trading else "LIVE"
+            logger.info(f"✅ Connected to IBKR ({mode})")
+            logger.info(f"   Market Data Type: DELAYED (Type 3 - Free)")
+            
+            return True
+            
+        except Exception as e:
+            logger.error(f"❌ Connection failed: {e}")
+            return False
+    
+    def disconnect(self):
+        """Disconnetti da IBKR"""
+        if self.ib.isConnected():
+            self.ib.disconnect()
+            logger.info("✅ Disconnected")
+    
+    def get_es_contract(self):
+        """
+        Ottieni contratto ES (E-mini S&P 500) più liquido
+        Smart selection: considera scadenza + volume
+        
+        Returns:
+            Contract ES o None
+        """
+        try:
+            from datetime import datetime
+            
+            logger.info("🔍 Cercando contratto ES (smart selection)...")
+            
+            # Get ES contracts
+            es = Future(symbol='ES', exchange='CME', currency='USD')
+            contracts = self.ib.qualifyContracts(es)
+            
+            if not contracts:
+                logger.error("❌ Contratto ES non trovato")
+                return None
+            
+            # Sort by expiry date
+            sorted_contracts = sorted(
+                contracts, 
+                key=lambda c: c.lastTradeDateOrContractMonth
+            )
+            
+            # Check days to expiry for front month
+            front_month = sorted_contracts[0]
+            expiry_str = front_month.lastTradeDateOrContractMonth  # "20251219"
+            expiry_date = datetime.strptime(expiry_str, "%Y%m%d")
+            days_to_expiry = (expiry_date - datetime.now()).days
+            
+            # If <8 days to expiry, auto-roll to next month
+            if days_to_expiry < 8 and len(sorted_contracts) > 1:
+                contract = sorted_contracts[1]
+                logger.info(f"⚠️  Roll period! Using {contract.localSymbol} (front month expires in {days_to_expiry} days)")
+                return contract
+            
+            # Else, compare volume of front 2 months
+            if len(sorted_contracts) > 1:
+                try:
+                    # Request market data for front 2 months
+                    ticker1 = self.ib.reqMktData(sorted_contracts[0], '', False, False)
+                    ticker2 = self.ib.reqMktData(sorted_contracts[1], '', False, False)
+                    self.ib.sleep(1.5)  # Wait for volume data
+                    
+                    vol1 = ticker1.volume if ticker1.volume else 0
+                    vol2 = ticker2.volume if ticker2.volume else 0
+                    
+                    # Cancel market data subscriptions
+                    self.ib.cancelMktData(sorted_contracts[0])
+                    self.ib.cancelMktData(sorted_contracts[1])
+                    
+                    # Use most liquid (if next month has >1.5x volume, it's rolling)
+                    if vol2 > vol1 * 1.5:
+                        contract = sorted_contracts[1]
+                        logger.info(f"✅ Using {contract.localSymbol} (higher volume: {vol2:,} vs {vol1:,})")
+                    else:
+                        contract = front_month
+                        logger.info(f"✅ Using {contract.localSymbol} (front month, volume: {vol1:,})")
+                    
+                    return contract
+                    
+                except Exception as vol_error:
+                    logger.warning(f"⚠️  Volume check failed: {vol_error}. Using front month.")
+                    logger.info(f"✅ Trovato: {front_month.localSymbol}")
+                    return front_month
+            else:
+                logger.info(f"✅ Trovato: {front_month.localSymbol}")
+                return front_month
+                
+        except Exception as e:
+            logger.error(f"❌ Errore cercando ES: {e}")
+            return None
+    
+    def get_mes_contract(self):
+        """
+        Ottieni contratto MES (Micro E-mini S&P 500) più liquido
+        Smart selection: considera scadenza + volume
+        
+        Returns:
+            Contract MES o None
+        """
+        try:
+            from datetime import datetime
+            
+            logger.info("🔍 Cercando contratto MES (smart selection)...")
+            
+            # Get MES contracts
+            mes = Future(symbol='MES', exchange='CME', currency='USD')
+            contracts = self.ib.qualifyContracts(mes)
+            
+            if not contracts:
+                logger.error("❌ Contratto MES non trovato")
+                return None
+            
+            # Sort by expiry date
+            sorted_contracts = sorted(
+                contracts, 
+                key=lambda c: c.lastTradeDateOrContractMonth
+            )
+            
+            # Check days to expiry for front month
+            front_month = sorted_contracts[0]
+            expiry_str = front_month.lastTradeDateOrContractMonth  # "20251219"
+            expiry_date = datetime.strptime(expiry_str, "%Y%m%d")
+            days_to_expiry = (expiry_date - datetime.now()).days
+            
+            # If <8 days to expiry, auto-roll to next month
+            if days_to_expiry < 8 and len(sorted_contracts) > 1:
+                contract = sorted_contracts[1]
+                logger.info(f"⚠️  Roll period! Using {contract.localSymbol} (front month expires in {days_to_expiry} days)")
+                return contract
+            
+            # Else, compare volume of front 2 months
+            if len(sorted_contracts) > 1:
+                try:
+                    # Request market data for front 2 months
+                    ticker1 = self.ib.reqMktData(sorted_contracts[0], '', False, False)
+                    ticker2 = self.ib.reqMktData(sorted_contracts[1], '', False, False)
+                    self.ib.sleep(1.5)  # Wait for volume data
+                    
+                    vol1 = ticker1.volume if ticker1.volume else 0
+                    vol2 = ticker2.volume if ticker2.volume else 0
+                    
+                    # Cancel market data subscriptions
+                    self.ib.cancelMktData(sorted_contracts[0])
+                    self.ib.cancelMktData(sorted_contracts[1])
+                    
+                    # Use most liquid (if next month has >1.5x volume, it's rolling)
+                    if vol2 > vol1 * 1.5:
+                        contract = sorted_contracts[1]
+                        logger.info(f"✅ Using {contract.localSymbol} (higher volume: {vol2:,} vs {vol1:,})")
+                    else:
+                        contract = front_month
+                        logger.info(f"✅ Using {contract.localSymbol} (front month, volume: {vol1:,})")
+                    
+                    return contract
+                    
+                except Exception as vol_error:
+                    logger.warning(f"⚠️  Volume check failed: {vol_error}. Using front month.")
+                    logger.info(f"✅ Trovato: {front_month.localSymbol}")
+                    return front_month
+            else:
+                logger.info(f"✅ Trovato: {front_month.localSymbol}")
+                return front_month
+                
+        except Exception as e:
+            logger.error(f"❌ Errore cercando MES: {e}")
+            return None
+    
+    def download_historical(self, contract, days=30):
+        """
+        Scarica dati storici
+        
+        Args:
+            contract: Contract object
+            days: Numero giorni
+            
+        Returns:
+            DataFrame con OHLCV
+        """
+        try:
+            duration = f"{days} D"
+            bars = self.ib.reqHistoricalData(
+                contract,
+                endDateTime='',
+                durationStr=duration,
+                barSizeSetting='1 hour',
+                whatToShow='TRADES',
+                useRTH=True,
+                formatDate=1
+            )
+            
+            if bars:
+                import pandas as pd
+                df = util.df(bars)
+                logger.info(f"✅ Downloaded {len(df)} bars")
+                return df
+            else:
+                logger.error("❌ No data downloaded")
+                return None
+                
+        except Exception as e:
+            logger.error(f"❌ Download error: {e}")
+            return None
+    
+    def stream_market_data(self, contract, callback):
+        """
+        Stream market data in tempo reale
+        
+        Args:
+            contract: Contract object
+            callback: Function(tick_data) chiamata per ogni tick
+            
+        Returns:
+            Ticker object
+        """
+        try:
+            ticker = self.ib.reqMktData(contract, '', False, False)
+            
+            def on_pending_tickers(tickers):
+                for t in tickers:
+                    if t.contract == contract:
+                        tick_data = {
+                            'timestamp': t.time,
+                            'price': t.last if t.last else t.close,
+                            'bid': t.bid if t.bid else 0,
+                            'ask': t.ask if t.ask else 0,
+                            'volume': t.volume if t.volume else 0
+                        }
+                        callback(tick_data)
+            
+            self.ib.pendingTickersEvent += on_pending_tickers
+            
+            return ticker
+            
+        except Exception as e:
+            logger.error(f"❌ Stream error: {e}")
+            return None
+    
+    def place_market_order(self, contract, action, quantity):
+        """
+        Piazza ordine MARKET su IBKR
+        
+        Args:
+            contract: Contract object (MES)
+            action: 'BUY' o 'SELL'
+            quantity: Numero contratti
+            
+        Returns:
+            Order ID se successo, None se fallito
+        """
+        try:
+            # Create market order
+            order = MarketOrder(action, quantity)
+            
+            # Place order
+            trade = self.ib.placeOrder(contract, order)
+            
+            # Wait for order to be submitted
+            self.ib.sleep(0.5)
+            
+            if trade and trade.order:
+                order_id = trade.order.orderId
+                logger.info(f"✅ Order placed: {action} {quantity}x @ MARKET | ID: {order_id}")
+                return order_id
+            else:
+                logger.error("❌ Order placement failed")
+                return None
+                
+        except Exception as e:
+            logger.error(f"❌ Error placing order: {e}")
+            return None
+    
+    def place_limit_order(self, contract, action, quantity, limit_price):
+        """
+        Piazza ordine LIMIT su IBKR
+        
+        Args:
+            contract: Contract object (MES)
+            action: 'BUY' o 'SELL'
+            quantity: Numero contratti
+            limit_price: Prezzo limite
+            
+        Returns:
+            Order ID se successo, None se fallito
+        """
+        try:
+            # Create limit order
+            order = LimitOrder(action, quantity, limit_price)
+            
+            # Place order
+            trade = self.ib.placeOrder(contract, order)
+            
+            # Wait for order to be submitted
+            self.ib.sleep(0.5)
+            
+            if trade and trade.order:
+                order_id = trade.order.orderId
+                logger.info(f"✅ Order placed: {action} {quantity}x @ {limit_price} LIMIT | ID: {order_id}")
+                return order_id
+            else:
+                logger.error("❌ Order placement failed")
+                return None
+                
+        except Exception as e:
+            logger.error(f"❌ Error placing order: {e}")
+            return None
+    
+    def place_stop_order(self, contract, action, quantity, stop_price):
+        """
+        Piazza ordine STOP su IBKR
+        
+        Args:
+            contract: Contract object (MES)
+            action: 'BUY' o 'SELL'
+            quantity: Numero contratti
+            stop_price: Prezzo stop
+            
+        Returns:
+            Order ID se successo, None se fallito
+        """
+        try:
+            # Create stop order
+            order = StopOrder(action, quantity, stop_price)
+            
+            # Place order
+            trade = self.ib.placeOrder(contract, order)
+            
+            # Wait for order to be submitted
+            self.ib.sleep(0.5)
+            
+            if trade and trade.order:
+                order_id = trade.order.orderId
+                logger.info(f"✅ Order placed: {action} {quantity}x @ {stop_price} STOP | ID: {order_id}")
+                return order_id
+            else:
+                logger.error("❌ Order placement failed")
+                return None
+                
+        except Exception as e:
+            logger.error(f"❌ Error placing order: {e}")
+            return None
+    
+    def cancel_order(self, order_id):
+        """
+        Cancella ordine
+        
+        Args:
+            order_id: ID ordine da cancellare
+            
+        Returns:
+            True se successo, False se fallito
+        """
+        try:
+            # Find order by ID
+            for trade in self.ib.trades():
+                if trade.order.orderId == order_id:
+                    self.ib.cancelOrder(trade.order)
+                    logger.info(f"✅ Order cancelled: {order_id}")
+                    return True
+            
+            logger.warning(f"⚠️  Order not found: {order_id}")
+            return False
+            
+        except Exception as e:
+            logger.error(f"❌ Error cancelling order: {e}")
+            return False
+    
+    def get_positions(self):
+        """
+        Ottieni posizioni aperte
+        
+        Returns:
+            List di Position objects
+        """
+        try:
+            positions = self.ib.positions()
+            return positions
+        except Exception as e:
+            logger.error(f"❌ Error getting positions: {e}")
+            return []
+    
+    def get_open_orders(self):
+        """
+        Ottieni ordini aperti
+        
+        Returns:
+            List di Trade objects
+        """
+        try:
+            trades = self.ib.openTrades()
+            return trades
+        except Exception as e:
+            logger.error(f"❌ Error getting open orders: {e}")
+            return []
