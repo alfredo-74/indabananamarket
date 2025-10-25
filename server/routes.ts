@@ -10,6 +10,7 @@ import { SessionDetector } from "./session_detector";
 import { KeyLevelsDetector } from "./key_levels_detector";
 import { AutoTrader } from "./auto_trader";
 import { BacktestEngine } from "./backtest_engine";
+import { PerformanceAnalyzer } from "./performance_analyzer";
 import type {
   SystemStatus,
   MarketData,
@@ -36,6 +37,7 @@ const sessionRegimeManager = new SessionAwareRegimeManager(30, 50); // ETH ±30,
 const sessionDetector = new SessionDetector();
 const keyLevelsDetector = new KeyLevelsDetector(20); // 20-candle lookback for swing levels
 const autoTrader = new AutoTrader(); // Automated trading strategy
+const performanceAnalyzer = new PerformanceAnalyzer(); // Account performance analysis
 
 // IBKR Python bridge process
 let ibkrProcess: any = null;
@@ -92,6 +94,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     account_type: null, // Will be detected when IBKR connects
     data_delay_seconds: 900, // Assume 15-minute delay for delayed data (will be updated)
   });
+
+  // Initialize starting capital for performance tracking
+  await storage.setStartingCapital(2000);
 
   // Initialize position
   await storage.setPosition({
@@ -713,6 +718,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     res.json(keyLevels);
+  });
+
+  // GET /api/account-analysis - Get comprehensive account performance analysis
+  app.get("/api/account-analysis", async (req, res) => {
+    try {
+      const trades = await storage.getTrades();
+      const systemStatus = await storage.getSystemStatus();
+      const startingCapital = await storage.getStartingCapital();
+      
+      if (!systemStatus) {
+        return res.status(500).json({ error: "System status not initialized" });
+      }
+
+      const currentCapital = systemStatus.capital;
+
+      // Parse query parameters for time period filtering
+      const { period } = req.query;
+      let periodStart: number | undefined;
+      const periodEnd = Date.now();
+
+      if (period === 'today') {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        periodStart = today.getTime();
+      } else if (period === 'week') {
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        periodStart = weekAgo.getTime();
+      } else if (period === 'month') {
+        const monthAgo = new Date();
+        monthAgo.setMonth(monthAgo.getMonth() - 1);
+        periodStart = monthAgo.getTime();
+      }
+      // If no period specified, use all-time data
+
+      const analysis = performanceAnalyzer.calculateAnalysis(
+        trades,
+        startingCapital,
+        currentCapital,
+        periodStart,
+        periodEnd
+      );
+
+      res.json(analysis);
+    } catch (error) {
+      console.error("Account analysis error:", error);
+      res.status(500).json({ error: "Failed to calculate account analysis" });
+    }
   });
 
   return httpServer;
