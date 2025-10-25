@@ -27,6 +27,9 @@ class IBKRConnector:
         self.account_currency = "USD"  # Default to USD
         self.usd_to_gbp_rate = 0.79  # Default exchange rate (will be updated from IB)
         self.port = 7497  # Track which port we're connected to
+        self.account_balance = 0.0  # NetLiquidation value from IBKR
+        self.unrealized_pnl = 0.0  # Unrealized P&L from open positions
+        self.realized_pnl = 0.0  # Realized P&L from closed positions
         
     async def connect(self, username: str, password: str):
         """Connect to IBKR Paper Trading"""
@@ -78,12 +81,12 @@ class IBKRConnector:
             return {"success": False, "error": str(e)}
     
     async def update_account_info(self):
-        """Get account currency and exchange rates from IB"""
+        """Get account currency, balance, and exchange rates from IB"""
         try:
             if not self.connected:
                 return
             
-            # Get account summary to find base currency
+            # Get account summary to find base currency and balance
             account_values = self.ib.accountSummary()
             
             for item in account_values:
@@ -91,9 +94,19 @@ class IBKRConnector:
                     # Detect if this is a paper or live account based on port
                     # Port 7497 = paper, 7496 = live
                     pass
-                if item.tag == 'Currency':
+                elif item.tag == 'Currency':
                     self.account_currency = item.value
                     print(f"Account currency: {self.account_currency}", file=sys.stderr)
+                elif item.tag == 'NetLiquidation':
+                    # Total account value (cash + positions)
+                    self.account_balance = float(item.value)
+                    print(f"Account balance (NetLiquidation): ${self.account_balance:,.2f}", file=sys.stderr)
+                elif item.tag == 'UnrealizedPnL':
+                    # Unrealized P&L from open positions
+                    self.unrealized_pnl = float(item.value)
+                elif item.tag == 'RealizedPnL':
+                    # Realized P&L from closed positions
+                    self.realized_pnl = float(item.value)
             
             # If account is in GBP, get USD/GBP exchange rate
             if self.account_currency == 'GBP':
@@ -239,8 +252,13 @@ async def main():
                     sys.stdout.flush()
                 
                 elif command['action'] == 'get_account_info':
+                    # Update account info before returning
+                    await connector.update_account_info()
                     data = {
                         "account_currency": connector.account_currency,
+                        "account_balance": connector.account_balance,
+                        "unrealized_pnl": connector.unrealized_pnl,
+                        "realized_pnl": connector.realized_pnl,
                         "usd_to_account_rate": connector.usd_to_gbp_rate if connector.account_currency == 'GBP' else 1.0,
                         "account_type": "PAPER" if connector.port == 7497 else "LIVE"
                     }
