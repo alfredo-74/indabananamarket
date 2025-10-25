@@ -32,7 +32,7 @@ export class BacktestEngine {
     let position: Position = {
       contracts: 0,
       entry_price: null,
-      current_price: candles[0]?.close || 5838,
+      current_price: candles[0]?.close || 6004,  // ES pricing for display
       unrealized_pnl: 0,
       realized_pnl: 0,
       side: "FLAT",
@@ -73,7 +73,7 @@ export class BacktestEngine {
 
       // Analyze market for trade signals
       const marketData: MarketData = {
-        symbol: "MES",
+        symbol: "ES",  // Display ES symbol
         last_price: currentCandle.close,
         bid: currentCandle.close - 0.25,
         ask: currentCandle.close + 0.25,
@@ -260,10 +260,11 @@ export class BacktestEngine {
   /**
    * Generate mock historical candles for backtesting
    * In production, replace this with real historical data loading
+   * Note: Generates ES price levels for display (trades execute on MES)
    */
   private generateMockCandles(numCandles: number): VolumetricCandle[] {
     const candles: VolumetricCandle[] = [];
-    let price = 5838;
+    let price = 6004;  // ES pricing for display
     let cumulativeDelta = 0;
     const startTime = Date.now() - numCandles * 60000; // Go back in time
 
