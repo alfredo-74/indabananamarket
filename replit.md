@@ -42,8 +42,9 @@ Preferred communication style: Simple, everyday language.
 
 **Key Frontend Components**:
 - `TradingDashboard`: Main dashboard orchestrating all trading views
-- `ChartComponent`: Chart.js-based candlestick charts with VWAP bands
+- `ChartComponent`: Chart.js-based candlestick charts with VWAP bands and key level overlays
 - `RegimeIndicator`: Visual display of current market regime (ROTATIONAL/DIRECTIONAL_BULLISH/DIRECTIONAL_BEARISH)
+- `SessionIndicator`: Displays current session (ETH/RTH), time to next session, and session-specific cumulative delta
 - `LiveStatsPanel`: Real-time P&L, position, and market statistics
 - `TradeHistoryTable`: Historical trade log with performance metrics
 - `ControlPanel`: Trading automation controls and parameter settings
@@ -75,9 +76,26 @@ Preferred communication style: Simple, everyday language.
    - Implements hysteresis to prevent rapid regime flapping
    - Four states: ROTATIONAL, DIRECTIONAL_BULLISH, DIRECTIONAL_BEARISH, TRANSITIONING
 
-4. **Storage Layer** (`server/storage.ts`):
+4. **SessionDetector** (`server/session_detector.ts`) - *Phase 1*:
+   - Detects ETH (Extended Trading Hours: 6 PM - 9:30 AM ET) vs RTH (Regular Trading Hours: 9:30 AM - 4 PM ET)
+   - Handles timezone conversion from user's London timezone to ET
+   - Provides session start/end times and calculates time to next session transition
+
+5. **SessionAwareRegimeManager** (`server/session_aware_regime_manager.ts`) - *Phase 1*:
+   - Maintains separate cumulative delta tracking for ETH and RTH sessions
+   - Different regime thresholds: ±30 for ETH (lower liquidity), ±50 for RTH (higher liquidity)
+   - Smart regime blending at RTH open using weighted average (prevents false regime switches)
+   - Resets ETH cumulative delta at 6 PM ET daily
+
+6. **KeyLevelsDetector** (`server/key_levels_detector.ts`) - *Phase 1*:
+   - Tracks previous day high/low/close for support/resistance
+   - Detects swing highs/lows using configurable lookback period (default: 10 candles)
+   - Calculates volume Point of Control (POC) - price level with highest volume
+   - All levels used for confluence scoring in trade signals
+
+7. **Storage Layer** (`server/storage.ts`):
    - In-memory storage implementation (MemStorage)
-   - Stores candles, VWAP data, regime state, positions, trades, market data, and system status
+   - Stores candles, VWAP data, regime state, positions, trades, market data, system status, session stats, and key levels
    - Designed with interface (IStorage) for future database integration
 
 **Trading Strategy Logic**:
@@ -158,3 +176,29 @@ Not currently implemented - system designed for single-user paper trading enviro
 - Frontend: Vite builds to `dist/public`
 - Backend: esbuild bundles to `dist/index.js`
 - Deployment: Node.js server serving static frontend + API/WebSocket endpoints
+
+## Recent Changes
+
+### Phase 1: Session Intelligence + Key Levels (Completed - October 25, 2025)
+
+**Objective**: Add session awareness and key level detection for confluence-based trading.
+
+**Backend Enhancements**:
+- `SessionDetector`: ETH vs RTH detection with ET timezone handling
+- `SessionAwareRegimeManager`: Separate ETH/RTH cumulative delta tracking with smart blending at session transitions
+- `KeyLevelsDetector`: Previous day levels, swing highs/lows, and volume POC detection
+- New API endpoints: `GET /api/session`, `GET /api/key-levels`
+- WebSocket broadcasts for session updates and key level changes
+- Enhanced schema with `SessionType`, `SessionStats`, and `KeyLevels` types
+
+**Frontend Enhancements**:
+- `SessionIndicator` component: Shows current session (ETH/RTH), countdown to next session, session-specific cumulative delta
+- Key levels overlay on chart: Purple lines for previous day levels, orange for swing levels, amber for volume POC
+- Updated `ChartComponent` to render key levels as horizontal reference lines
+
+**Trading Logic Improvements**:
+- Session-aware regime thresholds: ETH uses ±30, RTH uses ±50 (accounts for liquidity differences)
+- Smart regime transitions at RTH open: Weighted average instead of hard reset prevents false signals
+- Confluence scoring foundation: Key levels aligned with VWAP bands increase trade quality (to be fully implemented in Phase 2)
+
+**Next Phase (Phase 2)**: DOM (Depth of Market) integration with live order book visualization and imbalance detection for enhanced order flow analysis.
