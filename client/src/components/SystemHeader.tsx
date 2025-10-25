@@ -9,11 +9,13 @@ interface SystemHeaderProps {
 
 export function SystemHeader({ status, marketData }: SystemHeaderProps) {
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("en-US", {
+    // Convert USD to GBP (assuming 0.79 rate)
+    const gbpValue = value * 0.79;
+    return new Intl.NumberFormat("en-GB", {
       style: "currency",
-      currency: "USD",
+      currency: "GBP",
       minimumFractionDigits: 2,
-    }).format(value);
+    }).format(gbpValue);
   };
 
   const formatTime = (timestamp: number) => {
@@ -73,14 +75,14 @@ export function SystemHeader({ status, marketData }: SystemHeaderProps) {
           <DollarSign className="h-4 w-4 text-muted-foreground" />
           <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Capital</span>
           <span className="text-base font-semibold font-mono tabular-nums">
-            {status ? formatCurrency(status.capital) : "$0.00"}
+            {status ? formatCurrency(status.capital) : "£0.00"}
           </span>
         </div>
 
         <div className="flex items-center gap-2" data-testid="text-daily-pnl">
           <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Daily P&L</span>
           <span className={`text-base font-semibold font-mono tabular-nums ${status && status.daily_pnl >= 0 ? "text-trading-profit" : "text-trading-loss"}`}>
-            {status ? formatCurrency(status.daily_pnl) : "$0.00"}
+            {status ? formatCurrency(status.daily_pnl) : "£0.00"}
           </span>
         </div>
 
