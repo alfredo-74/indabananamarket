@@ -229,22 +229,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
         data: vwap,
       });
 
-      // Detect regime
+      // Session-aware regime detection
       const latestCandle = candles[candles.length - 1];
-      const previousRegime = await storage.getRegime();
-      const regime = regimeDetector.detectRegime(
-        latestCandle.cumulative_delta,
-        previousRegime?.regime
-      );
+      const tickDelta = isBuy ? 1 : -1; // Delta for this tick
+      const regimeUpdate = sessionRegimeManager.updateRegime(timestamp, tickDelta);
 
-      await storage.setRegime(regime, latestCandle.cumulative_delta);
+      // Store regime data (use current session's regime)
+      await storage.setRegime(regimeUpdate.regime, 
+        regimeUpdate.session === "ETH" ? regimeUpdate.ethCD : regimeUpdate.rthCD);
+      
       broadcast({
         type: "regime_change",
         data: {
-          regime,
-          cumulative_delta: latestCandle.cumulative_delta,
+          regime: regimeUpdate.regime,
+          cumulative_delta: regimeUpdate.session === "ETH" ? regimeUpdate.ethCD : regimeUpdate.rthCD,
         },
       });
+
+      // Update session stats
+      const sessionStats: SessionStats = sessionDetector.createSessionStats(
+        timestamp,
+        regimeUpdate.ethCD,
+        regimeUpdate.rthCD,
+        sessionRegimeManager.getSessionRegime("ETH"),
+        sessionRegimeManager.getSessionRegime("RTH")
+      );
+      await storage.setSessionStats(sessionStats);
+      broadcast({
+        type: "session_update",
+        data: sessionStats,
+      });
+
+      // Update key levels periodically (when candle completes)
+      if (completedCandle) {
+        const previousDayCandles = await storage.getPreviousDayCandles();
+        const keyLevels = keyLevelsDetector.detectKeyLevels(
+          candles,
+          vwap,
+          previousDayCandles
+        );
+        await storage.setKeyLevels(keyLevels);
+        broadcast({
+          type: "key_levels_update",
+          data: keyLevels,
+        });
+      }
 
       // Auto-trading logic (if enabled)
       const status = await storage.getSystemStatus();
@@ -254,7 +283,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const signal = autoTrader.analyzeMarket(
           marketData,
           vwap,
-          regime,
+          regimeUpdate.regime,
           position
         );
 
@@ -269,7 +298,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             contracts: signal.quantity,
             pnl: null,
             duration_ms: null,
-            regime,
+            regime: regimeUpdate.regime,
             cumulative_delta: latestCandle.cumulative_delta,
             status: "OPEN",
           });
@@ -309,7 +338,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             contracts: Math.abs(position.contracts),
             pnl,
             duration_ms: null,
-            regime,
+            regime: regimeUpdate.regime,
             cumulative_delta: latestCandle.cumulative_delta,
             status: "CLOSED",
           });
