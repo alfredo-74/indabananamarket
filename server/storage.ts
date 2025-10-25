@@ -6,6 +6,8 @@ import type {
   Trade,
   MarketData,
   SystemStatus,
+  SessionStats,
+  KeyLevels,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
@@ -32,6 +34,15 @@ export interface IStorage {
   
   getSystemStatus(): Promise<SystemStatus | undefined>;
   setSystemStatus(status: SystemStatus): Promise<void>;
+  
+  getSessionStats(): Promise<SessionStats | undefined>;
+  setSessionStats(stats: SessionStats): Promise<void>;
+  
+  getKeyLevels(): Promise<KeyLevels | undefined>;
+  setKeyLevels(levels: KeyLevels): Promise<void>;
+  
+  getPreviousDayCandles(): Promise<VolumetricCandle[]>;
+  setPreviousDayCandles(candles: VolumetricCandle[]): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -42,6 +53,9 @@ export class MemStorage implements IStorage {
   private trades: Map<string, Trade> = new Map();
   private marketData: MarketData | undefined;
   private systemStatus: SystemStatus | undefined;
+  private sessionStats: SessionStats | undefined;
+  private keyLevels: KeyLevels | undefined;
+  private previousDayCandles: VolumetricCandle[] = [];
 
   async getCandles(): Promise<VolumetricCandle[]> {
     return this.candles;
@@ -115,6 +129,30 @@ export class MemStorage implements IStorage {
 
   async setSystemStatus(status: SystemStatus): Promise<void> {
     this.systemStatus = status;
+  }
+
+  async getSessionStats(): Promise<SessionStats | undefined> {
+    return this.sessionStats;
+  }
+
+  async setSessionStats(stats: SessionStats): Promise<void> {
+    this.sessionStats = stats;
+  }
+
+  async getKeyLevels(): Promise<KeyLevels | undefined> {
+    return this.keyLevels;
+  }
+
+  async setKeyLevels(levels: KeyLevels): Promise<void> {
+    this.keyLevels = levels;
+  }
+
+  async getPreviousDayCandles(): Promise<VolumetricCandle[]> {
+    return this.previousDayCandles;
+  }
+
+  async setPreviousDayCandles(candles: VolumetricCandle[]): Promise<void> {
+    this.previousDayCandles = candles;
   }
 }
 
