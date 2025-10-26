@@ -12,19 +12,39 @@ Preferred communication style: Simple, everyday language.
 
 ### Frontend
 
-The frontend is built with React 18, TypeScript, and Vite, utilizing Radix UI primitives and shadcn/ui components styled with Tailwind CSS. It draws inspiration from the Carbon Design System for data-intensive financial interfaces, prioritizing a dark mode with high contrast and IBM Plex fonts for optimal readability. State management uses TanStack Query for server state and WebSockets for real-time market data, candle updates, regime changes, and position updates. Key components include a `TradingDashboard`, `ChartComponent` (Chart.js-based with VWAP bands), `RegimeIndicator`, `SessionIndicator`, `LiveStatsPanel`, `TradeHistoryTable`, `ControlPanel`, and an `AccountAnalysisPanel` for comprehensive performance analytics.
+The frontend is built with React 18, TypeScript, and Vite, utilizing Radix UI primitives and shadcn/ui components styled with Tailwind CSS. It draws inspiration from the Carbon Design System for data-intensive financial interfaces, prioritizing a dark mode with high contrast and IBM Plex fonts for optimal readability. State management uses TanStack Query for server state and WebSockets for real-time market data, candle updates, regime changes, and position updates. 
+
+The UI follows the **90/10 Rule** from professional trading methodology: 90% order flow data, 10% charts. Key components include:
+- **Order Flow Panels**: `TimeAndSalesPanel` (color-coded transaction feed), `DomLadder` (depth of market visualization), `AbsorptionAlerts` (institutional order absorption detection)
+- **Chart & Analytics**: `ChartComponent` (Chart.js candlesticks with VWAP), `RegimeIndicator`, `SessionIndicator`, `LiveStatsPanel`, `TradeHistoryTable`, `ControlPanel`, `AccountAnalysisPanel`
+- **Layout**: Three-column dashboard with Time & Sales (left), Chart (center - smaller per 90/10 rule), DOM (right), with absorption alerts and stats in secondary row
 
 ### Backend
 
-The backend is a Node.js Express.js server written in TypeScript, providing RESTful endpoints and WebSocket streaming. Core trading modules include:
-- **VolumetricCandleBuilder**: Aggregates tick data into time-based candles with buy/sell volume separation and cumulative delta.
-- **VWAPCalculator**: Computes Volume-Weighted Average Price with standard deviation bands for entry/exit signals.
-- **RegimeDetector**: Identifies market regimes (ROTATIONAL, DIRECTIONAL_BULLISH, DIRECTIONAL_BEARISH, TRANSITIONING) based on cumulative delta thresholds and hysteresis.
-- **SessionDetector**: Differentiates between ETH (Extended Trading Hours) and RTH (Regular Trading Hours).
-- **SessionAwareRegimeManager**: Manages session-specific cumulative delta and regime thresholds, with smart blending at RTH open.
-- **KeyLevelsDetector**: Tracks previous day's high/low/close, swing highs/lows, and volume Point of Control for confluence scoring.
-- **PerformanceAnalyzer**: Calculates comprehensive trading metrics like win rate, profit factor, Sharpe ratio, and maximum drawdown, with breakdowns by session and regime.
-- **Storage Layer**: Currently uses in-memory storage (`MemStorage`) but is designed with an interface for future PostgreSQL integration via Drizzle ORM.
+The backend is a Node.js Express.js server written in TypeScript, providing RESTful endpoints and WebSocket streaming. 
+
+**Order Flow Analysis Modules** (Foundation Course Implementation):
+- **TimeAndSalesProcessor** (`server/time_and_sales.ts`): Processes real-time tick-by-tick transactions, tracks buy/sell pressure, detects large institutional trades, calculates volume ratios
+- **DomProcessor** (`server/dom_processor.ts`): Analyzes Level 2 market depth data, identifies bid/ask imbalance, detects stacked liquidity (institutional orders), finds largest support/resistance levels
+- **VolumeProfileCalculator** (`server/volume_profile.ts`): Builds horizontal volume histograms, calculates POC (Point of Control), VAH/VAL (Value Area High/Low), identifies profile shapes (P, b, D, DOUBLE), detects HVN/LVN (High/Low Volume Nodes)
+- **AbsorptionDetector** (`server/absorption_detector.ts`): Identifies when aggressive orders are absorbed by passive liquidity without price movement, signals institutional defense of price levels, predicts potential reversals/breakouts
+
+**Legacy Trading Modules** (Being Replaced):
+- **VolumetricCandleBuilder**: Aggregates tick data into time-based candles with buy/sell volume separation and cumulative delta
+- **VWAPCalculator**: Computes Volume-Weighted Average Price with standard deviation bands
+- **RegimeDetector**: Identifies market regimes based on cumulative delta thresholds
+- **SessionDetector**: Differentiates between ETH and RTH trading sessions
+- **SessionAwareRegimeManager**: Manages session-specific cumulative delta
+- **KeyLevelsDetector**: Tracks previous day's high/low/close and swing levels
+- **PerformanceAnalyzer**: Calculates comprehensive trading metrics
+- **Storage Layer**: Currently uses in-memory storage (`MemStorage`) with interface for PostgreSQL via Drizzle ORM
+
+**API Endpoints**:
+- `/api/time-and-sales` - Get Time & Sales transaction feed (limit parameter)
+- `/api/dom` - Get current Depth of Market snapshot
+- `/api/volume-profile` - Get Volume Profile with POC, VAH, VAL
+- `/api/absorption-events` - Get detected absorption events (limit parameter)
+- `/api/discord-levels` - Get/Set Discord price levels (support/resistance from trading course)
 
 Trading strategies are implemented for each regime:
 - **ROTATIONAL**: Mean reversion from VWAP standard deviation extremes.
