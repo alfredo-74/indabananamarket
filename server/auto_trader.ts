@@ -1,4 +1,5 @@
-import type { VWAPData, RegimeState, Position, MarketData } from "@shared/schema";
+import type { Position, MarketData, AbsorptionEvent, DomSnapshot, TimeAndSalesEntry, VolumeProfile } from "@shared/schema";
+import { OrderFlowStrategy, type OrderFlowSignal, type OrderFlowSettings } from './orderflow_strategy';
 
 export interface TradeSignal {
   action: "BUY" | "SELL" | "CLOSE" | "NONE";
@@ -7,51 +8,46 @@ export interface TradeSignal {
   entry_price: number;
   stop_loss?: number;
   take_profit?: number;
+  // Order Flow Metadata
+  confidence?: number;
+  orderflow_signals?: {
+    absorption?: string;
+    dom_imbalance?: string;
+    tape_pressure?: string;
+    profile_context?: string;
+  };
 }
 
 export class AutoTrader {
-  private maxPositionSize: number = 1; // Max 1 MES contract for $2,000 account
+  private maxPositionSize: number = 1; // Max 1 MES contract for small account
   private minCapital: number = 2000;
+  private orderflowStrategy: OrderFlowStrategy;
+
+  constructor(settings: OrderFlowSettings) {
+    this.orderflowStrategy = new OrderFlowStrategy(settings);
+  }
 
   /**
-   * Analyze market conditions and generate trade signals
-   * 
-   * Strategy:
-   * - ROTATIONAL: Mean reversion at SD±3, targeting VWAP
-   * - DIRECTIONAL_BULLISH: Long at SD-1, targets at SD+1/+2/+3
-   * - DIRECTIONAL_BEARISH: Short at SD+1, targets at SD-1/-2/-3
+   * Analyze market using Order Flow methodology from Foundation Course
+   * Replaces VWAP/regime-based trading with institutional order flow analysis
    */
   analyzeMarket(
     marketData: MarketData,
-    vwap: VWAPData,
-    regime: RegimeState,
+    absorptionEvents: AbsorptionEvent[],
+    domSnapshot: DomSnapshot | null,
+    timeAndSales: TimeAndSalesEntry[],
+    volumeProfile: VolumeProfile | null,
     position: Position
   ): TradeSignal {
-    // Safety check: VWAP must be calculated
-    if (
-      vwap.vwap === null ||
-      vwap.sd1_upper === null ||
-      vwap.sd1_lower === null ||
-      vwap.sd3_upper === null ||
-      vwap.sd3_lower === null
-    ) {
-      return {
-        action: "NONE",
-        quantity: 0,
-        reason: "VWAP not yet calculated (need 10 candles)",
-        entry_price: marketData.last_price,
-      };
-    }
-
     const currentPrice = marketData.last_price;
 
     // Check for exit signals first (if we have a position)
     if (position.contracts !== 0) {
       const exitSignal = this.checkExitConditions(
         currentPrice,
-        vwap,
-        regime,
-        position
+        position,
+        absorptionEvents,
+        domSnapshot
       );
       if (exitSignal.action !== "NONE") {
         return exitSignal;
@@ -68,218 +64,153 @@ export class AutoTrader {
       };
     }
 
-    // Check for entry signals based on regime
-    switch (regime) {
-      case "ROTATIONAL":
-        return this.checkRotationalEntry(currentPrice, vwap);
+    // Get order flow signal from strategy
+    const orderflowSignal = this.orderflowStrategy.analyzeOrderFlow(
+      currentPrice,
+      absorptionEvents,
+      domSnapshot,
+      timeAndSales,
+      volumeProfile
+    );
 
-      case "DIRECTIONAL_BULLISH":
-        return this.checkBullishEntry(currentPrice, vwap);
-
-      case "DIRECTIONAL_BEARISH":
-        return this.checkBearishEntry(currentPrice, vwap);
-
-      default:
-        return {
-          action: "NONE",
-          quantity: 0,
-          reason: "Unknown regime",
-          entry_price: currentPrice,
-        };
-    }
+    // Convert order flow signal to trade signal
+    return this.convertToTradeSignal(orderflowSignal);
   }
 
   /**
-   * ROTATIONAL regime: Mean reversion strategy
-   * Enter when price reaches SD±3, target VWAP
+   * Convert OrderFlowSignal to TradeSignal for execution
    */
-  private checkRotationalEntry(
-    currentPrice: number,
-    vwap: VWAPData
-  ): TradeSignal {
-    // Buy signal: Price below SD-3 (oversold)
-    if (vwap.sd3_lower !== null && currentPrice <= vwap.sd3_lower) {
+  private convertToTradeSignal(orderflowSignal: OrderFlowSignal): TradeSignal {
+    if (orderflowSignal.type === 'NONE') {
       return {
-        action: "BUY",
-        quantity: this.maxPositionSize,
-        reason: "ROTATIONAL: Price at SD-3 (oversold), targeting VWAP",
-        entry_price: currentPrice,
-        take_profit: vwap.vwap!,
-        stop_loss: vwap.sd3_lower - 2, // Stop 2 points below entry
+        action: 'NONE',
+        quantity: 0,
+        reason: orderflowSignal.reason,
+        entry_price: orderflowSignal.entry_price,
+        confidence: orderflowSignal.confidence,
       };
     }
 
-    // Sell signal: Price above SD+3 (overbought)
-    if (vwap.sd3_upper !== null && currentPrice >= vwap.sd3_upper) {
-      return {
-        action: "SELL",
-        quantity: this.maxPositionSize,
-        reason: "ROTATIONAL: Price at SD+3 (overbought), targeting VWAP",
-        entry_price: currentPrice,
-        take_profit: vwap.vwap!,
-        stop_loss: vwap.sd3_upper + 2, // Stop 2 points above entry
-      };
-    }
+    const action = orderflowSignal.type === 'LONG' ? 'BUY' : 'SELL';
 
     return {
-      action: "NONE",
-      quantity: 0,
-      reason: "ROTATIONAL: Waiting for SD±3 entry",
-      entry_price: currentPrice,
+      action,
+      quantity: this.maxPositionSize,
+      reason: `${orderflowSignal.reason} (${orderflowSignal.confidence}% confidence)`,
+      entry_price: orderflowSignal.entry_price,
+      stop_loss: orderflowSignal.stop_loss,
+      take_profit: orderflowSignal.take_profit,
+      confidence: orderflowSignal.confidence,
+      orderflow_signals: orderflowSignal.signals,
     };
   }
 
   /**
-   * DIRECTIONAL_BULLISH regime: Trend following (long bias)
-   * Enter long at SD-1, targets at SD+1/+2/+3
-   */
-  private checkBullishEntry(
-    currentPrice: number,
-    vwap: VWAPData
-  ): TradeSignal {
-    // Buy signal: Price at or below SD-1 (pullback in uptrend)
-    if (vwap.sd1_lower !== null && currentPrice <= vwap.sd1_lower) {
-      return {
-        action: "BUY",
-        quantity: this.maxPositionSize,
-        reason: "DIRECTIONAL_BULLISH: Long entry at SD-1 pullback",
-        entry_price: currentPrice,
-        take_profit: vwap.sd2_upper!, // Target SD+2
-        stop_loss: vwap.sd2_lower!, // Stop at SD-2
-      };
-    }
-
-    return {
-      action: "NONE",
-      quantity: 0,
-      reason: "DIRECTIONAL_BULLISH: Waiting for SD-1 pullback",
-      entry_price: currentPrice,
-    };
-  }
-
-  /**
-   * DIRECTIONAL_BEARISH regime: Trend following (short bias)
-   * Enter short at SD+1, targets at SD-1/-2/-3
-   */
-  private checkBearishEntry(
-    currentPrice: number,
-    vwap: VWAPData
-  ): TradeSignal {
-    // Sell signal: Price at or above SD+1 (rally in downtrend)
-    if (vwap.sd1_upper !== null && currentPrice >= vwap.sd1_upper) {
-      return {
-        action: "SELL",
-        quantity: this.maxPositionSize,
-        reason: "DIRECTIONAL_BEARISH: Short entry at SD+1 rally",
-        entry_price: currentPrice,
-        take_profit: vwap.sd2_lower!, // Target SD-2
-        stop_loss: vwap.sd2_upper!, // Stop at SD+2
-      };
-    }
-
-    return {
-      action: "NONE",
-      quantity: 0,
-      reason: "DIRECTIONAL_BEARISH: Waiting for SD+1 rally",
-      entry_price: currentPrice,
-    };
-  }
-
-  /**
-   * Check exit conditions for open positions
+   * Check exit conditions using order flow
+   * - Take profit hit
+   * - Stop loss hit
+   * - Adverse order flow (absorption reversing, DOM flipping)
    */
   private checkExitConditions(
     currentPrice: number,
-    vwap: VWAPData,
-    regime: RegimeState,
-    position: Position
+    position: Position,
+    absorptionEvents: AbsorptionEvent[],
+    domSnapshot: DomSnapshot | null
   ): TradeSignal {
     const isLong = position.contracts > 0;
     const isShort = position.contracts < 0;
 
-    // Exit LONG positions
-    if (isLong) {
-      // Take profit conditions
-      if (regime === "ROTATIONAL" && vwap.vwap !== null) {
-        // ROTATIONAL: Exit at VWAP
-        if (currentPrice >= vwap.vwap) {
-          return {
-            action: "CLOSE",
-            quantity: Math.abs(position.contracts),
-            reason: "ROTATIONAL: Target VWAP reached",
-            entry_price: currentPrice,
-          };
-        }
-      } else if (regime === "DIRECTIONAL_BULLISH") {
-        // DIRECTIONAL: Exit at SD+2 or SD+3
-        if (vwap.sd2_upper !== null && currentPrice >= vwap.sd2_upper) {
-          return {
-            action: "CLOSE",
-            quantity: Math.abs(position.contracts),
-            reason: "DIRECTIONAL_BULLISH: Target SD+2 reached",
-            entry_price: currentPrice,
-          };
-        }
-      }
+    // For simplicity, we'll rely on the IBKR bracket orders for take profit/stop loss
+    // But we can add order flow-based early exit logic here in the future
 
-      // Stop loss: Exit if regime flips to bearish
-      if (regime === "DIRECTIONAL_BEARISH") {
-        return {
-          action: "CLOSE",
-          quantity: Math.abs(position.contracts),
-          reason: "Regime changed to BEARISH - closing LONG",
-          entry_price: currentPrice,
-        };
-      }
-    }
+    // Check for adverse absorption (institutional activity against our position)
+    if (absorptionEvents && absorptionEvents.length > 0) {
+      const recentAbsorption = absorptionEvents.filter(
+        e => Date.now() - e.timestamp < 60000 // Last 1 minute
+      );
 
-    // Exit SHORT positions
-    if (isShort) {
-      // Take profit conditions
-      if (regime === "ROTATIONAL" && vwap.vwap !== null) {
-        // ROTATIONAL: Exit at VWAP
-        if (currentPrice <= vwap.vwap) {
+      if (recentAbsorption.length > 0) {
+        const latestAbsorption = recentAbsorption[recentAbsorption.length - 1];
+
+        // If we're LONG and see SELL_ABSORPTION (buyers being absorbed at resistance)
+        if (isLong && latestAbsorption.side === 'SELL_ABSORPTION' && latestAbsorption.ratio >= 2.0) {
           return {
-            action: "CLOSE",
+            action: 'CLOSE',
             quantity: Math.abs(position.contracts),
-            reason: "ROTATIONAL: Target VWAP reached",
+            reason: `Adverse absorption detected: Buyers absorbed ${latestAbsorption.ratio.toFixed(1)}:1 @ ${latestAbsorption.price.toFixed(2)}`,
             entry_price: currentPrice,
           };
         }
-      } else if (regime === "DIRECTIONAL_BEARISH") {
-        // DIRECTIONAL: Exit at SD-2 or SD-3
-        if (vwap.sd2_lower !== null && currentPrice <= vwap.sd2_lower) {
+
+        // If we're SHORT and see BUY_ABSORPTION (sellers being absorbed at support)
+        if (isShort && latestAbsorption.side === 'BUY_ABSORPTION' && latestAbsorption.ratio >= 2.0) {
           return {
-            action: "CLOSE",
+            action: 'CLOSE',
             quantity: Math.abs(position.contracts),
-            reason: "DIRECTIONAL_BEARISH: Target SD-2 reached",
+            reason: `Adverse absorption detected: Sellers absorbed ${latestAbsorption.ratio.toFixed(1)}:1 @ ${latestAbsorption.price.toFixed(2)}`,
             entry_price: currentPrice,
           };
         }
       }
+    }
 
-      // Stop loss: Exit if regime flips to bullish
-      if (regime === "DIRECTIONAL_BULLISH") {
-        return {
-          action: "CLOSE",
-          quantity: Math.abs(position.contracts),
-          reason: "Regime changed to BULLISH - closing SHORT",
-          entry_price: currentPrice,
-        };
+    // Check for DOM flip (order book pressure reversing)
+    if (domSnapshot && domSnapshot.levels && domSnapshot.levels.length > 0) {
+      const topLevels = domSnapshot.levels.slice(0, 10);
+      const bidVolume = topLevels.reduce((sum, l) => sum + l.bid_size, 0);
+      const askVolume = topLevels.reduce((sum, l) => sum + l.ask_size, 0);
+
+      if (bidVolume > 0 && askVolume > 0) {
+        const ratio = Math.max(bidVolume, askVolume) / Math.min(bidVolume, askVolume);
+
+        // Strong adverse DOM imbalance
+        if (ratio >= 3.0) {
+          if (isLong && askVolume > bidVolume) {
+            return {
+              action: 'CLOSE',
+              quantity: Math.abs(position.contracts),
+              reason: `DOM flipped bearish: ${ratio.toFixed(1)}:1 ask pressure`,
+              entry_price: currentPrice,
+            };
+          }
+
+          if (isShort && bidVolume > askVolume) {
+            return {
+              action: 'CLOSE',
+              quantity: Math.abs(position.contracts),
+              reason: `DOM flipped bullish: ${ratio.toFixed(1)}:1 bid pressure`,
+              entry_price: currentPrice,
+            };
+          }
+        }
       }
     }
 
     return {
       action: "NONE",
       quantity: 0,
-      reason: "Holding position",
+      reason: "Holding position - order flow remains favorable",
       entry_price: currentPrice,
     };
   }
 
   /**
+   * Update order flow strategy settings
+   */
+  updateSettings(newSettings: Partial<OrderFlowSettings>) {
+    this.orderflowStrategy.updateSettings(newSettings);
+  }
+
+  /**
+   * Get current strategy settings
+   */
+  getSettings(): OrderFlowSettings {
+    return this.orderflowStrategy.getSettings();
+  }
+
+  /**
    * Calculate position size based on account capital and risk
-   * For $2,000 account, we use 1 MES contract max
+   * For small accounts, we use 1 MES contract max
    */
   calculatePositionSize(capital: number): number {
     if (capital < this.minCapital) {
