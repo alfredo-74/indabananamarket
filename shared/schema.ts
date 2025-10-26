@@ -77,6 +77,13 @@ export const tradeSchema = z.object({
   regime: z.string(),
   cumulative_delta: z.number(),
   status: z.enum(["OPEN", "CLOSED"]),
+  // Order Flow Signals
+  orderflow_signal: z.string().optional(), // Main reason for trade (e.g., "Absorption + DOM imbalance")
+  confidence: z.number().optional(), // Confidence level 0-100
+  absorption_event: z.string().optional(), // e.g., "Buy absorption 2.5:1 @ 6000"
+  dom_signal: z.string().optional(), // e.g., "Bid stack 3:1"
+  tape_signal: z.string().optional(), // e.g., "Buy pressure 2:1"
+  profile_context: z.string().optional(), // e.g., "Near POC @ 6005"
 });
 
 export const marketDataSchema = z.object({
@@ -103,9 +110,25 @@ export const systemStatusSchema = z.object({
 
 export const controlSettingsSchema = z.object({
   auto_trading: z.boolean(),
-  volume_target: z.number(),
-  cd_threshold: z.number(),
   symbol: z.string(),
+  
+  // Order Flow Settings
+  absorption_threshold: z.number(), // Min absorption ratio
+  absorption_lookback: z.number(), // Minutes
+  dom_imbalance_threshold: z.number(), // Min bid/ask ratio
+  dom_depth_levels: z.number(), // Price levels to analyze
+  tape_volume_threshold: z.number(), // Large order size
+  tape_ratio_threshold: z.number(), // Buy/sell ratio
+  tape_lookback_seconds: z.number(), // Seconds
+  use_poc_magnet: z.boolean(),
+  use_vah_val_boundaries: z.boolean(),
+  stop_loss_ticks: z.number(),
+  take_profit_ticks: z.number(),
+  min_confidence: z.number(), // Min confidence %
+  
+  // Legacy (deprecated but kept for compatibility)
+  volume_target: z.number().optional(),
+  cd_threshold: z.number().optional(),
 });
 
 export const backtestParametersSchema = z.object({

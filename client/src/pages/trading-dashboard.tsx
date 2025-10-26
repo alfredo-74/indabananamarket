@@ -30,9 +30,20 @@ import type {
 export default function TradingDashboard() {
   const [settings, setSettings] = useState<ControlSettings>({
     auto_trading: false,
-    volume_target: 100,
-    cd_threshold: 50,
     symbol: "MES",
+    // Order Flow Settings (from Foundation Course)
+    absorption_threshold: 2.0,
+    absorption_lookback: 5,
+    dom_imbalance_threshold: 2.0,
+    dom_depth_levels: 10,
+    tape_volume_threshold: 10,
+    tape_ratio_threshold: 1.5,
+    tape_lookback_seconds: 60,
+    use_poc_magnet: true,
+    use_vah_val_boundaries: true,
+    stop_loss_ticks: 8,
+    take_profit_ticks: 16,
+    min_confidence: 60,
   });
 
   const { isConnected } = useWebSocket();
