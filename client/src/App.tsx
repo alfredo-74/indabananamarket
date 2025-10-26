@@ -5,14 +5,12 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import TradingDashboard from "@/pages/trading-dashboard";
-import Backtest from "@/pages/backtest";
 import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={TradingDashboard} />
-      <Route path="/backtest" component={Backtest} />
       <Route component={NotFound} />
     </Switch>
   );
