@@ -202,6 +202,71 @@ export const accountAnalysisSchema = z.object({
   trading_days: z.number(),
 });
 
+// Order Flow Analysis Schemas (Foundation Course)
+
+export const timeAndSalesEntrySchema = z.object({
+  timestamp: z.number(),
+  price: z.number(),
+  volume: z.number(),
+  side: z.enum(["BUY", "SELL"]), // BUY = aggressor bought at ask, SELL = aggressor sold at bid
+});
+
+export const domLevelSchema = z.object({
+  price: z.number(),
+  bid_size: z.number(), // Passive buy orders at this level
+  ask_size: z.number(), // Passive sell orders at this level
+  bid_orders: z.number(), // Number of bid orders
+  ask_orders: z.number(), // Number of ask orders
+});
+
+export const domSnapshotSchema = z.object({
+  timestamp: z.number(),
+  levels: z.array(domLevelSchema),
+  best_bid: z.number(),
+  best_ask: z.number(),
+  spread: z.number(),
+});
+
+export const volumeProfileLevelSchema = z.object({
+  price: z.number(),
+  total_volume: z.number(),
+  buy_volume: z.number(),
+  sell_volume: z.number(),
+  delta: z.number(), // buy_volume - sell_volume
+  tpo_count: z.number().optional(), // Time Price Opportunity count (30-min periods)
+});
+
+export const volumeProfileSchema = z.object({
+  levels: z.array(volumeProfileLevelSchema),
+  poc: z.number(), // Point of Control - price with highest volume
+  vah: z.number(), // Value Area High (70% volume upper bound)
+  val: z.number(), // Value Area Low (70% volume lower bound)
+  total_volume: z.number(),
+  profile_type: z.enum(["P", "b", "D", "DOUBLE"]).nullable(), // P=trending up, b=trending down, D=balanced, DOUBLE=two distributions
+  hvn_levels: z.array(z.number()), // High Volume Nodes
+  lvn_levels: z.array(z.number()), // Low Volume Nodes
+  period_start: z.number(),
+  period_end: z.number(),
+});
+
+export const absorptionEventSchema = z.object({
+  timestamp: z.number(),
+  price: z.number(),
+  aggressive_volume: z.number(), // Volume of aggressive orders
+  passive_volume: z.number(), // Volume absorbed by passive orders
+  ratio: z.number(), // aggressive / passive
+  side: z.enum(["BUY_ABSORPTION", "SELL_ABSORPTION"]), // Which side absorbed
+  price_change: z.number(), // Price movement despite absorption
+});
+
+export const discordLevelSchema = z.object({
+  price: z.number(),
+  type: z.enum(["SUPPORT", "RESISTANCE", "PIVOT"]),
+  strength: z.number(), // 1-5, where 5 is strongest (monthly/weekly)
+  timeframe: z.enum(["MONTHLY", "WEEKLY", "DAILY", "INTRADAY"]),
+  description: z.string().optional(),
+});
+
 export type VolumetricCandle = z.infer<typeof volumetricCandleSchema>;
 export type VWAPData = z.infer<typeof vwapDataSchema>;
 export type RegimeState = z.infer<typeof regimeStateSchema>;
@@ -219,6 +284,13 @@ export type BacktestResult = z.infer<typeof backtestResultSchema>;
 export type SessionPerformance = z.infer<typeof sessionPerformanceSchema>;
 export type RegimePerformance = z.infer<typeof regimePerformanceSchema>;
 export type AccountAnalysis = z.infer<typeof accountAnalysisSchema>;
+export type TimeAndSalesEntry = z.infer<typeof timeAndSalesEntrySchema>;
+export type DomLevel = z.infer<typeof domLevelSchema>;
+export type DomSnapshot = z.infer<typeof domSnapshotSchema>;
+export type VolumeProfileLevel = z.infer<typeof volumeProfileLevelSchema>;
+export type VolumeProfile = z.infer<typeof volumeProfileSchema>;
+export type AbsorptionEvent = z.infer<typeof absorptionEventSchema>;
+export type DiscordLevel = z.infer<typeof discordLevelSchema>;
 
 export const webSocketMessageSchema = z.discriminatedUnion("type", [
   z.object({
@@ -259,6 +331,22 @@ export const webSocketMessageSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("key_levels_update"),
     data: keyLevelsSchema,
+  }),
+  z.object({
+    type: z.literal("time_and_sales"),
+    data: timeAndSalesEntrySchema,
+  }),
+  z.object({
+    type: z.literal("dom_update"),
+    data: domSnapshotSchema,
+  }),
+  z.object({
+    type: z.literal("volume_profile_update"),
+    data: volumeProfileSchema,
+  }),
+  z.object({
+    type: z.literal("absorption_detected"),
+    data: absorptionEventSchema,
   }),
 ]);
 
