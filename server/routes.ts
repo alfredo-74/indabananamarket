@@ -614,6 +614,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // GET /api/time-and-sales - Get Time & Sales data
+  app.get("/api/time-and-sales", async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 100;
+      const entries = await storage.getTimeAndSales(limit);
+      res.json(entries);
+    } catch (error) {
+      console.error("Time & Sales error:", error);
+      res.status(500).json({ error: "Failed to retrieve Time & Sales data" });
+    }
+  });
+
+  // GET /api/dom - Get current Depth of Market snapshot
+  app.get("/api/dom", async (req, res) => {
+    try {
+      const snapshot = await storage.getDomSnapshot();
+      res.json(snapshot || null);
+    } catch (error) {
+      console.error("DOM error:", error);
+      res.status(500).json({ error: "Failed to retrieve DOM data" });
+    }
+  });
+
+  // GET /api/volume-profile - Get current Volume Profile
+  app.get("/api/volume-profile", async (req, res) => {
+    try {
+      const profile = await storage.getVolumeProfile();
+      res.json(profile || null);
+    } catch (error) {
+      console.error("Volume Profile error:", error);
+      res.status(500).json({ error: "Failed to retrieve Volume Profile" });
+    }
+  });
+
+  // GET /api/absorption-events - Get absorption events
+  app.get("/api/absorption-events", async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 50;
+      const events = await storage.getAbsorptionEvents(limit);
+      res.json(events);
+    } catch (error) {
+      console.error("Absorption events error:", error);
+      res.status(500).json({ error: "Failed to retrieve absorption events" });
+    }
+  });
+
+  // GET /api/discord-levels - Get Discord levels
+  app.get("/api/discord-levels", async (req, res) => {
+    try {
+      const levels = await storage.getDiscordLevels();
+      res.json(levels);
+    } catch (error) {
+      console.error("Discord levels error:", error);
+      res.status(500).json({ error: "Failed to retrieve Discord levels" });
+    }
+  });
+
+  // POST /api/discord-levels - Set Discord levels (admin/setup)
+  app.post("/api/discord-levels", async (req, res) => {
+    try {
+      const { levels } = req.body;
+      if (!Array.isArray(levels)) {
+        return res.status(400).json({ error: "Invalid levels data" });
+      }
+      await storage.setDiscordLevels(levels);
+      res.json({ success: true, count: levels.length });
+    } catch (error) {
+      console.error("Discord levels set error:", error);
+      res.status(500).json({ error: "Failed to set Discord levels" });
+    }
+  });
+
   // POST /api/trade - Execute trade
   app.post("/api/trade", async (req, res) => {
     const { action, quantity } = req.body;

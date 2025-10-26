@@ -8,6 +8,11 @@ import type {
   SystemStatus,
   SessionStats,
   KeyLevels,
+  TimeAndSalesEntry,
+  DomSnapshot,
+  VolumeProfile,
+  AbsorptionEvent,
+  DiscordLevel,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
@@ -49,6 +54,22 @@ export interface IStorage {
   
   getHistoricalBars(): Promise<VolumetricCandle[]>;
   setHistoricalBars(bars: VolumetricCandle[]): Promise<void>;
+  
+  // Order Flow Analysis
+  getTimeAndSales(limit?: number): Promise<TimeAndSalesEntry[]>;
+  addTimeAndSalesEntry(entry: TimeAndSalesEntry): Promise<void>;
+  
+  getDomSnapshot(): Promise<DomSnapshot | undefined>;
+  setDomSnapshot(snapshot: DomSnapshot): Promise<void>;
+  
+  getVolumeProfile(): Promise<VolumeProfile | undefined>;
+  setVolumeProfile(profile: VolumeProfile): Promise<void>;
+  
+  getAbsorptionEvents(limit?: number): Promise<AbsorptionEvent[]>;
+  addAbsorptionEvent(event: AbsorptionEvent): Promise<void>;
+  
+  getDiscordLevels(): Promise<DiscordLevel[]>;
+  setDiscordLevels(levels: DiscordLevel[]): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -64,6 +85,13 @@ export class MemStorage implements IStorage {
   private previousDayCandles: VolumetricCandle[] = [];
   private startingCapital: number = 2000; // Default starting capital
   private historicalBars: VolumetricCandle[] = [];
+  
+  // Order Flow Analysis
+  private timeAndSales: TimeAndSalesEntry[] = [];
+  private domSnapshot: DomSnapshot | undefined;
+  private volumeProfile: VolumeProfile | undefined;
+  private absorptionEvents: AbsorptionEvent[] = [];
+  private discordLevels: DiscordLevel[] = [];
 
   async getCandles(): Promise<VolumetricCandle[]> {
     return this.candles;
@@ -177,6 +205,58 @@ export class MemStorage implements IStorage {
 
   async setHistoricalBars(bars: VolumetricCandle[]): Promise<void> {
     this.historicalBars = bars;
+  }
+
+  // Order Flow Analysis Methods
+  
+  async getTimeAndSales(limit: number = 500): Promise<TimeAndSalesEntry[]> {
+    const allEntries = this.timeAndSales;
+    return allEntries.slice(-limit); // Return most recent entries
+  }
+
+  async addTimeAndSalesEntry(entry: TimeAndSalesEntry): Promise<void> {
+    this.timeAndSales.push(entry);
+    // Keep only last 1000 entries in memory
+    if (this.timeAndSales.length > 1000) {
+      this.timeAndSales = this.timeAndSales.slice(-1000);
+    }
+  }
+
+  async getDomSnapshot(): Promise<DomSnapshot | undefined> {
+    return this.domSnapshot;
+  }
+
+  async setDomSnapshot(snapshot: DomSnapshot): Promise<void> {
+    this.domSnapshot = snapshot;
+  }
+
+  async getVolumeProfile(): Promise<VolumeProfile | undefined> {
+    return this.volumeProfile;
+  }
+
+  async setVolumeProfile(profile: VolumeProfile): Promise<void> {
+    this.volumeProfile = profile;
+  }
+
+  async getAbsorptionEvents(limit: number = 100): Promise<AbsorptionEvent[]> {
+    const allEvents = this.absorptionEvents;
+    return allEvents.slice(-limit); // Return most recent events
+  }
+
+  async addAbsorptionEvent(event: AbsorptionEvent): Promise<void> {
+    this.absorptionEvents.push(event);
+    // Keep only last 200 events in memory
+    if (this.absorptionEvents.length > 200) {
+      this.absorptionEvents = this.absorptionEvents.slice(-200);
+    }
+  }
+
+  async getDiscordLevels(): Promise<DiscordLevel[]> {
+    return this.discordLevels;
+  }
+
+  async setDiscordLevels(levels: DiscordLevel[]): Promise<void> {
+    this.discordLevels = levels;
   }
 }
 
