@@ -13,6 +13,9 @@ import { LiveStatsPanel } from "@/components/LiveStatsPanel";
 import { TradeHistoryTable } from "@/components/TradeHistoryTable";
 import { ControlPanel } from "@/components/ControlPanel";
 import { AccountAnalysisPanel } from "@/components/AccountAnalysisPanel";
+import { TimeAndSalesPanel } from "@/components/TimeAndSalesPanel";
+import { DomLadder } from "@/components/DomLadder";
+import { AbsorptionAlerts } from "@/components/AbsorptionAlerts";
 import type {
   SystemStatus,
   MarketData,
@@ -129,8 +132,9 @@ export default function TradingDashboard() {
       <NavigationHeader />
       <SystemHeader status={systemStatus ?? null} marketData={marketData ?? null} />
 
-      <div className="flex-1 overflow-auto p-4 gap-4 grid grid-cols-1 lg:grid-cols-[1fr_320px] grid-rows-[auto_1fr_auto]">
-        <div className="lg:col-span-2 flex items-center justify-between gap-4 flex-wrap">
+      <div className="flex-1 overflow-auto p-4 gap-4">
+        {/* Top Indicators */}
+        <div className="flex items-center justify-between gap-4 flex-wrap mb-4">
           {regimeData && (
             <RegimeIndicator
               regime={regimeData.regime}
@@ -140,28 +144,53 @@ export default function TradingDashboard() {
           <SessionIndicator sessionStats={sessionStats ?? null} />
         </div>
 
-        <div className="row-span-2 min-h-[400px]">
-          <ChartComponent
-            candles={candles ?? []}
-            vwap={vwapData ?? null}
-            keyLevels={keyLevels ?? null}
-            isLoading={candlesLoading}
-          />
+        {/* Main Order Flow Layout: 90/10 Rule (90% order flow data, 10% chart) */}
+        <div className="grid grid-cols-1 xl:grid-cols-[300px_1fr_300px] gap-4 mb-4" style={{ height: "600px" }}>
+          {/* Left: Time & Sales */}
+          <div className="h-full">
+            <TimeAndSalesPanel />
+          </div>
+
+          {/* Center: Chart (Smaller for 90/10 rule) */}
+          <div className="h-full min-h-[400px]">
+            <ChartComponent
+              candles={candles ?? []}
+              vwap={vwapData ?? null}
+              keyLevels={keyLevels ?? null}
+              isLoading={candlesLoading}
+            />
+          </div>
+
+          {/* Right: DOM */}
+          <div className="h-full">
+            <DomLadder />
+          </div>
         </div>
 
-        <div className="row-span-2 overflow-hidden">
-          <LiveStatsPanel
-            vwap={vwapData ?? null}
-            position={position ?? null}
-            marketData={marketData ?? null}
-          />
+        {/* Secondary Row: Absorption + Stats */}
+        <div className="grid grid-cols-1 xl:grid-cols-[300px_1fr_300px] gap-4 mb-4" style={{ height: "400px" }}>
+          {/* Left: Absorption Alerts */}
+          <div className="h-full">
+            <AbsorptionAlerts />
+          </div>
+
+          {/* Center: Trade History */}
+          <div className="h-full">
+            <TradeHistoryTable trades={trades ?? []} />
+          </div>
+
+          {/* Right: Live Stats */}
+          <div className="h-full overflow-hidden">
+            <LiveStatsPanel
+              vwap={vwapData ?? null}
+              position={position ?? null}
+              marketData={marketData ?? null}
+            />
+          </div>
         </div>
 
-        <div className="lg:col-span-2">
-          <TradeHistoryTable trades={trades ?? []} />
-        </div>
-
-        <div className="lg:col-span-2">
+        {/* Control Panel */}
+        <div className="mb-4">
           <ControlPanel
             settings={settings}
             onSettingsChange={handleSettingsChange}
@@ -169,7 +198,8 @@ export default function TradingDashboard() {
           />
         </div>
 
-        <div className="lg:col-span-2">
+        {/* Performance Analysis Toggle */}
+        <div className="mb-4">
           <Button
             variant="outline"
             className="w-full gap-2"
@@ -183,7 +213,7 @@ export default function TradingDashboard() {
         </div>
 
         {showAnalysis && (
-          <div className="lg:col-span-2">
+          <div className="mb-4">
             <AccountAnalysisPanel />
           </div>
         )}
