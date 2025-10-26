@@ -22,6 +22,23 @@ export class VolumeProfileCalculator {
   }
 
   /**
+   * Add a completed candle to the volume profile
+   * 
+   * @param candle - VolumetricCandle with OHLC and buy/sell volume
+   */
+  addCandle(candle: { open: number; high: number; low: number; close: number; buy_volume: number; sell_volume: number }): void {
+    // Add buy volume at the candle's close price (simplified - real implementation would use tick data)
+    if (candle.buy_volume > 0) {
+      this.addTransaction(candle.close, candle.buy_volume, "BUY");
+    }
+    
+    // Add sell volume at the candle's close price (simplified - real implementation would use tick data)
+    if (candle.sell_volume > 0) {
+      this.addTransaction(candle.close, candle.sell_volume, "SELL");
+    }
+  }
+
+  /**
    * Add a transaction to the volume profile
    * 
    * @param price - Transaction price
