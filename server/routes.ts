@@ -11,6 +11,10 @@ import { KeyLevelsDetector } from "./key_levels_detector";
 import { AutoTrader } from "./auto_trader";
 import { BacktestEngine } from "./backtest_engine";
 import { PerformanceAnalyzer } from "./performance_analyzer";
+import { TimeAndSalesProcessor } from "./time_and_sales";
+import { DomProcessor } from "./dom_processor";
+import { VolumeProfileCalculator } from "./volume_profile";
+import { AbsorptionDetector } from "./absorption_detector";
 import type {
   SystemStatus,
   MarketData,
@@ -21,6 +25,11 @@ import type {
   WebSocketMessage,
   SessionStats,
   KeyLevels,
+  OrderFlowSettings,
+  AbsorptionEvent,
+  DomSnapshot,
+  TimeAndSalesEntry,
+  VolumeProfile,
 } from "@shared/schema";
 import { spawn } from "child_process";
 import { join, dirname } from "path";
@@ -36,8 +45,31 @@ const regimeDetector = new RegimeDetector(50); // ±50 CD threshold (legacy, rep
 const sessionRegimeManager = new SessionAwareRegimeManager(30, 50); // ETH ±30, RTH ±50
 const sessionDetector = new SessionDetector();
 const keyLevelsDetector = new KeyLevelsDetector(20); // 20-candle lookback for swing levels
-const autoTrader = new AutoTrader(); // Automated trading strategy
 const performanceAnalyzer = new PerformanceAnalyzer(); // Account performance analysis
+
+// Initialize Order Flow processors (Foundation Course methodology)
+const timeAndSalesProcessor = new TimeAndSalesProcessor(100); // Keep last 100 transactions
+const domProcessor = new DomProcessor();
+const volumeProfileCalculator = new VolumeProfileCalculator();
+const absorptionDetector = new AbsorptionDetector({
+  min_volume_ratio: 2.0,
+  lookback_seconds: 10,
+  price_tolerance_ticks: 2
+});
+
+// Default Order Flow Settings for AutoTrader
+const defaultOrderFlowSettings: OrderFlowSettings = {
+  absorption_min_ratio: 2.0,
+  absorption_lookback_seconds: 60,
+  dom_depth_levels: 10,
+  dom_imbalance_ratio: 2.5,
+  tape_lookback_entries: 50,
+  tape_pressure_ratio: 1.5,
+  volume_profile_lookback_candles: 20,
+  min_confidence_score: 60
+};
+
+const autoTrader = new AutoTrader(defaultOrderFlowSettings); // Order flow-based trading strategy
 
 // IBKR Python bridge process
 let ibkrProcess: any = null;
@@ -238,6 +270,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
 
+    // Process tick through Order Flow processors
+    const tapeTick = timeAndSalesProcessor.processTick(mockPrice, 1, isBuy ? 'BUY' : 'SELL', timestamp);
+
+    // Update DOM processor (mock data - will be replaced with real IBKR L2 data)
+    const mockBids: Array<[number, number]> = [
+      [mockPrice - 0.25, 10],
+      [mockPrice - 0.50, 8],
+      [mockPrice - 0.75, 12]
+    ];
+    const mockAsks: Array<[number, number]> = [
+      [mockPrice + 0.25, 10],
+      [mockPrice + 0.50, 8],
+      [mockPrice + 0.75, 12]
+    ];
+    domProcessor.updateSnapshot(mockBids, mockAsks, mockPrice);
+
+    // Detect absorption events
+    const absorptionEvent = absorptionDetector.processTick(tapeTick);
+
+    if (absorptionEvent) {
+      console.log(`[ABSORPTION] ${absorptionEvent.side} @ ${absorptionEvent.price.toFixed(2)} - Ratio: ${absorptionEvent.ratio.toFixed(2)}:1`);
+    }
+
+    // Update volume profile when candle completes
+    if (completedCandle) {
+      volumeProfileCalculator.addCandle(completedCandle);
+    }
+
     // Calculate VWAP
     const candles = await storage.getCandles();
     if (candles.length > 0) {
@@ -299,10 +359,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const position = await storage.getPosition();
       
       if (status && status.auto_trading_enabled && position) {
+        // Get order flow data for analysis
+        const absorptionEvents = absorptionDetector.getRecentEvents(60); // Last 60 seconds
+        const domSnapshot = domProcessor.getSnapshot() || null;
+        const timeAndSalesEntries = timeAndSalesProcessor.getEntries(50); // Last 50 entries
+        const volumeProfile = volumeProfileCalculator.getProfile() || null;
+
         const signal = autoTrader.analyzeMarket(
           marketData,
-          vwap,
-          regimeUpdate.regime,
+          absorptionEvents,
+          domSnapshot,
+          timeAndSalesEntries,
+          volumeProfile,
           position
         );
 

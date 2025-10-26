@@ -18,11 +18,14 @@ import type { AbsorptionEvent, TimeAndSalesEntry } from "@shared/schema";
 
 export class AbsorptionDetector {
   private recentTicks: TimeAndSalesEntry[] = [];
+  private absorptionEvents: AbsorptionEvent[] = [];
   private maxTickHistory: number;
+  private maxEventHistory: number;
   private tickSize: number;
 
-  constructor(maxTickHistory: number = 100, tickSize: number = 0.25) {
+  constructor(maxTickHistory: number = 100, maxEventHistory: number = 50, tickSize: number = 0.25) {
     this.maxTickHistory = maxTickHistory;
+    this.maxEventHistory = maxEventHistory;
     this.tickSize = tickSize;
   }
 
@@ -45,7 +48,17 @@ export class AbsorptionDetector {
     }
 
     // Check for absorption in the last few ticks
-    return this.detectAbsorptionPattern(tick);
+    const event = this.detectAbsorptionPattern(tick);
+    
+    // Store absorption event if detected
+    if (event) {
+      this.absorptionEvents.push(event);
+      if (this.absorptionEvents.length > this.maxEventHistory) {
+        this.absorptionEvents = this.absorptionEvents.slice(-this.maxEventHistory);
+      }
+    }
+    
+    return event;
   }
 
   /**
@@ -157,6 +170,21 @@ export class AbsorptionDetector {
   }
 
   /**
+   * Get recent absorption events
+   */
+  getRecentEvents(secondsBack: number = 60): AbsorptionEvent[] {
+    const cutoffTime = Date.now() - (secondsBack * 1000);
+    return this.absorptionEvents.filter(event => event.timestamp >= cutoffTime);
+  }
+
+  /**
+   * Get all absorption events
+   */
+  getAllEvents(): AbsorptionEvent[] {
+    return [...this.absorptionEvents];
+  }
+
+  /**
    * Get recent ticks for analysis
    */
   getRecentTicks(limit: number = 20): TimeAndSalesEntry[] {
@@ -164,10 +192,11 @@ export class AbsorptionDetector {
   }
 
   /**
-   * Clear tick history
+   * Clear tick history and events
    */
   clear(): void {
     this.recentTicks = [];
+    this.absorptionEvents = [];
   }
 
   /**
