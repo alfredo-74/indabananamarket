@@ -10,7 +10,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
-### UI Improvements & IBKR Integration (October 28, 2025)
+### UI Layout Overhaul & IBKR Integration (October 28, 2025)
+- **Layout Restructure:**
+  - Converted traffic light indicator from vertical to horizontal for better space utilization
+  - Moved System Status to center column (previously in right column, center was empty)
+  - Ensured all columns have consistent heights for a clean, balanced look
+  - Removed `h-fit` classes to maintain proportionate window sizing
+
 - **Fixed UI Issues:**
   - Removed duplicate ES symbol in price display header
   - Fixed layout overlap between Tactical Chart and Account section by adding proper scroll behavior
