@@ -205,12 +205,12 @@ export default function F1CommandCenter() {
               Order Flow Signals
             </div>
             
-            <div className="space-y-3 overflow-y-auto max-h-full">
+            <div className="space-y-2 overflow-y-auto max-h-full">
               {/* Absorption Events */}
-              {absorptionEvents && absorptionEvents.slice(0, 8).map((event, i) => (
+              {absorptionEvents && absorptionEvents.slice(0, 5).map((event, i) => (
                 <div 
-                  key={i} 
-                  className={`p-3 rounded border ${
+                  key={`abs-${i}`} 
+                  className={`p-2 rounded border ${
                     event.side === "BUY_ABSORPTION" 
                       ? "bg-green-950/30 border-green-800" 
                       : "bg-red-950/30 border-red-800"
@@ -218,51 +218,86 @@ export default function F1CommandCenter() {
                   data-testid={`signal-absorption-${i}`}
                 >
                   <div className="flex items-center gap-2 mb-1">
-                    <div className={`h-3 w-3 rounded-full ${
+                    <div className={`h-2 w-2 rounded-full ${
                       event.side === "BUY_ABSORPTION" 
-                        ? "bg-green-500 shadow-lg shadow-green-500/50" 
-                        : "bg-red-500 shadow-lg shadow-red-500/50"
+                        ? "bg-green-500 shadow-lg shadow-green-500/50 animate-pulse" 
+                        : "bg-red-500 shadow-lg shadow-red-500/50 animate-pulse"
                     }`} />
                     <span className={`text-xs font-bold ${
                       event.side === "BUY_ABSORPTION" ? "text-green-400" : "text-red-400"
                     }`}>
-                      {event.side === "BUY_ABSORPTION" ? "BUY" : "SELL"} ABSORPTION
+                      ABSORPTION
                     </span>
-                  </div>
-                  <div className="text-xs text-gray-400">
-                    @ {event.price.toFixed(2)} • Ratio: {event.ratio.toFixed(1)}:1
-                  </div>
-                  <div className="text-xs text-gray-600 mt-1">
-                    {new Date(event.timestamp).toLocaleTimeString()}
+                    <span className="text-xs text-gray-500">
+                      {event.ratio.toFixed(1)}:1 @ {event.price.toFixed(2)}
+                    </span>
                   </div>
                 </div>
               ))}
 
-              {/* Placeholder for other signals */}
-              {(!absorptionEvents || absorptionEvents.length === 0) && (
+              {/* Advanced Order Flow Signals */}
+              {orderFlowSignals && orderFlowSignals.slice(0, 5).map((signal, i) => {
+                // Color scheme based on signal type
+                const getSignalStyle = () => {
+                  if (signal.signal_type === "LACK_OF_PARTICIPATION") {
+                    return {
+                      bg: "bg-yellow-950/30",
+                      border: "border-yellow-800",
+                      text: "text-yellow-400",
+                      glow: "bg-yellow-500 shadow-yellow-500/50"
+                    };
+                  } else if (signal.signal_type === "STACKED_IMBALANCE") {
+                    return signal.direction === "BULLISH"
+                      ? { bg: "bg-blue-950/30", border: "border-blue-800", text: "text-blue-400", glow: "bg-blue-500 shadow-blue-500/50" }
+                      : { bg: "bg-orange-950/30", border: "border-orange-800", text: "text-orange-400", glow: "bg-orange-500 shadow-orange-500/50" };
+                  } else if (signal.signal_type === "TRAPPED_TRADERS") {
+                    return { bg: "bg-purple-950/30", border: "border-purple-800", text: "text-purple-400", glow: "bg-purple-500 shadow-purple-500/50" };
+                  } else if (signal.signal_type.includes("INITIATIVE")) {
+                    return signal.direction === "BULLISH"
+                      ? { bg: "bg-cyan-950/30", border: "border-cyan-800", text: "text-cyan-400", glow: "bg-cyan-500 shadow-cyan-500/50" }
+                      : { bg: "bg-pink-950/30", border: "border-pink-800", text: "text-pink-400", glow: "bg-pink-500 shadow-pink-500/50" };
+                  } else if (signal.signal_type.includes("EXHAUSTION")) {
+                    return { bg: "bg-red-950/30", border: "border-red-800", text: "text-red-400", glow: "bg-red-500 shadow-red-500/50" };
+                  }
+                  return { bg: "bg-gray-950/30", border: "border-gray-800", text: "text-gray-400", glow: "bg-gray-500 shadow-gray-500/50" };
+                };
+
+                const style = getSignalStyle();
+                const signalName = signal.signal_type.replace(/_/g, " ");
+
+                return (
+                  <div 
+                    key={`sig-${i}`} 
+                    className={`p-2 rounded border ${style.bg} ${style.border}`}
+                    data-testid={`signal-${signal.signal_type}-${i}`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className={`h-2 w-2 rounded-full ${style.glow} ${signal.actionable ? "animate-pulse" : ""}`} />
+                      <span className={`text-xs font-bold ${style.text}`}>
+                        {signalName}
+                      </span>
+                    </div>
+                    <div className="text-xs text-gray-400">{signal.description}</div>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs text-gray-600">
+                        Conf: {signal.confidence}%
+                      </span>
+                      {signal.actionable && (
+                        <span className="text-xs text-green-500 font-bold">ACTIONABLE</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+
+              {/* Placeholder when no signals */}
+              {(!absorptionEvents || absorptionEvents.length === 0) && 
+               (!orderFlowSignals || orderFlowSignals.length === 0) && (
                 <div className="text-center text-gray-600 py-8">
                   <AlertTriangle className="h-8 w-8 mx-auto mb-2 opacity-50" />
                   <div className="text-xs">Waiting for order flow signals...</div>
                 </div>
               )}
-
-              {/* TODO: Add other order flow signals
-              <div className="p-3 rounded border bg-yellow-950/30 border-yellow-800">
-                <div className="flex items-center gap-2 mb-1">
-                  <AlertTriangle className="h-3 w-3 text-yellow-500" />
-                  <span className="text-xs font-bold text-yellow-400">LACK OF PARTICIPATION</span>
-                </div>
-                <div className="text-xs text-gray-400">Bearish divergence detected</div>
-              </div>
-
-              <div className="p-3 rounded border bg-blue-950/30 border-blue-800">
-                <div className="flex items-center gap-2 mb-1">
-                  <TrendingUp className="h-3 w-3 text-blue-500" />
-                  <span className="text-xs font-bold text-blue-400">STACKED IMBALANCES</span>
-                </div>
-                <div className="text-xs text-gray-400">3 consecutive buy imbalances</div>
-              </div>
-              */}
             </div>
           </Card>
         </div>

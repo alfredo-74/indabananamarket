@@ -390,4 +390,87 @@ export class OrderFlowSignalDetector {
     const cutoff = Date.now() - olderThan;
     this.recentSignals = this.recentSignals.filter((s) => s.timestamp > cutoff);
   }
+
+  /**
+   * Process market data and detect all signal types
+   * 
+   * This is the main entry point that should be called on each market update
+   */
+  processMarketData(data: {
+    currentPrice: number;
+    currentDelta: number;
+    currentVolume: number;
+    recentPrices: number[];
+    recentDeltas: number[];
+    recentVolumes: number[];
+    recentImbalances: Array<{ price: number; ratio: number; direction: "BUY" | "SELL" }>;
+    vah: number;
+    val: number;
+    avgVolume: number;
+    timeOutsideValue?: number;
+  }): OrderFlowSignal[] {
+    const newSignals: OrderFlowSignal[] = [];
+
+    // 1. Lack of Participation (Delta Divergence)
+    const lackOfParticipation = this.detectLackOfParticipation(
+      data.currentPrice,
+      data.currentDelta,
+      data.recentPrices,
+      data.recentDeltas
+    );
+    if (lackOfParticipation) {
+      this.addSignal(lackOfParticipation);
+      newSignals.push(lackOfParticipation);
+    }
+
+    // 2. Stacked Imbalances
+    const stackedImbalance = this.detectStackedImbalances(data.recentImbalances);
+    if (stackedImbalance) {
+      this.addSignal(stackedImbalance);
+      newSignals.push(stackedImbalance);
+    }
+
+    // 3. Trapped Traders
+    const trappedTraders = this.detectTrappedTraders(
+      data.currentPrice,
+      data.recentPrices,
+      data.recentVolumes
+    );
+    if (trappedTraders) {
+      this.addSignal(trappedTraders);
+      newSignals.push(trappedTraders);
+    }
+
+    // 4. Initiative vs Responsive
+    if (data.timeOutsideValue !== undefined) {
+      const tradingType = this.classifyTradingType(
+        data.currentPrice,
+        data.vah,
+        data.val,
+        data.currentVolume,
+        data.avgVolume,
+        data.timeOutsideValue
+      );
+      if (tradingType.actionable) {
+        this.addSignal(tradingType);
+        newSignals.push(tradingType);
+      }
+    }
+
+    // 5. Exhaustion
+    const exhaustion = this.detectExhaustion(
+      data.recentPrices,
+      data.recentVolumes,
+      data.recentDeltas
+    );
+    if (exhaustion) {
+      this.addSignal(exhaustion);
+      newSignals.push(exhaustion);
+    }
+
+    // Clean up old signals (older than 1 hour)
+    this.clearOldSignals(60 * 60 * 1000);
+
+    return newSignals;
+  }
 }
