@@ -146,7 +146,7 @@ export default function F1CommandCenter() {
 
         {/* Price Display */}
         <div className="absolute top-4 right-6 text-right">
-          <div className="text-xs text-gray-500">ES {marketData?.symbol || ""}</div>
+          <div className="text-xs text-gray-500">{marketData?.symbol || "ES"}</div>
           <div className="text-2xl font-bold text-green-400 tabular-nums">
             {marketData?.last_price.toFixed(2) || "----"}
           </div>
@@ -154,9 +154,9 @@ export default function F1CommandCenter() {
       </div>
 
       {/* Main Content Grid */}
-      <div className="flex-1 grid grid-cols-3 gap-3 p-3 overflow-hidden">
+      <div className="flex-1 grid grid-cols-3 gap-3 p-3 overflow-y-auto">
         {/* LEFT: Pressure Gauges & Delta */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 h-fit">
           {/* Buy/Sell Pressure Meters */}
           <Card className="bg-gray-950 border-green-900 p-4 flex-1" data-testid="pressure-gauges">
             <div className="text-xs text-green-500 mb-3 uppercase tracking-wider">Market Pressure</div>
@@ -231,7 +231,7 @@ export default function F1CommandCenter() {
         </div>
 
         {/* CENTER: Order Flow Signals */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 h-fit">
           <Card className="bg-gray-950 border-green-900 p-4 flex-1 overflow-hidden" data-testid="orderflow-signals">
             <div className="text-xs text-green-500 mb-3 uppercase tracking-wider flex items-center gap-2">
               <Zap className="h-4 w-4" />
@@ -336,7 +336,7 @@ export default function F1CommandCenter() {
         </div>
 
         {/* RIGHT: Trade Recommendations & Context */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 h-fit">
           {/* Trade Recommendations */}
           <Card className="bg-gray-950 border-green-900 p-4 overflow-hidden" data-testid="trade-recommendations">
             <div className="text-xs text-green-500 mb-3 uppercase tracking-wider flex items-center gap-2">
@@ -455,7 +455,7 @@ export default function F1CommandCenter() {
           </Card>
 
           {/* System Status */}
-          <Card className="bg-gray-950 border-green-900 p-4 flex-1" data-testid="system-status">
+          <Card className="bg-gray-950 border-green-900 p-4" data-testid="system-status">
             <div className="text-xs text-green-500 mb-3 uppercase tracking-wider">System Status</div>
             <div className="space-y-3">
               <div className="space-y-2 text-xs">
@@ -472,9 +472,16 @@ export default function F1CommandCenter() {
                   <span className="text-green-400">STREAMING</span>
                 </div>
                 <div className="flex items-center gap-2">
+                  <div className={`h-2 w-2 rounded-full ${status?.ibkr_connected ? "bg-green-500" : "bg-red-500"}`} />
+                  <span className="text-gray-400">IBKR Gateway:</span>
+                  <span className={status?.ibkr_connected ? "text-green-400" : "text-red-400"}>
+                    {status?.ibkr_connected ? "CONNECTED" : "DISCONNECTED"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
                   <div className="h-2 w-2 rounded-full bg-yellow-500" />
                   <span className="text-gray-400">Account:</span>
-                  <span className="text-yellow-400">{status?.account_type || "UNKNOWN"}</span>
+                  <span className="text-yellow-400">{status?.account_type || "PAPER"}</span>
                 </div>
               </div>
               
@@ -489,6 +496,23 @@ export default function F1CommandCenter() {
                 <Power className="h-3 w-3 mr-1" />
                 {status?.auto_trading_enabled ? "DISABLE AUTO-TRADING" : "ENABLE AUTO-TRADING"}
               </Button>
+
+              {!status?.ibkr_connected && (
+                <div className="text-xs text-gray-500 border-t border-gray-800 pt-2 space-y-1">
+                  <div className="text-yellow-400">⚠ IBKR Gateway Required</div>
+                  <div className="text-gray-600">
+                    Launch IB Gateway/TWS on your computer with API enabled (port 7497 for paper trading)
+                  </div>
+                  <a 
+                    href="https://www.interactivebrokers.com/en/trading/ibgateway-stable.php"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-green-400 hover:text-green-300 underline block"
+                  >
+                    Download IB Gateway →
+                  </a>
+                </div>
+              )}
             </div>
           </Card>
         </div>
