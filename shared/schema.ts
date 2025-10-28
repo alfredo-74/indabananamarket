@@ -290,6 +290,89 @@ export const discordLevelSchema = z.object({
   description: z.string().optional(),
 });
 
+// G7FX PRO Course Schemas (Advanced Context & Order Flow)
+
+export const compositeProfileDataSchema = z.object({
+  composite_vah: z.number(),
+  composite_val: z.number(),
+  composite_poc: z.number(),
+  total_volume: z.number(),
+  days_included: z.number(),
+  oldest_day: z.number(),
+  newest_day: z.number(),
+  profile_shape: z.enum(["P", "b", "D", "DOUBLE"]).nullable(),
+});
+
+export const valueMigrationDataSchema = z.object({
+  migration_type: z.enum([
+    "BULLISH_MIGRATION",
+    "BEARISH_MIGRATION",
+    "NEUTRAL_OVERLAP",
+    "BREAKOUT_PENDING",
+    "UNKNOWN",
+  ]),
+  dva_position: z.enum(["ABOVE_CVA", "BELOW_CVA", "OVERLAPPING", "UNKNOWN"]),
+  overlap_percentage: z.number(),
+  dva_vah: z.number(),
+  dva_val: z.number(),
+  dva_poc: z.number(),
+  cva_vah: z.number(),
+  cva_val: z.number(),
+  cva_poc: z.number(),
+  value_range_pct: z.number(),
+  migration_strength: z.number(),
+  description: z.string(),
+});
+
+export const marketConditionSchema = z.enum([
+  "TREND_UP",
+  "TREND_DOWN",
+  "BALANCE",
+  "BREAKOUT_PENDING",
+  "OPENING_DRIVE",
+  "UNKNOWN",
+]);
+
+export const dailyHypothesisSchema = z.object({
+  condition: marketConditionSchema,
+  confidence: z.number(),
+  bias: z.enum(["BULLISH", "BEARISH", "NEUTRAL"]),
+  primary_strategy: z.string(),
+  key_levels: z.object({
+    resistance_1: z.number(),
+    resistance_2: z.number(),
+    support_1: z.number(),
+    support_2: z.number(),
+    pivot: z.number(),
+  }),
+  expected_behavior: z.string(),
+  trade_plan: z.string(),
+  invalidation_criteria: z.string(),
+});
+
+export const orderFlowSignalSchema = z.object({
+  signal_type: z.enum([
+    "LACK_OF_PARTICIPATION",
+    "STACKED_IMBALANCE",
+    "TRAPPED_TRADERS",
+    "INITIATIVE_BUYING",
+    "INITIATIVE_SELLING",
+    "RESPONSIVE_BUYING",
+    "RESPONSIVE_SELLING",
+    "EXHAUSTION_BULL",
+    "EXHAUSTION_BEAR",
+    "ABSORPTION_BUY",
+    "ABSORPTION_SELL",
+  ]),
+  timestamp: z.number(),
+  price: z.number(),
+  strength: z.number(),
+  direction: z.enum(["BULLISH", "BEARISH", "NEUTRAL"]),
+  description: z.string(),
+  confidence: z.number(),
+  actionable: z.boolean(),
+});
+
 export type VolumetricCandle = z.infer<typeof volumetricCandleSchema>;
 export type VWAPData = z.infer<typeof vwapDataSchema>;
 export type RegimeState = z.infer<typeof regimeStateSchema>;
@@ -314,6 +397,11 @@ export type VolumeProfileLevel = z.infer<typeof volumeProfileLevelSchema>;
 export type VolumeProfile = z.infer<typeof volumeProfileSchema>;
 export type AbsorptionEvent = z.infer<typeof absorptionEventSchema>;
 export type DiscordLevel = z.infer<typeof discordLevelSchema>;
+export type CompositeProfileData = z.infer<typeof compositeProfileDataSchema>;
+export type ValueMigrationData = z.infer<typeof valueMigrationDataSchema>;
+export type MarketCondition = z.infer<typeof marketConditionSchema>;
+export type DailyHypothesis = z.infer<typeof dailyHypothesisSchema>;
+export type OrderFlowSignal = z.infer<typeof orderFlowSignalSchema>;
 
 export const webSocketMessageSchema = z.discriminatedUnion("type", [
   z.object({
@@ -370,6 +458,22 @@ export const webSocketMessageSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("absorption_detected"),
     data: absorptionEventSchema,
+  }),
+  z.object({
+    type: z.literal("composite_profile_update"),
+    data: compositeProfileDataSchema,
+  }),
+  z.object({
+    type: z.literal("value_migration_update"),
+    data: valueMigrationDataSchema,
+  }),
+  z.object({
+    type: z.literal("daily_hypothesis_update"),
+    data: dailyHypothesisSchema,
+  }),
+  z.object({
+    type: z.literal("orderflow_signal"),
+    data: orderFlowSignalSchema,
   }),
 ]);
 
