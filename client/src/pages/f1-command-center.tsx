@@ -14,6 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Minus, AlertTriangle, Zap, Target } from "lucide-react";
+import MinimalProfileChart from "@/components/minimal-profile-chart";
 import type { 
   SystemStatus, 
   MarketData, 
@@ -66,6 +67,16 @@ export default function F1CommandCenter() {
   const { data: orderFlowSignals } = useQuery<OrderFlowSignal[]>({ 
     queryKey: ["/api/orderflow-signals"],
     refetchInterval: 2000, // Update every 2 seconds
+  });
+
+  const { data: candles } = useQuery<any[]>({ 
+    queryKey: ["/api/candles"],
+    refetchInterval: 5000, // Update every 5 seconds
+  });
+
+  const { data: vwapData } = useQuery<any>({ 
+    queryKey: ["/api/vwap"],
+    refetchInterval: 1000,
   });
 
   // Derive display values from PRO data
@@ -378,6 +389,47 @@ export default function F1CommandCenter() {
             </div>
           </Card>
         </div>
+      </div>
+
+      {/* Tactical Price Chart - Minimal with CVA/DVA Levels */}
+      <div className="h-64 px-6 pb-4">
+        <Card className="bg-black border-green-900 p-3 h-full" data-testid="tactical-chart">
+          <div className="text-xs text-green-500 mb-2 uppercase tracking-wider flex items-center gap-2">
+            <Target className="h-4 w-4" />
+            Tactical Chart: CVA/DVA + Absorption Force Fields
+          </div>
+          <div className="h-[calc(100%-2rem)]">
+            {candles && candles.length > 0 ? (
+              <MinimalProfileChart
+                candles={candles.slice(-50)} // Last 50 candles
+                cva={compositeProfile ? {
+                  poc: compositeProfile.composite_poc,
+                  vah: compositeProfile.composite_vah,
+                  val: compositeProfile.composite_val,
+                } : undefined}
+                dva={volumeProfile ? {
+                  poc: volumeProfile.poc,
+                  vah: volumeProfile.vah,
+                  val: volumeProfile.val,
+                } : undefined}
+                vwap={vwapData ? {
+                  value: vwapData.vwap,
+                  sd1_upper: vwapData.sd1_upper,
+                  sd1_lower: vwapData.sd1_lower,
+                } : undefined}
+                absorptionEvents={absorptionEvents}
+                currentPrice={marketData?.last_price}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-600">
+                <div className="text-center">
+                  <Target className="h-12 w-12 mx-auto mb-3 opacity-30" />
+                  <div className="text-xs">Loading chart data...</div>
+                </div>
+              </div>
+            )}
+          </div>
+        </Card>
       </div>
 
       {/* Footer: Quick Stats */}
