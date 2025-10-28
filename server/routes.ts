@@ -376,20 +376,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const position = await storage.getPosition();
       
       if (status && status.auto_trading_enabled && position) {
-        // Get order flow data for analysis
-        const absorptionEvents = absorptionDetector.getRecentEvents(60); // Last 60 seconds
-        const domSnapshot = domProcessor.getSnapshot() || null;
-        const timeAndSalesEntries = timeAndSalesProcessor.getEntries(50); // Last 50 entries
-        const volumeProfile = volumeProfileCalculator.getProfile() || null;
+        let signal: any;
 
-        const signal = autoTrader.analyzeMarket(
-          marketData,
-          absorptionEvents,
-          domSnapshot,
-          timeAndSalesEntries,
-          volumeProfile,
-          position
-        );
+        // First, check for high-probability PRO Course setups
+        const compositeProfile = compositeProfileSystem.getCompositeProfile();
+        const volumeProfile = volumeProfileCalculator.getProfile();
+        
+        if (volumeProfile) {
+          const migration = valueMigrationDetector.detectMigration(volumeProfile, compositeProfile);
+          const overnightHigh = marketData.last_price * 1.005;
+          const overnightLow = marketData.last_price * 0.995;
+          const hypothesis = hypothesisGenerator.generateHypothesis(
+            overnightHigh,
+            overnightLow,
+            marketData.last_price,
+            compositeProfile,
+            null,
+            migration,
+            vwap
+          );
+          
+          const orderFlowSignals = orderFlowSignalDetector.getRecentSignals(20);
+          
+          // Build market context for recommendations
+          const context = {
+            currentPrice: marketData.last_price,
+            compositeProfile,
+            valueMigration: migration,
+            hypothesis,
+            orderFlowSignals,
+            vwap: vwap.vwap,
+            vwapSD1Upper: vwap.sd1_upper,
+            vwapSD1Lower: vwap.sd1_lower,
+            vwapSD2Upper: vwap.sd2_upper,
+            vwapSD2Lower: vwap.sd2_lower,
+            volumeProfile: {
+              poc: volumeProfile.poc,
+              vah: volumeProfile.vah,
+              val: volumeProfile.val,
+            },
+          };
+          
+          const recommendations = setupRecognizer.generateRecommendations(context);
+          signal = autoTrader.evaluateRecommendations(recommendations, position, 75); // 75% min confidence
+        }
+
+        // Fallback to order flow strategy if no PRO setup found
+        if (!signal || signal.action === "NONE") {
+          const absorptionEvents = absorptionDetector.getRecentEvents(60);
+          const domSnapshot = domProcessor.getSnapshot() || null;
+          const timeAndSalesEntries = timeAndSalesProcessor.getEntries(50);
+          const volumeProfile = volumeProfileCalculator.getProfile() || null;
+
+          signal = autoTrader.analyzeMarket(
+            marketData,
+            absorptionEvents,
+            domSnapshot,
+            timeAndSalesEntries,
+            volumeProfile,
+            position
+          );
+        }
 
         // Execute trade if signal is not NONE
         if (signal.action !== "NONE" && signal.action !== "CLOSE") {
@@ -864,7 +911,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/trade-recommendations", async (req, res) => {
     try {
       const marketData = await storage.getMarketData();
-      const vwapData = await storage.getVWAP();
+      const vwapData = await storage.getVWAPData();
       const volumeProfile = await storage.getVolumeProfile();
       
       if (!marketData || !vwapData || !volumeProfile) {
@@ -968,6 +1015,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
 
     res.json(trade);
+  });
+
+  // POST /api/auto-trading/toggle - Toggle auto-trading on/off
+  app.post("/api/auto-trading/toggle", async (req, res) => {
+    try {
+      const { enabled } = req.body;
+      
+      if (typeof enabled !== "boolean") {
+        return res.status(400).json({ error: "enabled must be a boolean" });
+      }
+
+      const status = await storage.getSystemStatus();
+      if (!status) {
+        return res.status(500).json({ error: "System status not available" });
+      }
+
+      status.auto_trading_enabled = enabled;
+      await storage.setSystemStatus(status);
+
+      console.log(`[AUTO-TRADING] ${enabled ? "ENABLED" : "DISABLED"}`);
+
+      broadcast({
+        type: "status_update",
+        data: status,
+      });
+
+      res.json({ success: true, enabled });
+    } catch (error) {
+      console.error("Auto-trading toggle error:", error);
+      res.status(500).json({ error: "Failed to toggle auto-trading" });
+    }
   });
 
   // POST /api/emergency-stop - Emergency stop all trading

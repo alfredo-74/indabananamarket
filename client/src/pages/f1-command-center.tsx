@@ -10,10 +10,12 @@
  * G7FX PRO Course: 90% Context, 10% Order Flow
  */
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown, Minus, AlertTriangle, Zap, Target } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { TrendingUp, TrendingDown, Minus, AlertTriangle, Zap, Target, Power } from "lucide-react";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import MinimalProfileChart from "@/components/minimal-profile-chart";
 import type { 
   SystemStatus, 
@@ -83,6 +85,20 @@ export default function F1CommandCenter() {
   const { data: tradeRecommendations } = useQuery<TradeRecommendation[]>({ 
     queryKey: ["/api/trade-recommendations"],
     refetchInterval: 5000, // Update every 5 seconds
+  });
+
+  // Auto-trading mutation
+  const toggleAutoTradingMutation = useMutation({
+    mutationFn: async (enabled: boolean) => {
+      return apiRequest("/api/auto-trading/toggle", {
+        method: "POST",
+        body: JSON.stringify({ enabled }),
+        headers: { "Content-Type": "application/json" },
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/status"] });
+    },
   });
 
   // Derive display values from PRO data
@@ -441,24 +457,38 @@ export default function F1CommandCenter() {
           {/* System Status */}
           <Card className="bg-gray-950 border-green-900 p-4 flex-1" data-testid="system-status">
             <div className="text-xs text-green-500 mb-3 uppercase tracking-wider">System Status</div>
-            <div className="space-y-2 text-xs">
-              <div className="flex items-center gap-2">
-                <div className={`h-2 w-2 rounded-full ${status?.auto_trading_enabled ? "bg-green-500" : "bg-gray-600"}`} />
-                <span className="text-gray-400">Auto Trading:</span>
-                <span className={status?.auto_trading_enabled ? "text-green-400" : "text-gray-600"}>
-                  {status?.auto_trading_enabled ? "ENABLED" : "DISABLED"}
-                </span>
+            <div className="space-y-3">
+              <div className="space-y-2 text-xs">
+                <div className="flex items-center gap-2">
+                  <div className={`h-2 w-2 rounded-full ${status?.auto_trading_enabled ? "bg-green-500 animate-pulse" : "bg-gray-600"}`} />
+                  <span className="text-gray-400">Auto Trading:</span>
+                  <span className={status?.auto_trading_enabled ? "text-green-400" : "text-gray-600"}>
+                    {status?.auto_trading_enabled ? "ENABLED" : "DISABLED"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-green-500" />
+                  <span className="text-gray-400">Market Data:</span>
+                  <span className="text-green-400">STREAMING</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-2 w-2 rounded-full bg-yellow-500" />
+                  <span className="text-gray-400">Account:</span>
+                  <span className="text-yellow-400">{status?.account_type || "UNKNOWN"}</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-green-500" />
-                <span className="text-gray-400">Market Data:</span>
-                <span className="text-green-400">STREAMING</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="h-2 w-2 rounded-full bg-yellow-500" />
-                <span className="text-gray-400">Account:</span>
-                <span className="text-yellow-400">{status?.account_type || "UNKNOWN"}</span>
-              </div>
+              
+              <Button
+                onClick={() => toggleAutoTradingMutation.mutate(!status?.auto_trading_enabled)}
+                disabled={toggleAutoTradingMutation.isPending}
+                size="sm"
+                variant={status?.auto_trading_enabled ? "destructive" : "default"}
+                className="w-full text-xs"
+                data-testid="button-toggle-autotrading"
+              >
+                <Power className="h-3 w-3 mr-1" />
+                {status?.auto_trading_enabled ? "DISABLE AUTO-TRADING" : "ENABLE AUTO-TRADING"}
+              </Button>
             </div>
           </Card>
         </div>

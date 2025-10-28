@@ -58,8 +58,11 @@ export default function MinimalProfileChart({
       chartInstance.current.destroy();
     }
 
-    // Prepare candlestick data
-    const candleData = candles.map((c) => ({
+    // Prepare candlestick data - filter out invalid timestamps
+    const validCandles = candles.filter(c => c.timestamp > 0);
+    if (validCandles.length === 0) return;
+    
+    const candleData = validCandles.map((c) => ({
       x: c.timestamp,
       o: c.open,
       h: c.high,

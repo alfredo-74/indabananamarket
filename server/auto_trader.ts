@@ -1,4 +1,4 @@
-import type { Position, MarketData, AbsorptionEvent, DomSnapshot, TimeAndSalesEntry, VolumeProfile } from "@shared/schema";
+import type { Position, MarketData, AbsorptionEvent, DomSnapshot, TimeAndSalesEntry, VolumeProfile, TradeRecommendation } from "@shared/schema";
 import { OrderFlowStrategy, type OrderFlowSignal, type OrderFlowSettings } from './orderflow_strategy';
 
 export interface TradeSignal {
@@ -217,5 +217,56 @@ export class AutoTrader {
       return 0; // Not enough capital
     }
     return this.maxPositionSize;
+  }
+
+  /**
+   * Evaluate TradeRecommendations from PRO Course setup recognizer
+   * Returns best recommendation if confidence threshold is met
+   */
+  evaluateRecommendations(
+    recommendations: TradeRecommendation[],
+    position: Position,
+    minConfidence: number = 75
+  ): TradeSignal {
+    // Don't open new positions if we already have one
+    if (position.contracts !== 0) {
+      return {
+        action: "NONE",
+        quantity: 0,
+        reason: "Position already open",
+        entry_price: 0,
+      };
+    }
+
+    // Filter active recommendations above confidence threshold
+    const validRecs = recommendations
+      .filter(r => r.active && r.confidence >= minConfidence)
+      .sort((a, b) => b.confidence - a.confidence); // Sort by confidence descending
+
+    if (validRecs.length === 0) {
+      return {
+        action: "NONE",
+        quantity: 0,
+        reason: "No high-confidence setups available",
+        entry_price: 0,
+      };
+    }
+
+    // Take the highest confidence recommendation
+    const best = validRecs[0];
+    
+    return {
+      action: best.direction === "LONG" ? "BUY" : "SELL",
+      quantity: this.maxPositionSize,
+      reason: `${best.setup_type}: ${best.context_reason}`,
+      entry_price: best.entry_price,
+      stop_loss: best.stop_loss,
+      take_profit: best.target_1,
+      confidence: best.confidence,
+      orderflow_signals: {
+        absorption: best.orderflow_confirmation,
+        profile_context: best.context_reason,
+      },
+    };
   }
 }
