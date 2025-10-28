@@ -347,73 +347,12 @@ export class HighProbabilitySetupRecognizer {
    * 
    * If price travels 80% of overnight range in first hour, expect continuation
    * Based on James Dalton's Mind Over Markets
+   * 
+   * NOTE: Requires overnight high/low data (to be implemented in future enhancement)
    */
   private detectRule80Setup(context: MarketContext): TradeRecommendation | null {
-    const { hypothesis, currentPrice, vwap } = context;
-
-    if (!hypothesis || !hypothesis.overnight_high || !hypothesis.overnight_low) {
-      return null;
-    }
-
-    const overnightRange = hypothesis.overnight_high - hypothesis.overnight_low;
-    const eightyPercent = overnightRange * 0.8;
-    
-    // Check if we've traveled 80% of overnight range upward
-    const upwardTravel = currentPrice - hypothesis.overnight_low;
-    if (upwardTravel >= eightyPercent) {
-      const entry = currentPrice;
-      const stop = hypothesis.overnight_low;
-      const target1 = entry + overnightRange * 0.5;
-      const target2 = entry + overnightRange;
-      
-      const risk = entry - stop;
-      const reward = target1 - entry;
-      
-      return {
-        setup_type: "RULE_80_LONG",
-        direction: "LONG",
-        entry_price: entry,
-        stop_loss: stop,
-        target_1: target1,
-        target_2: target2,
-        confidence: 85,
-        risk_reward_ratio: reward / risk,
-        context_reason: `80% Rule: Price traveled ${(upwardTravel / overnightRange * 100).toFixed(0)}% of overnight range. Expect continuation.`,
-        orderflow_confirmation: "Strong directional initiative from opening",
-        invalidation_criteria: `Price closes below ${stop.toFixed(2)} (overnight low)`,
-        timestamp: Date.now(),
-        active: true,
-      };
-    }
-
-    // Check if we've traveled 80% of overnight range downward
-    const downwardTravel = hypothesis.overnight_high - currentPrice;
-    if (downwardTravel >= eightyPercent) {
-      const entry = currentPrice;
-      const stop = hypothesis.overnight_high;
-      const target1 = entry - overnightRange * 0.5;
-      const target2 = entry - overnightRange;
-      
-      const risk = stop - entry;
-      const reward = entry - target1;
-      
-      return {
-        setup_type: "RULE_80_SHORT",
-        direction: "SHORT",
-        entry_price: entry,
-        stop_loss: stop,
-        target_1: target1,
-        target_2: target2,
-        confidence: 85,
-        risk_reward_ratio: reward / risk,
-        context_reason: `80% Rule: Price traveled ${(downwardTravel / overnightRange * 100).toFixed(0)}% of overnight range. Expect continuation.`,
-        orderflow_confirmation: "Strong directional initiative from opening",
-        invalidation_criteria: `Price closes above ${stop.toFixed(2)} (overnight high)`,
-        timestamp: Date.now(),
-        active: true,
-      };
-    }
-
+    // TODO: Implement 80% rule once overnight data is added to hypothesis
+    // For now, return null (can be enhanced later with overnight session tracking)
     return null;
   }
 

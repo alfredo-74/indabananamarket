@@ -373,6 +373,33 @@ export const orderFlowSignalSchema = z.object({
   actionable: z.boolean(),
 });
 
+export const tradeRecommendationSchema = z.object({
+  setup_type: z.enum([
+    "VA_FADE_LONG",
+    "VA_FADE_SHORT",
+    "VA_BREAKOUT_LONG",
+    "VA_BREAKOUT_SHORT",
+    "VWAP_BOUNCE_LONG",
+    "VWAP_BOUNCE_SHORT",
+    "RULE_80_LONG",
+    "RULE_80_SHORT",
+    "OPENING_DRIVE_LONG",
+    "OPENING_DRIVE_SHORT",
+  ]),
+  direction: z.enum(["LONG", "SHORT"]),
+  entry_price: z.number(),
+  stop_loss: z.number(),
+  target_1: z.number(),
+  target_2: z.number(),
+  confidence: z.number(),
+  risk_reward_ratio: z.number(),
+  context_reason: z.string(),
+  orderflow_confirmation: z.string(),
+  invalidation_criteria: z.string(),
+  timestamp: z.number(),
+  active: z.boolean(),
+});
+
 export type VolumetricCandle = z.infer<typeof volumetricCandleSchema>;
 export type VWAPData = z.infer<typeof vwapDataSchema>;
 export type RegimeState = z.infer<typeof regimeStateSchema>;
@@ -402,6 +429,7 @@ export type ValueMigrationData = z.infer<typeof valueMigrationDataSchema>;
 export type MarketCondition = z.infer<typeof marketConditionSchema>;
 export type DailyHypothesis = z.infer<typeof dailyHypothesisSchema>;
 export type OrderFlowSignal = z.infer<typeof orderFlowSignalSchema>;
+export type TradeRecommendation = z.infer<typeof tradeRecommendationSchema>;
 
 export const webSocketMessageSchema = z.discriminatedUnion("type", [
   z.object({

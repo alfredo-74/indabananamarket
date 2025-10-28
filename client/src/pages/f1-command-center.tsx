@@ -23,7 +23,8 @@ import type {
   CompositeProfileData,
   ValueMigrationData,
   DailyHypothesis,
-  OrderFlowSignal
+  OrderFlowSignal,
+  TradeRecommendation
 } from "@shared/schema";
 
 export default function F1CommandCenter() {
@@ -77,6 +78,11 @@ export default function F1CommandCenter() {
   const { data: vwapData } = useQuery<any>({ 
     queryKey: ["/api/vwap"],
     refetchInterval: 1000,
+  });
+
+  const { data: tradeRecommendations } = useQuery<TradeRecommendation[]>({ 
+    queryKey: ["/api/trade-recommendations"],
+    refetchInterval: 5000, // Update every 5 seconds
   });
 
   // Derive display values from PRO data
@@ -315,33 +321,100 @@ export default function F1CommandCenter() {
 
         {/* RIGHT: Trade Recommendations & Context */}
         <div className="flex flex-col gap-3">
+          {/* Trade Recommendations */}
+          <Card className="bg-gray-950 border-green-900 p-4 overflow-hidden" data-testid="trade-recommendations">
+            <div className="text-xs text-green-500 mb-3 uppercase tracking-wider flex items-center gap-2">
+              <Target className="h-4 w-4" />
+              High-Probability Setups
+            </div>
+            <div className="space-y-2 max-h-64 overflow-y-auto">
+              {tradeRecommendations && tradeRecommendations.filter(r => r.active).slice(0, 3).map((rec, i) => (
+                <div 
+                  key={i}
+                  className={`p-2 rounded border ${
+                    rec.direction === "LONG" 
+                      ? "bg-green-950/30 border-green-800" 
+                      : "bg-red-950/30 border-red-800"
+                  }`}
+                  data-testid={`recommendation-${i}`}
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className={`text-xs font-bold ${
+                      rec.direction === "LONG" ? "text-green-400" : "text-red-400"
+                    }`}>
+                      {rec.setup_type.replace(/_/g, " ")}
+                    </span>
+                    <Badge variant={rec.confidence >= 75 ? "default" : "secondary"} className="text-xs">
+                      {rec.confidence}%
+                    </Badge>
+                  </div>
+                  <div className="text-xs text-gray-400 mb-2">{rec.context_reason}</div>
+                  <div className="grid grid-cols-2 gap-1 text-xs">
+                    <div>
+                      <span className="text-gray-600">Entry:</span>
+                      <span className="text-white font-bold ml-1">{rec.entry_price.toFixed(2)}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Stop:</span>
+                      <span className="text-red-400 ml-1">{rec.stop_loss.toFixed(2)}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">Target:</span>
+                      <span className="text-green-400 ml-1">{rec.target_1.toFixed(2)}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600">R:R:</span>
+                      <span className="text-yellow-400 ml-1">{rec.risk_reward_ratio.toFixed(1)}:1</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              {(!tradeRecommendations || tradeRecommendations.filter(r => r.active).length === 0) && (
+                <div className="text-center text-gray-600 py-8">
+                  <Target className="h-8 w-8 mx-auto mb-2 opacity-30" />
+                  <div className="text-xs">No high-probability setups detected</div>
+                  <div className="text-xs text-gray-700 mt-1">Waiting for optimal context + order flow alignment</div>
+                </div>
+              )}
+            </div>
+          </Card>
+
           {/* Daily Hypothesis */}
           <Card className="bg-gray-950 border-green-900 p-4" data-testid="daily-hypothesis">
             <div className="text-xs text-green-500 mb-3 uppercase tracking-wider flex items-center gap-2">
               <Target className="h-4 w-4" />
               Daily Hypothesis
             </div>
-            <div className="space-y-2">
-              <div className="text-xs text-gray-500 uppercase">Condition</div>
-              <div className="text-lg font-bold text-red-400">TREND DOWN</div>
-              
-              <div className="text-xs text-gray-500 uppercase mt-3">Strategy</div>
-              <div className="text-xs text-gray-300">
-                Sell bounces to VWAP or VAH, cover at support
-              </div>
+            {hypothesis ? (
+              <div className="space-y-2">
+                <div className="text-xs text-gray-500 uppercase">Condition</div>
+                <div className={`text-sm font-bold ${
+                  hypothesis.bias === "BULLISH" ? "text-green-400" : 
+                  hypothesis.bias === "BEARISH" ? "text-red-400" : "text-yellow-400"
+                }`}>
+                  {hypothesis.condition.replace(/_/g, " ")}
+                </div>
+                
+                <div className="text-xs text-gray-500 uppercase mt-3">Strategy</div>
+                <div className="text-xs text-gray-300">{hypothesis.primary_strategy}</div>
 
-              <div className="text-xs text-gray-500 uppercase mt-3">Key Levels</div>
-              <div className="text-xs text-gray-300 space-y-1">
-                <div className="flex justify-between">
-                  <span>R1:</span>
-                  <span className="text-red-400 tabular-nums">6010.00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>S1:</span>
-                  <span className="text-green-400 tabular-nums">5995.00</span>
+                <div className="text-xs text-gray-500 uppercase mt-3">Key Levels</div>
+                <div className="text-xs text-gray-300 space-y-1">
+                  <div className="flex justify-between">
+                    <span>R1:</span>
+                    <span className="text-red-400 tabular-nums">{hypothesis.key_levels.resistance_1.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>S1:</span>
+                    <span className="text-green-400 tabular-nums">{hypothesis.key_levels.support_1.toFixed(2)}</span>
+                  </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="text-center text-gray-600 py-4">
+                <div className="text-xs">Generating hypothesis...</div>
+              </div>
+            )}
           </Card>
 
           {/* Account Info */}

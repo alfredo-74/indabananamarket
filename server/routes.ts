@@ -19,6 +19,7 @@ import { CompositeProfileManager } from "./composite_profile";
 import { ValueMigrationDetector } from "./value_migration_detector";
 import { HypothesisGenerator } from "./hypothesis_generator";
 import { OrderFlowSignalDetector } from "./orderflow_signal_detector";
+import { HighProbabilitySetupRecognizer } from "./high_probability_setup_recognizer";
 import type { OrderFlowSettings } from "./orderflow_strategy";
 import type {
   SystemStatus,
@@ -38,6 +39,7 @@ import type {
   ValueMigrationData,
   DailyHypothesis,
   OrderFlowSignal,
+  TradeRecommendation,
 } from "@shared/schema";
 import { spawn } from "child_process";
 import { join, dirname } from "path";
@@ -66,6 +68,7 @@ const compositeProfileSystem = new CompositeProfileManager(5); // 5-day CVA
 const valueMigrationDetector = new ValueMigrationDetector();
 const hypothesisGenerator = new HypothesisGenerator();
 const orderFlowSignalDetector = new OrderFlowSignalDetector();
+const setupRecognizer = new HighProbabilitySetupRecognizer(); // PRO Course trade setups
 
 // Default Order Flow Settings for AutoTrader
 const defaultOrderFlowSettings: OrderFlowSettings = {
@@ -854,6 +857,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Order flow signals error:", error);
       res.status(500).json({ error: "Failed to retrieve order flow signals" });
+    }
+  });
+
+  // GET /api/trade-recommendations - Get high-probability trade setups
+  app.get("/api/trade-recommendations", async (req, res) => {
+    try {
+      const marketData = await storage.getMarketData();
+      const vwapData = await storage.getVWAP();
+      const volumeProfile = await storage.getVolumeProfile();
+      
+      if (!marketData || !vwapData || !volumeProfile) {
+        return res.json([]);
+      }
+      
+      const compositeProfile = compositeProfileSystem.getCompositeProfile();
+      const migration = valueMigrationDetector.detectMigration(volumeProfile, compositeProfile);
+      
+      // Generate hypothesis for context
+      const overnightHigh = marketData.last_price * 1.005;
+      const overnightLow = marketData.last_price * 0.995;
+      const hypothesis = hypothesisGenerator.generateHypothesis(
+        overnightHigh,
+        overnightLow,
+        marketData.last_price,
+        compositeProfile,
+        null,
+        migration,
+        vwapData
+      );
+      
+      const orderFlowSignals = orderFlowSignalDetector.getRecentSignals(20);
+      
+      // Build market context
+      const context = {
+        currentPrice: marketData.last_price,
+        compositeProfile,
+        valueMigration: migration,
+        hypothesis,
+        orderFlowSignals,
+        vwap: vwapData.vwap,
+        vwapSD1Upper: vwapData.sd1_upper,
+        vwapSD1Lower: vwapData.sd1_lower,
+        vwapSD2Upper: vwapData.sd2_upper,
+        vwapSD2Lower: vwapData.sd2_lower,
+        volumeProfile: {
+          poc: volumeProfile.poc,
+          vah: volumeProfile.vah,
+          val: volumeProfile.val,
+        },
+      };
+      
+      const recommendations = setupRecognizer.generateRecommendations(context);
+      res.json(recommendations);
+    } catch (error) {
+      console.error("Trade recommendations error:", error);
+      res.status(500).json({ error: "Failed to generate trade recommendations" });
     }
   });
 
