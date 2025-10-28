@@ -2,7 +2,7 @@
 
 ## Overview
 
-OrderFlowAI is a professional automated trading system for futures markets, specifically targeting ES (E-mini S&P 500) for data visualization and MES (Micro E-mini S&P 500) for trade execution. It uses order flow analysis and market regime detection, implementing a dual-strategy approach: Rotational Trading for range-bound markets and Directional Trading for trending markets, with sophisticated risk management based on VWAP, cumulative delta, and volumetric candle analysis. The project's ambition is to provide real-time market data, automated trade execution via Interactive Brokers, and comprehensive performance analytics.
+OrderFlowAI is a professional automated trading system for futures markets implementing the complete G7FX PRO course methodology. The system features Market/Volume Profile analysis with 5-day Composite Value Areas (CVA), Value Migration tracking, pre-market hypothesis generation, and advanced order flow detection (absorption, divergence, lack of participation, stacked imbalances). It targets ES (E-mini S&P 500) for price display and MES (Micro E-mini S&P 500) for trade execution via Interactive Brokers integration. The F1 Command Center UI provides a Formula 1 steering wheel-inspired interface with traffic light regime indicators, pressure gauges, and real-time order flow signal alerts following the PRO course 90/10 rule: 90% context (profiles, VWAP, value areas), 10% order flow.
 
 ## User Preferences
 
@@ -12,39 +12,62 @@ Preferred communication style: Simple, everyday language.
 
 ### Frontend
 
-The frontend is built with React 18, TypeScript, and Vite, utilizing Radix UI primitives and shadcn/ui components styled with Tailwind CSS. It draws inspiration from the Carbon Design System for data-intensive financial interfaces, prioritizing a dark mode with high contrast and IBM Plex fonts for optimal readability. State management uses TanStack Query for server state and WebSockets for real-time market data, candle updates, regime changes, and position updates. 
+The frontend is built with React 18, TypeScript, and Vite, utilizing Radix UI primitives and shadcn/ui components styled with Tailwind CSS. State management uses TanStack Query for server state and WebSockets for real-time market data and order flow signals.
 
-The UI follows the **90/10 Rule** from professional trading methodology: 90% order flow data, 10% charts. Key components include:
-- **Order Flow Panels**: `TimeAndSalesPanel` (color-coded transaction feed), `DomLadder` (depth of market visualization), `AbsorptionAlerts` (institutional order absorption detection)
-- **Chart & Analytics**: `ChartComponent` (Chart.js candlesticks with VWAP), `RegimeIndicator`, `SessionIndicator`, `LiveStatsPanel`, `TradeHistoryTable`, `ControlPanel`, `AccountAnalysisPanel`
-- **Layout**: Three-column dashboard with Time & Sales (left), Chart (center - smaller per 90/10 rule), DOM (right), with absorption alerts and stats in secondary row
+**F1 Command Center** (`client/src/pages/f1-command-center.tsx`) - Default homepage:
+- Formula 1 steering wheel-inspired tactical interface with high-contrast green/red/black terminal aesthetic
+- **Traffic Light Market Regime** - Large visual indicator showing market condition (TREND_UP, TREND_DOWN, BALANCE, BREAKOUT_PENDING)
+- **Pressure Gauges** - Buy/sell pressure meters with cumulative delta strength indicator
+- **Order Flow Signal Panel** - Real-time absorption events (4:1, 5:1 ratios) with glowing green/red indicators
+- **Value Area Display** - CVA, DVA, POC levels from composite profile system
+- **Daily Hypothesis** - Pre-market trade plan with key levels and expected behavior
+- **System Status** - Account balance, daily P&L, connection indicators
+
+**Classic Trading Dashboard** (`client/src/pages/trading-dashboard.tsx`) - Available at `/classic`:
+- Three-column layout with Time & Sales, Chart, DOM
+- Chart.js candlesticks with VWAP bands
+- Absorption alerts and trade history
 
 ### Backend
 
 The backend is a Node.js Express.js server written in TypeScript, providing RESTful endpoints and WebSocket streaming. 
 
-**Order Flow Analysis Modules** (Foundation Course Implementation):
-- **TimeAndSalesProcessor** (`server/time_and_sales.ts`): Processes real-time tick-by-tick transactions, tracks buy/sell pressure, detects large institutional trades, calculates volume ratios
-- **DomProcessor** (`server/dom_processor.ts`): Analyzes Level 2 market depth data, identifies bid/ask imbalance, detects stacked liquidity (institutional orders), finds largest support/resistance levels
-- **VolumeProfileCalculator** (`server/volume_profile.ts`): Builds horizontal volume histograms, calculates POC (Point of Control), VAH/VAL (Value Area High/Low), identifies profile shapes (P, b, D, DOUBLE), detects HVN/LVN (High/Low Volume Nodes)
-- **AbsorptionDetector** (`server/absorption_detector.ts`): Identifies when aggressive orders are absorbed by passive liquidity without price movement, signals institutional defense of price levels, predicts potential reversals/breakouts
+**PRO Course Systems** (Market/Volume Profile + Advanced Order Flow):
+- **CompositeProfileManager** (`server/composite_profile.ts`): Builds 5-day Composite Value Area (CVA) for pre-market context, calculates composite POC/VAH/VAL, identifies profile shape (P, b, D, DOUBLE)
+- **ValueMigrationDetector** (`server/value_migration_detector.ts`): Tracks Daily Value Area (DVA) position relative to CVA, detects bullish/bearish/neutral migration, measures overlap percentage and migration strength
+- **HypothesisGenerator** (`server/hypothesis_generator.ts`): Generates pre-market trade hypothesis using overnight data, CVA, DVA, and value migration, creates rule-based trade plan with key levels and invalidation criteria
+- **OrderFlowSignalDetector** (`server/orderflow_signal_detector.ts`): Detects lack of participation, stacked imbalances, trapped traders, initiative vs responsive buying/selling, exhaustion signals
+- **TimeAndSalesProcessor** (`server/time_and_sales.ts`): Processes tick-by-tick transactions, tracks buy/sell pressure, detects large institutional trades
+- **DomProcessor** (`server/dom_processor.ts`): Analyzes Level 2 market depth, identifies bid/ask imbalance, detects stacked liquidity
+- **VolumeProfileCalculator** (`server/volume_profile.ts`): Builds horizontal volume histograms, calculates POC, VAH, VAL, identifies profile shapes and HVN/LVN
+- **AbsorptionDetector** (`server/absorption_detector.ts`): Identifies institutional absorption (4:1, 5:1 ratios), signals reversals/breakouts
 
-**Legacy Trading Modules** (Being Replaced):
-- **VolumetricCandleBuilder**: Aggregates tick data into time-based candles with buy/sell volume separation and cumulative delta
-- **VWAPCalculator**: Computes Volume-Weighted Average Price with standard deviation bands
-- **RegimeDetector**: Identifies market regimes based on cumulative delta thresholds
-- **SessionDetector**: Differentiates between ETH and RTH trading sessions
-- **SessionAwareRegimeManager**: Manages session-specific cumulative delta
+**Legacy Supporting Modules**:
+- **VolumetricCandleBuilder**: Aggregates tick data into candles with buy/sell volume separation
+- **VWAPCalculator**: Computes VWAP with standard deviation bands (SD1, SD2)
+- **RegimeDetector / SessionAwareRegimeManager**: Identifies market regimes based on cumulative delta
+- **SessionDetector**: Differentiates ETH vs RTH trading sessions
 - **KeyLevelsDetector**: Tracks previous day's high/low/close and swing levels
 - **PerformanceAnalyzer**: Calculates comprehensive trading metrics
-- **Storage Layer**: Currently uses in-memory storage (`MemStorage`) with interface for PostgreSQL via Drizzle ORM
+- **Storage Layer**: In-memory storage (`MemStorage`) with PostgreSQL interface via Drizzle ORM
 
 **API Endpoints**:
+
+*PRO Course Endpoints*:
+- `/api/composite-profile` - Get 5-day Composite Value Area (CVA) with POC, VAH, VAL
+- `/api/value-migration` - Get Value Migration analysis (DVA vs CVA relationship)
+- `/api/daily-hypothesis` - Get pre-market hypothesis and rule-based trade plan
+- `/api/orderflow-signals` - Get advanced order flow signals (limit parameter)
+
+*Foundation Course Endpoints*:
 - `/api/time-and-sales` - Get Time & Sales transaction feed (limit parameter)
 - `/api/dom` - Get current Depth of Market snapshot
 - `/api/volume-profile` - Get Volume Profile with POC, VAH, VAL
 - `/api/absorption-events` - Get detected absorption events (limit parameter)
 - `/api/discord-levels` - Get/Set Discord price levels (support/resistance from trading course)
+
+*Legacy Endpoints*:
+- `/api/status`, `/api/market-data`, `/api/candles`, `/api/vwap`, `/api/regime`, `/api/position`, `/api/trades`, `/api/session`, `/api/key-levels`, `/api/account-analysis`
 
 Trading strategies are implemented for each regime:
 - **ROTATIONAL**: Mean reversion from VWAP standard deviation extremes.
