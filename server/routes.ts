@@ -100,7 +100,7 @@ let mockTick = 0;
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
 
-  // Initialize WebSocket server on /ws path
+  // Initialize WebSocket server on /ws path (for frontend clients)
   const wss = new WebSocketServer({ 
     server: httpServer, 
     path: '/ws' 
@@ -128,6 +128,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     });
   }
+
+  // Initialize WebSocket server on /bridge path (for IBKR bridge from user's computer)
+  const bridgeWss = new WebSocketServer({ 
+    server: httpServer, 
+    path: '/bridge' 
+  });
+
+  // Bridge connection handler
+  bridgeWss.on('connection', (ws: WebSocket) => {
+    console.log('✓ IBKR Bridge connected from user computer');
+    
+    ws.on('message', async (data: Buffer) => {
+      try {
+        const message = JSON.parse(data.toString());
+        
+        if (message.type === 'handshake') {
+          console.log('✓ Bridge handshake received');
+          ibkrConnected = true;
+          const status = await storage.getSystemStatus();
+          if (status) {
+            status.ibkr_connected = true;
+            status.market_data_active = true;
+            status.data_delay_seconds = 0; // Real-time data from IB Gateway
+            await storage.setSystemStatus(status);
+          }
+          ws.send(JSON.stringify({ type: 'ack', message: 'Connected to trading system' }));
+        }
+        else if (message.type === 'market_data') {
+          // Update mockPrice with real data from IB Gateway
+          // The existing setInterval loop will handle all the processing
+          mockPrice = message.last_price;
+          console.log(`[BRIDGE] Price update: ${mockPrice.toFixed(2)}`);
+        }
+      } catch (error) {
+        console.error('Bridge message error:', error);
+      }
+    });
+
+    ws.on('close', async () => {
+      console.log('✗ IBKR Bridge disconnected');
+      ibkrConnected = false;
+      const status = await storage.getSystemStatus();
+      if (status) {
+        status.ibkr_connected = false;
+        status.market_data_active = false;
+        await storage.setSystemStatus(status);
+      }
+    });
+
+    ws.on('error', (error) => {
+      console.error('Bridge WebSocket error:', error);
+    });
+  });
 
   // Initialize system status with $2,000 starting capital (default before IBKR connection)
   // NOTE: Capital will be updated from IBKR account balance when connection is established
@@ -251,10 +304,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Simulate market data updates (500ms interval)
   setInterval(async () => {
-    // Generate mock tick data for development
-    const volatility = 0.25;
-    const tickChange = (Math.random() - 0.5) * volatility;
-    mockPrice += tickChange;
+    // If bridge is connected, mockPrice is already being updated by real data
+    // Otherwise, generate mock tick data for development
+    if (!ibkrConnected) {
+      const volatility = 0.25;
+      const tickChange = (Math.random() - 0.5) * volatility;
+      mockPrice += tickChange;
+    }
+    
     mockTick++;
 
     const isBuy = Math.random() > 0.5;
