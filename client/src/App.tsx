@@ -5,12 +5,14 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import TradingDashboard from "@/pages/trading-dashboard";
+import F1CommandCenter from "@/pages/f1-command-center";
 import NotFound from "@/pages/not-found";
 
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={TradingDashboard} />
+      <Route path="/" component={F1CommandCenter} />
+      <Route path="/classic" component={TradingDashboard} />
       <Route component={NotFound} />
     </Switch>
   );
