@@ -8,6 +8,28 @@ OrderFlowAI is a professional automated trading system for futures markets imple
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+### UI Improvements & IBKR Integration (October 28, 2025)
+- **Fixed UI Issues:**
+  - Removed duplicate ES symbol in price display header
+  - Fixed layout overlap between Tactical Chart and Account section by adding proper scroll behavior
+  - Ensured auto-trading toggle button is fully visible and functional
+  - Added IBKR Gateway connection status with instructions and download link
+
+- **IBKR Connection Helper:**
+  - Added real-time IBKR Gateway connection status indicator (green = connected, red = disconnected)
+  - When disconnected, displays helpful instructions for launching IB Gateway/TWS with API enabled (port 7497)
+  - Includes direct download link to Interactive Brokers Gateway
+  - Note: Web browsers cannot directly launch desktop applications for security reasons, so users must manually start IB Gateway
+
+### Advanced Features Implementation (October 2025)
+- Implemented 4 major enhancements to the PRO course trading system:
+  1. **Enhanced Order Flow Signal Detection** - Added 6 signal types (lack of participation, stacked imbalances, trapped traders, absorption, divergence, exhaustion)
+  2. **Minimal Tactical Chart** - Built lightweight chart showing CVA/DVA levels, VWAP bands, and absorption force field visuals
+  3. **High-Probability Trade Recommendation Engine** - Created `high_probability_setup_recognizer.ts` implementing 8 PRO Course setups with confidence scoring
+  4. **Auto-Trading Integration** - Connected recommendation engine to AutoTrader for automatic execution of high-confidence setups (75% minimum threshold)
+
 ## System Architecture
 
 ### Frontend

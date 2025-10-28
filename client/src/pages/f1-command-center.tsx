@@ -90,11 +90,13 @@ export default function F1CommandCenter() {
   // Auto-trading mutation
   const toggleAutoTradingMutation = useMutation({
     mutationFn: async (enabled: boolean) => {
-      return apiRequest("/api/auto-trading/toggle", {
+      const response = await fetch("/api/auto-trading/toggle", {
         method: "POST",
         body: JSON.stringify({ enabled }),
         headers: { "Content-Type": "application/json" },
       });
+      if (!response.ok) throw new Error("Failed to toggle auto-trading");
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/status"] });
