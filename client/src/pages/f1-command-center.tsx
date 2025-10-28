@@ -47,17 +47,32 @@ export default function F1CommandCenter() {
     refetchInterval: 1000,
   });
 
-  // TODO: Add PRO system endpoints
-  // const { data: compositeProfile } = useQuery<CompositeProfileData>({ queryKey: ["/api/composite-profile"] });
-  // const { data: valueMigration } = useQuery<ValueMigrationData>({ queryKey: ["/api/value-migration"] });
-  // const { data: hypothesis } = useQuery<DailyHypothesis>({ queryKey: ["/api/daily-hypothesis"] });
-  // const { data: orderFlowSignals } = useQuery<OrderFlowSignal[]>({ queryKey: ["/api/orderflow-signals"] });
+  // PRO system data
+  const { data: compositeProfile } = useQuery<CompositeProfileData>({ 
+    queryKey: ["/api/composite-profile"],
+    refetchInterval: 60000, // Update every minute
+  });
+  
+  const { data: valueMigration } = useQuery<ValueMigrationData>({ 
+    queryKey: ["/api/value-migration"],
+    refetchInterval: 10000, // Update every 10 seconds
+  });
+  
+  const { data: hypothesis } = useQuery<DailyHypothesis>({ 
+    queryKey: ["/api/daily-hypothesis"],
+    refetchInterval: 60000, // Update every minute
+  });
+  
+  const { data: orderFlowSignals } = useQuery<OrderFlowSignal[]>({ 
+    queryKey: ["/api/orderflow-signals"],
+    refetchInterval: 2000, // Update every 2 seconds
+  });
 
-  // Mock data for demonstration until PRO endpoints are built
-  const marketCondition = "DIRECTIONAL_BEARISH";
-  const buyPressure = 35;
-  const sellPressure = 75;
-  const deltaStrength = -420;
+  // Derive display values from PRO data
+  const marketCondition = hypothesis?.condition || "UNKNOWN";
+  const buyPressure = valueMigration ? Math.max(0, valueMigration.migration_strength * 10) : 50;
+  const sellPressure = valueMigration ? Math.max(0, -valueMigration.migration_strength * 10) : 50;
+  const deltaStrength = valueMigration ? Math.round(valueMigration.migration_strength * 100) : 0;
 
   return (
     <div className="h-screen flex flex-col bg-black text-green-400 font-mono overflow-hidden">

@@ -15,6 +15,11 @@ import { TimeAndSalesProcessor } from "./time_and_sales";
 import { DomProcessor } from "./dom_processor";
 import { VolumeProfileCalculator } from "./volume_profile";
 import { AbsorptionDetector } from "./absorption_detector";
+import { CompositeProfileManager } from "./composite_profile";
+import { ValueMigrationDetector } from "./value_migration_detector";
+import { HypothesisGenerator } from "./hypothesis_generator";
+import { OrderFlowSignalDetector } from "./orderflow_signal_detector";
+import type { OrderFlowSettings } from "./orderflow_strategy";
 import type {
   SystemStatus,
   MarketData,
@@ -25,11 +30,14 @@ import type {
   WebSocketMessage,
   SessionStats,
   KeyLevels,
-  OrderFlowSettings,
   AbsorptionEvent,
   DomSnapshot,
   TimeAndSalesEntry,
   VolumeProfile,
+  CompositeProfileData,
+  ValueMigrationData,
+  DailyHypothesis,
+  OrderFlowSignal,
 } from "@shared/schema";
 import { spawn } from "child_process";
 import { join, dirname } from "path";
@@ -51,22 +59,28 @@ const performanceAnalyzer = new PerformanceAnalyzer(); // Account performance an
 const timeAndSalesProcessor = new TimeAndSalesProcessor(100); // Keep last 100 transactions
 const domProcessor = new DomProcessor();
 const volumeProfileCalculator = new VolumeProfileCalculator();
-const absorptionDetector = new AbsorptionDetector({
-  min_volume_ratio: 2.0,
-  lookback_seconds: 10,
-  price_tolerance_ticks: 2
-});
+const absorptionDetector = new AbsorptionDetector(100, 50, 0.25); // maxTickHistory, maxEventHistory, tickSize
+
+// Initialize PRO Course Systems (Market/Volume Profile + Advanced Order Flow)
+const compositeProfileSystem = new CompositeProfileManager(5); // 5-day CVA
+const valueMigrationDetector = new ValueMigrationDetector();
+const hypothesisGenerator = new HypothesisGenerator();
+const orderFlowSignalDetector = new OrderFlowSignalDetector();
 
 // Default Order Flow Settings for AutoTrader
 const defaultOrderFlowSettings: OrderFlowSettings = {
-  absorption_min_ratio: 2.0,
-  absorption_lookback_seconds: 60,
+  absorption_threshold: 2.0,
+  absorption_lookback: 60,
+  dom_imbalance_threshold: 2.0,
   dom_depth_levels: 10,
-  dom_imbalance_ratio: 2.5,
-  tape_lookback_entries: 50,
-  tape_pressure_ratio: 1.5,
-  volume_profile_lookback_candles: 20,
-  min_confidence_score: 60
+  tape_volume_threshold: 50,
+  tape_ratio_threshold: 1.5,
+  tape_lookback_seconds: 60,
+  use_poc_magnet: true,
+  use_vah_val_boundaries: true,
+  stop_loss_ticks: 8,
+  take_profit_ticks: 16,
+  min_confidence: 60,
 };
 
 const autoTrader = new AutoTrader(defaultOrderFlowSettings); // Order flow-based trading strategy
@@ -751,6 +765,95 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Discord levels set error:", error);
       res.status(500).json({ error: "Failed to set Discord levels" });
+    }
+  });
+
+  // ==================== PRO COURSE ENDPOINTS ====================
+  // Market/Volume Profile + Advanced Order Flow Analysis
+
+  // GET /api/composite-profile - Get 5-day Composite Value Area
+  app.get("/api/composite-profile", async (req, res) => {
+    try {
+      const compositeData = compositeProfileSystem.getCompositeProfile();
+      res.json(compositeData || { 
+        composite_vah: 0, 
+        composite_val: 0, 
+        composite_poc: 0, 
+        total_volume: 0, 
+        days_included: 0,
+        oldest_day: Date.now(),
+        newest_day: Date.now(),
+        profile_shape: null
+      });
+    } catch (error) {
+      console.error("Composite profile error:", error);
+      res.status(500).json({ error: "Failed to retrieve composite profile" });
+    }
+  });
+
+  // GET /api/value-migration - Get Value Migration analysis (DVA vs CVA)
+  app.get("/api/value-migration", async (req, res) => {
+    try {
+      // Get current volume profile for DVA
+      const volumeProfile = await storage.getVolumeProfile();
+      if (!volumeProfile) {
+        return res.json(null);
+      }
+      
+      const compositeProfile = compositeProfileSystem.getCompositeProfile();
+      const migration = valueMigrationDetector.detectMigration(volumeProfile, compositeProfile);
+      res.json(migration);
+    } catch (error) {
+      console.error("Value migration error:", error);
+      res.status(500).json({ error: "Failed to retrieve value migration data" });
+    }
+  });
+
+  // GET /api/daily-hypothesis - Get pre-market hypothesis and trade plan
+  app.get("/api/daily-hypothesis", async (req, res) => {
+    try {
+      // Get current market data for hypothesis generation
+      const volumeProfile = await storage.getVolumeProfile();
+      const marketData = await storage.getMarketData();
+      const vwapData = vwapCalculator.getVWAP();
+      
+      if (!volumeProfile || !marketData) {
+        return res.json(null);
+      }
+      
+      const compositeProfile = compositeProfileSystem.getCompositeProfile();
+      const migration = valueMigrationDetector.detectMigration(volumeProfile, compositeProfile);
+      
+      // For now, use mock overnight data (would come from pre-market session in production)
+      const overnightHigh = marketData.last_price * 1.005;
+      const overnightLow = marketData.last_price * 0.995;
+      const openPrice = marketData.last_price;
+      
+      const hypothesis = hypothesisGenerator.generateHypothesis(
+        overnightHigh,
+        overnightLow,
+        openPrice,
+        compositeProfile,
+        null, // yesterdayProfile - would be stored from previous day
+        migration,
+        vwapData
+      );
+      res.json(hypothesis);
+    } catch (error) {
+      console.error("Daily hypothesis error:", error);
+      res.status(500).json({ error: "Failed to retrieve daily hypothesis" });
+    }
+  });
+
+  // GET /api/orderflow-signals - Get advanced order flow signals
+  app.get("/api/orderflow-signals", async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 50;
+      const signals = orderFlowSignalDetector.getRecentSignals(limit);
+      res.json(signals);
+    } catch (error) {
+      console.error("Order flow signals error:", error);
+      res.status(500).json({ error: "Failed to retrieve order flow signals" });
     }
   });
 
