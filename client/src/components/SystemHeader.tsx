@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import type { SystemStatus, MarketData } from "@shared/schema";
-import { Activity, TrendingUp, DollarSign, Clock, AlertCircle } from "lucide-react";
+import { Activity, TrendingUp, Clock, AlertCircle } from "lucide-react";
 
 interface SystemHeaderProps {
   status: SystemStatus | null;
@@ -93,8 +93,7 @@ export function SystemHeader({ status, marketData }: SystemHeaderProps) {
 
       <div className="flex items-center gap-6">
         <div className="flex items-center gap-2" data-testid="text-capital">
-          <DollarSign className="h-4 w-4 text-muted-foreground" />
-          <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Capital</span>
+          <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Account</span>
           <span className="text-base font-semibold font-mono tabular-nums">
             {status ? formatCurrency(status.capital) : "£0.00"}
           </span>
