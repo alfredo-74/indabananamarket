@@ -276,23 +276,6 @@ export default function F1CommandCenter() {
                 <Power className="h-3 w-3 mr-1" />
                 {status?.auto_trading_enabled ? "DISABLE AUTO-TRADING" : "ENABLE AUTO-TRADING"}
               </Button>
-
-              {!status?.ibkr_connected && (
-                <div className="text-xs text-gray-500 border-t border-gray-800 pt-2 space-y-1">
-                  <div className="text-yellow-400">⚠ IBKR Gateway Required</div>
-                  <div className="text-gray-600">
-                    Launch IB Gateway/TWS on your computer with API enabled (port 7497 for paper trading)
-                  </div>
-                  <a 
-                    href="https://www.interactivebrokers.com/en/trading/ibgateway-stable.php"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-green-400 hover:text-green-300 underline block"
-                  >
-                    Download IB Gateway →
-                  </a>
-                </div>
-              )}
             </div>
           </Card>
 
