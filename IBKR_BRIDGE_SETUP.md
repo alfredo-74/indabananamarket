@@ -21,6 +21,8 @@ Your ChromeOS Computer          →          Replit Cloud
 
 The bridge script runs on your computer and forwards price data from IB Gateway to Replit.
 
+**NEW:** The bridge now automatically detects the correct ES futures contract month - no manual updates needed!
+
 ## What You Need
 
 1. **IB Gateway** installed on your ChromeOS
@@ -29,17 +31,18 @@ The bridge script runs on your computer and forwards price data from IB Gateway 
 
 ## Step-by-Step Setup
 
-### Step 1: Install Python Libraries
+### Step 1: Install Python Libraries (One-Time Setup)
 
-Open your Linux terminal on ChromeOS and run:
-
-```bash
-pip3 install ib_insync websockets
-```
-
-If that doesn't work, try:
+Open your Linux terminal on ChromeOS and create a virtual environment:
 
 ```bash
+# Create virtual environment (only once)
+python3 -m venv ibkr_env
+
+# Activate it
+source ibkr_env/bin/activate
+
+# Install required packages
 pip install ib_insync websockets
 ```
 
@@ -59,54 +62,59 @@ pip install ib_insync websockets
 
 ### Step 3: Download the Bridge Script
 
-Download the file `ibkr_bridge_download.py` from this Replit project to your ChromeOS.
-
-You can copy the code from the file in this project and save it to your Downloads folder.
-
-### Step 4: Find Your Replit URL
-
-Your trading system is running at a URL like:
-
-```
-https://[something].replit.dev
-```
-
-Look in your browser address bar when you're viewing the trading system - copy that full URL.
-
-### Step 5: Run the Bridge
-
-In your Linux terminal on ChromeOS:
-
-1. Navigate to where you saved the bridge script:
+1. In this Replit project, find the file `ibkr_bridge_download.py`
+2. Copy all the code from that file
+3. On your ChromeOS, create a new file:
    ```bash
-   cd ~/Downloads
+   nano ibkr_bridge_download.py
    ```
+4. Paste the code and save (Ctrl+X, then Y, then Enter)
 
-2. Run the script with your Replit URL:
-   ```bash
-   python3 ibkr_bridge_download.py wss://[your-replit-url].replit.dev/bridge
-   ```
+### Step 4: Run the Bridge
 
-**Example:**
+Make sure your virtual environment is activated:
+
 ```bash
-python3 ibkr_bridge_download.py wss://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.replit.dev/bridge
+source ibkr_env/bin/activate
 ```
 
-Note: Change `https://` to `wss://` and add `/bridge` at the end!
+Then run the bridge with your Replit URL:
+
+```bash
+python3 ibkr_bridge_download.py wss://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev/bridge
+```
+
+**Important:** 
+- Use `wss://` (not `https://`)
+- Add `/bridge` at the end
+- Use your actual Replit URL from your browser address bar
 
 ## What You Should See
 
 ### When the Bridge Starts Successfully:
 
-In your terminal, you'll see:
-
 ```
-Connecting to IB Gateway at localhost:7497...
+============================================================
+IBKR BRIDGE - Real-time Data Forwarder
+============================================================
+
+📝 Using IB Gateway credentials from environment
+🌐 Replit URL: wss://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev/bridge
+
+Connecting to IB Gateway on 127.0.0.1:7497...
 ✓ Connected to IB Gateway
-✓ Connected to Replit
-Streaming market data...
-ES @ 6004.25 → Sent to Replit
-ES @ 6004.50 → Sent to Replit
+📅 Calculated front month contract: ES 202503
+✓ Contract qualified: ES 202503
+✓ Subscribed to ES market data
+✓ Connected to Replit trading system
+
+============================================================
+✓ BRIDGE ACTIVE - Forwarding ES data to Replit
+Press Ctrl+C to stop
+============================================================
+
+📊 ES @ 6004.25 → Sent to Replit
+📊 ES @ 6004.50 → Sent to Replit
 ```
 
 ### In Your Trading System:
@@ -124,39 +132,48 @@ ES @ 6004.50 → Sent to Replit
 - Check it's on port **7497** (not 7496 or 4002)
 - In IB Gateway settings, verify "Enable ActiveX and Socket Clients" is checked
 
-### "WebSocket connection failed"
+### "ERROR: URL must start with wss://"
 
 **Fix:**
-- Double-check your Replit URL is correct
-- Make sure you used `wss://` (not `https://`)
-- Make sure you added `/bridge` at the end
-- Check your Replit app is running (refresh the page)
+- Use `wss://` instead of `https://`
+- Correct format: `wss://your-project.replit.dev/bridge`
+
+### "server rejected WebSocket connection: HTTP 400"
+
+**Fix:**
+- Make sure your Replit URL is correct
+- Check it ends with `/bridge`
+- Verify your trading system is running on Replit
 
 ### No market data showing
 
 **Fix:**
+- The bridge will automatically find the front month ES contract
 - Ensure you're logged into IB Gateway paper trading mode
 - ES futures should have free delayed data
 - Try restarting the bridge script
 
-### Bridge keeps disconnecting
+### "No security definition has been found"
 
-**Fix:**
-- Check your internet connection
-- Keep the browser tab with your trading system open
-- IB Gateway sometimes needs to be restarted
+**Don't worry!** The script has automatic fallback:
+- It first tries to calculate the current front month
+- If that fails, it lets IB Gateway auto-select the contract
+- You should still see "✓ Subscribed to ES market data"
 
 ## Keeping the Bridge Running
 
-The bridge needs to stay running to get live data. Here are two options:
+**Each time you start the bridge:**
 
-**Option 1: Simple (Keep Terminal Open)**
-- Just leave the terminal window open
-- Press Ctrl+C to stop it when you're done
+1. Open terminal on ChromeOS
+2. Activate virtual environment: `source ibkr_env/bin/activate`
+3. Run: `python3 ibkr_bridge_download.py wss://[your-url]/bridge`
+4. Keep terminal open while trading
+5. Press Ctrl+C to stop
 
-**Option 2: Run in Background**
+**Optional - Run in background:**
 ```bash
 screen -S ibkr
+source ibkr_env/bin/activate
 python3 ibkr_bridge_download.py wss://[your-url]/bridge
 ```
 - Press Ctrl+A then D to detach
@@ -166,7 +183,7 @@ python3 ibkr_bridge_download.py wss://[your-url]/bridge
 
 ### With Bridge Connected (Live Data):
 - Green "IBKR Connected" indicator
-- Real ES prices from IB Gateway
+- Real ES prices from IB Gateway (current front month contract)
 - All trading algorithms use real market data
 - Auto-trading can execute real (paper) trades
 
@@ -189,6 +206,7 @@ Your IBKR password is only used on your local computer and never sent to Replit.
 If something isn't working:
 
 1. Check the terminal output for error messages
-2. Verify IB Gateway is logged in and active
-3. Make sure you're using the correct Replit URL with `wss://` and `/bridge`
-4. Try restarting both IB Gateway and the bridge script
+2. Verify IB Gateway is logged in and active (port 7497)
+3. Make sure you're using `wss://` URL format with `/bridge` at the end
+4. Activate virtual environment: `source ibkr_env/bin/activate`
+5. Try restarting both IB Gateway and the bridge script
