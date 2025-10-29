@@ -86,9 +86,10 @@ export default function MinimalProfileChart({
         label: "Price",
         data: candleData,
         borderColor: "#22c55e",
-        backgroundColor: {
-          up: "rgba(34, 197, 94, 0.3)",
-          down: "rgba(239, 68, 68, 0.3)",
+        color: {
+          up: "rgba(34, 197, 94, 0.8)",
+          down: "rgba(239, 68, 68, 0.8)",
+          unchanged: "rgba(156, 163, 175, 0.8)",
         },
         barThickness: 2,
       },
@@ -125,12 +126,12 @@ export default function MinimalProfileChart({
     }
 
     // CVA levels (5-day composite - cyan)
-    if (cva) {
+    if (cva && cva.poc > 0) {
       datasets.push(
         {
           type: "line" as const,
           label: "CVA POC",
-          data: candles.map((c) => ({ x: c.timestamp, y: cva.poc })),
+          data: validCandles.map((c) => ({ x: c.timestamp, y: cva.poc })),
           borderColor: "rgba(6, 182, 212, 0.8)",
           borderWidth: 2,
           borderDash: [5, 5],
@@ -139,7 +140,7 @@ export default function MinimalProfileChart({
         {
           type: "line" as const,
           label: "CVA VAH",
-          data: candles.map((c) => ({ x: c.timestamp, y: cva.vah })),
+          data: validCandles.map((c) => ({ x: c.timestamp, y: cva.vah })),
           borderColor: "rgba(6, 182, 212, 0.5)",
           borderWidth: 1,
           borderDash: [3, 3],
@@ -148,7 +149,7 @@ export default function MinimalProfileChart({
         {
           type: "line" as const,
           label: "CVA VAL",
-          data: candles.map((c) => ({ x: c.timestamp, y: cva.val })),
+          data: validCandles.map((c) => ({ x: c.timestamp, y: cva.val })),
           borderColor: "rgba(6, 182, 212, 0.5)",
           borderWidth: 1,
           borderDash: [3, 3],
@@ -158,12 +159,12 @@ export default function MinimalProfileChart({
     }
 
     // DVA levels (daily value area - yellow)
-    if (dva) {
+    if (dva && dva.poc > 0) {
       datasets.push(
         {
           type: "line" as const,
           label: "DVA POC",
-          data: candles.map((c) => ({ x: c.timestamp, y: dva.poc })),
+          data: validCandles.map((c) => ({ x: c.timestamp, y: dva.poc })),
           borderColor: "rgba(234, 179, 8, 0.8)",
           borderWidth: 2,
           pointRadius: 0,
@@ -171,7 +172,7 @@ export default function MinimalProfileChart({
         {
           type: "line" as const,
           label: "DVA VAH",
-          data: candles.map((c) => ({ x: c.timestamp, y: dva.vah })),
+          data: validCandles.map((c) => ({ x: c.timestamp, y: dva.vah })),
           borderColor: "rgba(234, 179, 8, 0.5)",
           borderWidth: 1,
           pointRadius: 0,
@@ -179,7 +180,7 @@ export default function MinimalProfileChart({
         {
           type: "line" as const,
           label: "DVA VAL",
-          data: candles.map((c) => ({ x: c.timestamp, y: dva.val })),
+          data: validCandles.map((c) => ({ x: c.timestamp, y: dva.val })),
           borderColor: "rgba(234, 179, 8, 0.5)",
           borderWidth: 1,
           pointRadius: 0,
@@ -188,12 +189,12 @@ export default function MinimalProfileChart({
     }
 
     // VWAP with SD bands (white)
-    if (vwap) {
+    if (vwap && vwap.value) {
       datasets.push(
         {
           type: "line" as const,
           label: "VWAP",
-          data: candles.map((c) => ({ x: c.timestamp, y: vwap.value })),
+          data: validCandles.map((c) => ({ x: c.timestamp, y: vwap.value })),
           borderColor: "rgba(255, 255, 255, 0.8)",
           borderWidth: 1,
           pointRadius: 0,
@@ -201,7 +202,7 @@ export default function MinimalProfileChart({
         {
           type: "line" as const,
           label: "VWAP +SD1",
-          data: candles.map((c) => ({ x: c.timestamp, y: vwap.sd1_upper })),
+          data: validCandles.map((c) => ({ x: c.timestamp, y: vwap.sd1_upper })),
           borderColor: "rgba(255, 255, 255, 0.3)",
           borderWidth: 1,
           borderDash: [2, 2],
@@ -210,7 +211,7 @@ export default function MinimalProfileChart({
         {
           type: "line" as const,
           label: "VWAP -SD1",
-          data: candles.map((c) => ({ x: c.timestamp, y: vwap.sd1_lower })),
+          data: validCandles.map((c) => ({ x: c.timestamp, y: vwap.sd1_lower })),
           borderColor: "rgba(255, 255, 255, 0.3)",
           borderWidth: 1,
           borderDash: [2, 2],
