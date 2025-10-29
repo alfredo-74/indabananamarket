@@ -70,13 +70,13 @@ export default function MinimalProfileChart({
       c: c.close,
     }));
 
-    // Prepare absorption markers (force field effect)
+    // Prepare absorption markers (force field effect) - filter out invalid timestamps
     const buyAbsorption = absorptionEvents
-      ?.filter((e) => e.side === "BUY_ABSORPTION")
+      ?.filter((e) => e.side === "BUY_ABSORPTION" && e.timestamp > 0)
       .map((e) => ({ x: e.timestamp, y: e.price })) || [];
     
     const sellAbsorption = absorptionEvents
-      ?.filter((e) => e.side === "SELL_ABSORPTION")
+      ?.filter((e) => e.side === "SELL_ABSORPTION" && e.timestamp > 0)
       .map((e) => ({ x: e.timestamp, y: e.price })) || [];
 
     const datasets: any[] = [
