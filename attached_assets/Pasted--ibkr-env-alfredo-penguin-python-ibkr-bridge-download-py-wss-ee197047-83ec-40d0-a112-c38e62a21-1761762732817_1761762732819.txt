@@ -1,0 +1,31 @@
+(ibkr_env) alfredo@penguin:~$ python ibkr_bridge_download.py wss://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.replit.dev/bridge
+
+============================================================
+IBKR BRIDGE - Real-time Data Forwarder
+============================================================
+
+📝 IB Gateway Credentials:
+Username: fredpaper74
+Password: m!j8r5C%WF3W-#2
+
+🌐 Replit Trading System URL:
+(e.g., https://yourproject.replit.app)
+URL: https://bananamarket.replit.app
+2025-10-29 18:31:47,430 - INFO - Connecting to IB Gateway on 127.0.0.1:7497...
+2025-10-29 18:31:47,430 - INFO - Connecting to 127.0.0.1:7497 with clientId 1...
+2025-10-29 18:31:47,431 - INFO - Connected
+2025-10-29 18:31:47,498 - INFO - Logged on to server version 176
+2025-10-29 18:31:47,556 - INFO - Warning 2104, reqId -1: Market data farm connection is OK:usfarm
+2025-10-29 18:31:47,556 - INFO - Warning 2106, reqId -1: HMDS data farm connection is OK:ushmds
+2025-10-29 18:31:47,556 - INFO - Warning 2158, reqId -1: Sec-def data farm connection is OK:secdefil
+2025-10-29 18:31:47,556 - INFO - API connection ready
+2025-10-29 18:31:47,974 - INFO - Synchronization complete
+2025-10-29 18:31:47,974 - INFO - ✓ Connected to IB Gateway
+2025-10-29 18:31:48,114 - ERROR - Error 200, reqId 3: No security definition has been found for the request, contract: Future(symbol='ES', lastTradeDateOrContractMonth='202412', exchange='CME')
+2025-10-29 18:31:48,114 - WARNING - Unknown contract: Future(symbol='ES', lastTradeDateOrContractMonth='202412', exchange='CME')
+2025-10-29 18:31:48,114 - INFO - ✓ Contract qualified: Future(symbol='ES', lastTradeDateOrContractMonth='202412', exchange='CME')
+2025-10-29 18:31:48,115 - INFO - ✓ Subscribed to ES market data
+2025-10-29 18:31:48,115 - INFO - Connecting to Replit at wss://bananamarket.replit.app/bridge...
+2025-10-29 18:31:48,303 - ERROR - Error 200, reqId 4: No security definition has been found for the request, contract: Future(symbol='ES', lastTradeDateOrContractMonth='202412', exchange='CME')
+2025-10-29 18:31:55,016 - ERROR - Failed to connect to Replit: server rejected WebSocket connection: HTTP 400
+(ibkr_env) alfredo@penguin:~$ 
