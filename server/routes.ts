@@ -132,8 +132,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Initialize WebSocket server on /bridge path (for IBKR bridge from user's computer)
   const bridgeWss = new WebSocketServer({ 
     server: httpServer, 
-    path: '/bridge' 
+    path: '/bridge',
+    verifyClient: (info) => {
+      console.log(`[BRIDGE] Connection attempt from: ${info.req.headers.origin || 'unknown'}`);
+      console.log(`[BRIDGE] Path: ${info.req.url}`);
+      return true; // Accept all connections for now
+    }
   });
+
+  bridgeWss.on('error', (error) => {
+    console.error('[BRIDGE] WebSocket server error:', error);
+  });
+
+  console.log('✓ Bridge WebSocket server initialized on /bridge');
 
   // Bridge connection handler
   bridgeWss.on('connection', (ws: WebSocket) => {

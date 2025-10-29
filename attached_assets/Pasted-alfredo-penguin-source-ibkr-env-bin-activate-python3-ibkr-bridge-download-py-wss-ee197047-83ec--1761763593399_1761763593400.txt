@@ -1,0 +1,48 @@
+alfredo@penguin:~$ source ibkr_env/bin/activate
+python3 ibkr_bridge_download.py wss://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev/bridge
+
+============================================================
+IBKR BRIDGE - Real-time Data Forwarder
+============================================================
+
+📝 Using IB Gateway credentials from environment
+🌐 Replit URL: wss://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev/bridge
+
+2025-10-29 18:46:02,273 - INFO - Connecting to IB Gateway on 127.0.0.1:7497...
+2025-10-29 18:46:02,273 - INFO - Connecting to 127.0.0.1:7497 with clientId 1...
+2025-10-29 18:46:02,274 - INFO - Connected
+2025-10-29 18:46:02,284 - INFO - Logged on to server version 176
+2025-10-29 18:46:02,292 - INFO - Warning 2104, reqId -1: Market data farm connection is OK:usfarm
+2025-10-29 18:46:02,292 - INFO - Warning 2107, reqId -1: HMDS data farm connection is inactive but should be available upon demand.ushmds
+2025-10-29 18:46:02,292 - INFO - Warning 2158, reqId -1: Sec-def data farm connection is OK:secdefil
+2025-10-29 18:46:02,292 - INFO - API connection ready
+2025-10-29 18:46:02,701 - INFO - Synchronization complete
+2025-10-29 18:46:02,701 - INFO - ✓ Connected to IB Gateway
+2025-10-29 18:46:02,701 - INFO - 📅 Calculated front month contract: ES 202512
+2025-10-29 18:46:03,362 - INFO - ✓ Contract qualified: ES 202512
+2025-10-29 18:46:03,362 - INFO - ✓ Subscribed to ES market data
+2025-10-29 18:46:03,362 - INFO - Connecting to Replit at wss://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev/bridge...
+2025-10-29 18:46:03,396 - INFO - Warning 2119, reqId -1: Market data farm is connecting:usfuture
+2025-10-29 18:46:04,117 - ERROR - Failed to connect to Replit: server rejected WebSocket connection: HTTP 400
+2025-10-29 18:46:04,117 - ERROR - Make sure the URL is correct: wss://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev/bridge
+2025-10-29 18:46:04,117 - ERROR - URL should be like: wss://your-project.replit.dev/bridge
+2025-10-29 18:46:04,130 - INFO - Disconnecting from 127.0.0.1:7497, 232 B sent in 10 messages, 19.3 kB received in 397 messages, session time 1.86 s.
+2025-10-29 18:46:04,130 - INFO - Disconnecting
+Exception ignored in: <function IB.__del__ at 0x7fa58a1263e0>
+Traceback (most recent call last):
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/ib_insync/ib.py", line 243, in __del__
+    self.disconnect()
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/ib_insync/ib.py", line 297, in disconnect
+    self.client.disconnect()
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/ib_insync/client.py", line 232, in disconnect
+    self.conn.disconnect()
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/ib_insync/connection.py", line 45, in disconnect
+    self.transport.close()
+  File "/usr/lib/python3.11/asyncio/selector_events.py", line 839, in close
+    self._loop.call_soon(self._call_connection_lost, None)
+  File "/usr/lib/python3.11/asyncio/base_events.py", line 761, in call_soon
+    self._check_closed()
+  File "/usr/lib/python3.11/asyncio/base_events.py", line 519, in _check_closed
+    raise RuntimeError('Event loop is closed')
+RuntimeError: Event loop is closed
+(ibkr_env) alfredo@penguin:~$ 
