@@ -106,16 +106,19 @@ class IBKRBridge:
                 else:
                     raise Exception("Failed to qualify ES contract")
             
-            # Subscribe to DELAYED market data (free for paper trading accounts)
+            # Try real-time data first, will auto-fallback to delayed if not subscribed
             # reqMktData(contract, genericTickList, snapshot, regulatorySnapshot, mktDataOptions)
             self.ib.reqMktData(self.es_contract, '', False, False)
             
-            # Request delayed market data (required for accounts without real-time subscription)
-            self.ib.reqMarketDataType(3)  # 3 = Delayed data (15 min), 1 = Live data, 2 = Frozen data
-            logger.info("✓ Subscribed to ES delayed market data (15-min delay)")
+            # Request LIVE market data first (will use if subscribed)
+            self.ib.reqMarketDataType(1)  # 1 = Live data, 3 = Delayed (15 min), 2 = Frozen
+            logger.info("✓ Requested real-time market data (will auto-switch to delayed if not subscribed)")
             
             # Setup tick callback
             self.ib.pendingTickersEvent += self.on_tick
+            
+            # Setup error handler to detect if we need delayed data
+            self.ib.errorEvent += self.on_error
             
             return True
         except Exception as e:
@@ -135,6 +138,23 @@ class IBKRBridge:
         except Exception as e:
             logger.error(f"Failed to send data to Replit: {e}")
             return False
+    
+    def on_error(self, reqId, errorCode, errorString, contract):
+        """Handle IBKR errors - auto-switch to delayed data if needed"""
+        if errorCode == 354:
+            # Error 354: Market data not subscribed - switch to delayed
+            logger.warning("⚠ Real-time data not available - switching to delayed data (15-min delay)")
+            self.ib.reqMarketDataType(3)  # Switch to delayed data
+            logger.info("✓ Now using delayed market data")
+        elif errorCode == 2119:
+            # Just connecting to data farm - informational only
+            logger.info(f"Market data farm connecting...")
+        elif errorCode in [2104, 2106, 2158]:
+            # Connection OK messages - informational
+            pass
+        else:
+            # Log other errors
+            logger.info(f"IBKR Error {errorCode}: {errorString}")
     
     def on_tick(self, tickers):
         """Called when new tick data arrives from IB Gateway"""
