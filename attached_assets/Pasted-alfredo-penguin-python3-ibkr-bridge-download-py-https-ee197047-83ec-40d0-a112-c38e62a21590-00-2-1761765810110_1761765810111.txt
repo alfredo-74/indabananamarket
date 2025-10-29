@@ -1,0 +1,57 @@
+alfredo@penguin:~$ python3 ibkr_bridge_download.py https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
+
+============================================================
+IBKR BRIDGE - Real-time Data Forwarder
+============================================================
+
+🌐 Replit URL: https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
+
+2025-10-29 19:22:19,140 - INFO - Connecting to IB Gateway on 127.0.0.1:7497...
+2025-10-29 19:22:19,140 - INFO - Connecting to 127.0.0.1:7497 with clientId 1...
+2025-10-29 19:22:19,140 - INFO - Connected
+2025-10-29 19:22:19,145 - INFO - Logged on to server version 176
+2025-10-29 19:22:19,186 - INFO - Warning 2104, reqId -1: Market data farm connection is OK:usfarm
+2025-10-29 19:22:19,186 - INFO - Warning 2107, reqId -1: HMDS data farm connection is inactive but should be available upon demand.ushmds
+2025-10-29 19:22:19,186 - INFO - Warning 2158, reqId -1: Sec-def data farm connection is OK:secdefil
+2025-10-29 19:22:19,187 - INFO - API connection ready
+2025-10-29 19:22:19,491 - INFO - Synchronization complete
+2025-10-29 19:22:19,492 - INFO - ✓ Connected to IB Gateway
+2025-10-29 19:22:19,492 - INFO - 📅 Calculated front month contract: ES 202512
+2025-10-29 19:22:19,647 - INFO - ✓ Contract qualified: ES 202512
+2025-10-29 19:22:19,647 - INFO - ✓ Subscribed to ES delayed market data (15-min delay)
+2025-10-29 19:22:19,647 - INFO - Connecting to Replit at https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev...
+2025-10-29 19:22:20,311 - INFO - ✓ Connected to Replit trading system
+
+============================================================
+✓ BRIDGE ACTIVE - Forwarding ES data to Replit
+Press Ctrl+C to stop
+============================================================
+
+2025-10-29 19:22:20,312 - INFO - Warning 2119, reqId -1: Market data farm is connecting:usfuture
+2025-10-29 19:22:20,465 - INFO - Warning 2104, reqId -1: Market data farm connection is OK:usfuture
+2025-10-29 19:22:20,683 - INFO - Warning 10167, reqId 4: Requested market data is not subscribed. Displaying delayed market data., contract: Future(conId=495512563, symbol='ES', lastTradeDateOrContractMonth='20251219', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ5', tradingClass='ES')
+2025-10-29 19:22:21,152 - INFO - 📊 ES @ 6920.25 → Sent to Replit
+2025-10-29 19:22:21,311 - INFO - 📊 ES @ 6920.25 → Sent to Replit
+2025-10-29 19:22:21,781 - INFO - 📊 ES @ 6920.25 → Sent to Replit
+2025-10-29 19:22:21,928 - INFO - 📊 ES @ 6918.75 → Sent to Replit
+2025-10-29 19:22:24,688 - INFO - 📊 ES @ 6918.75 → Sent to Replit
+2025-10-29 19:22:26,739 - INFO - 📊 ES @ 6918.75 → Sent to Replit
+2025-10-29 19:22:26,898 - INFO - 📊 ES @ 6919.75 → Sent to Replit
+2025-10-29 19:22:31,670 - INFO - 📊 ES @ 6919.50 → Sent to Replit
+2025-10-29 19:22:36,715 - INFO - 📊 ES @ 6919.50 → Sent to Replit
+2025-10-29 19:22:36,859 - INFO - 📊 ES @ 6919.00 → Sent to Replit
+2025-10-29 19:22:41,724 - INFO - 📊 ES @ 6918.00 → Sent to Replit
+2025-10-29 19:22:41,869 - INFO - 📊 ES @ 6918.00 → Sent to Replit
+2025-10-29 19:22:46,735 - INFO - 📊 ES @ 6915.75 → Sent to Replit
+2025-10-29 19:22:46,882 - INFO - 📊 ES @ 6915.75 → Sent to Replit
+2025-10-29 19:22:51,746 - INFO - 📊 ES @ 6915.00 → Sent to Replit
+2025-10-29 19:22:51,892 - INFO - 📊 ES @ 6915.00 → Sent to Replit
+2025-10-29 19:22:54,747 - INFO - 📊 ES @ 6915.00 → Sent to Replit
+2025-10-29 19:22:56,671 - INFO - 📊 ES @ 6914.75 → Sent to Replit
+2025-10-29 19:22:56,819 - INFO - 📊 ES @ 6914.75 → Sent to Replit
+2025-10-29 19:23:01,668 - INFO - 📊 ES @ 6913.75 → Sent to Replit
+2025-10-29 19:23:01,813 - INFO - 📊 ES @ 6913.75 → Sent to Replit
+2025-10-29 19:23:06,701 - INFO - 📊 ES @ 6915.75 → Sent to Replit
+2025-10-29 19:23:06,846 - INFO - 📊 ES @ 6915.75 → Sent to Replit
+2025-10-29 19:23:11,666 - INFO - 📊 ES @ 6915.75 → Sent to Replit
+2025-10-29 19:23:11,812 - INFO - 📊 ES @ 6915.75 → Sent to Replit
