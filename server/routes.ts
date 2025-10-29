@@ -129,56 +129,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   }
 
-  // Initialize WebSocket server on /bridge path (for IBKR bridge from user's computer)
-  const bridgeWss = new WebSocketServer({ 
-    server: httpServer, 
-    path: '/bridge',
-    verifyClient: (info) => {
-      console.log(`[BRIDGE] Connection attempt from: ${info.req.headers.origin || 'unknown'}`);
-      console.log(`[BRIDGE] Path: ${info.req.url}`);
-      return true; // Accept all connections for now
-    }
-  });
+  // HTTP endpoint for IBKR bridge (more reliable than WebSocket for external connections)
+  let bridgeLastHeartbeat = 0;
+  const BRIDGE_TIMEOUT_MS = 10000; // 10 seconds without data = disconnected
 
-  bridgeWss.on('error', (error) => {
-    console.error('[BRIDGE] WebSocket server error:', error);
-  });
-
-  console.log('✓ Bridge WebSocket server initialized on /bridge');
-
-  // Bridge connection handler
-  bridgeWss.on('connection', (ws: WebSocket) => {
-    console.log('✓ IBKR Bridge connected from user computer');
-    
-    ws.on('message', async (data: Buffer) => {
-      try {
-        const message = JSON.parse(data.toString());
-        
-        if (message.type === 'handshake') {
-          console.log('✓ Bridge handshake received');
+  app.post('/api/bridge/data', async (req, res) => {
+    try {
+      const message = req.body;
+      
+      if (message.type === 'handshake') {
+        console.log('✓ IBKR Bridge connected via HTTP');
+        ibkrConnected = true;
+        bridgeLastHeartbeat = Date.now();
+        const status = await storage.getSystemStatus();
+        if (status) {
+          status.ibkr_connected = true;
+          status.market_data_active = true;
+          status.data_delay_seconds = 0;
+          await storage.setSystemStatus(status);
+        }
+        res.json({ type: 'ack', message: 'Connected to trading system' });
+      }
+      else if (message.type === 'market_data') {
+        mockPrice = message.last_price;
+        bridgeLastHeartbeat = Date.now();
+        if (!ibkrConnected) {
+          console.log('✓ IBKR Bridge reconnected via HTTP');
           ibkrConnected = true;
           const status = await storage.getSystemStatus();
           if (status) {
             status.ibkr_connected = true;
             status.market_data_active = true;
-            status.data_delay_seconds = 0; // Real-time data from IB Gateway
+            status.data_delay_seconds = 0;
             await storage.setSystemStatus(status);
           }
-          ws.send(JSON.stringify({ type: 'ack', message: 'Connected to trading system' }));
         }
-        else if (message.type === 'market_data') {
-          // Update mockPrice with real data from IB Gateway
-          // The existing setInterval loop will handle all the processing
-          mockPrice = message.last_price;
-          console.log(`[BRIDGE] Price update: ${mockPrice.toFixed(2)}`);
-        }
-      } catch (error) {
-        console.error('Bridge message error:', error);
+        res.json({ type: 'ack' });
       }
-    });
+      else {
+        res.json({ type: 'ack' });
+      }
+    } catch (error) {
+      console.error('Bridge data error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
 
-    ws.on('close', async () => {
-      console.log('✗ IBKR Bridge disconnected');
+  // Check for bridge timeout every 5 seconds
+  setInterval(async () => {
+    if (ibkrConnected && Date.now() - bridgeLastHeartbeat > BRIDGE_TIMEOUT_MS) {
+      console.log('✗ IBKR Bridge timeout - no data received');
       ibkrConnected = false;
       const status = await storage.getSystemStatus();
       if (status) {
@@ -186,12 +186,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         status.market_data_active = false;
         await storage.setSystemStatus(status);
       }
-    });
+    }
+  }, 5000);
 
-    ws.on('error', (error) => {
-      console.error('Bridge WebSocket error:', error);
-    });
-  });
+  console.log('✓ Bridge HTTP endpoint initialized at /api/bridge/data');
 
   // Initialize system status with $2,000 starting capital (default before IBKR connection)
   // NOTE: Capital will be updated from IBKR account balance when connection is established

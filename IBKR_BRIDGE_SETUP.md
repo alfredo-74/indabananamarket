@@ -14,19 +14,19 @@ Your ChromeOS Computer          →          Replit Cloud
          │                                         │
          │                                         │
     ┌────▼──────────┐                             │
-    │ Bridge Script │─────WebSocket Connection────┘
+    │ Bridge Script │────────HTTP Connection──────┘
     │ (Python)      │
     └───────────────┘
 ```
 
-The bridge script runs on your computer and forwards price data from IB Gateway to Replit.
+The bridge script runs on your computer and forwards price data from IB Gateway to Replit using simple HTTP requests.
 
 **NEW:** The bridge now automatically detects the correct ES futures contract month - no manual updates needed!
 
 ## What You Need
 
 1. **IB Gateway** installed on your ChromeOS
-2. **Python 3** with two libraries: `ib_insync` and `websockets`
+2. **Python 3** with two libraries: `ib_insync` and `requests`
 3. **Your IBKR paper trading account** (username: fredpaper74)
 
 ## Step-by-Step Setup
@@ -43,7 +43,7 @@ python3 -m venv ibkr_env
 source ibkr_env/bin/activate
 
 # Install required packages
-pip install ib_insync websockets
+pip install ib_insync requests
 ```
 
 ### Step 2: Start IB Gateway
@@ -81,13 +81,12 @@ source ibkr_env/bin/activate
 Then run the bridge with your Replit URL:
 
 ```bash
-python3 ibkr_bridge_download.py wss://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev/bridge
+python3 ibkr_bridge_download.py https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
 ```
 
 **Important:** 
-- Use `wss://` (not `https://`)
-- Add `/bridge` at the end
-- Use your actual Replit URL from your browser address bar
+- Use `https://` (your regular Replit URL)
+- Just copy it from your browser address bar - that's it!
 
 ## What You Should See
 
@@ -98,14 +97,14 @@ python3 ibkr_bridge_download.py wss://ee197047-83ec-40d0-a112-c38e62a21590-00-2l
 IBKR BRIDGE - Real-time Data Forwarder
 ============================================================
 
-📝 Using IB Gateway credentials from environment
-🌐 Replit URL: wss://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev/bridge
+🌐 Replit URL: https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
 
 Connecting to IB Gateway on 127.0.0.1:7497...
 ✓ Connected to IB Gateway
 📅 Calculated front month contract: ES 202503
 ✓ Contract qualified: ES 202503
 ✓ Subscribed to ES market data
+Connecting to Replit at https://...
 ✓ Connected to Replit trading system
 
 ============================================================
@@ -132,18 +131,13 @@ Press Ctrl+C to stop
 - Check it's on port **7497** (not 7496 or 4002)
 - In IB Gateway settings, verify "Enable ActiveX and Socket Clients" is checked
 
-### "ERROR: URL must start with wss://"
+### "Failed to connect to Replit"
 
 **Fix:**
-- Use `wss://` instead of `https://`
-- Correct format: `wss://your-project.replit.dev/bridge`
-
-### "server rejected WebSocket connection: HTTP 400"
-
-**Fix:**
-- Make sure your Replit URL is correct
-- Check it ends with `/bridge`
+- Make sure your Replit URL is correct (copy from browser address bar)
+- Use `https://` (not `wss://` - that's the old version)
 - Verify your trading system is running on Replit
+- Make sure you have internet connection
 
 ### No market data showing
 
@@ -166,7 +160,7 @@ Press Ctrl+C to stop
 
 1. Open terminal on ChromeOS
 2. Activate virtual environment: `source ibkr_env/bin/activate`
-3. Run: `python3 ibkr_bridge_download.py wss://[your-url]/bridge`
+3. Run: `python3 ibkr_bridge_download.py https://[your-url]`
 4. Keep terminal open while trading
 5. Press Ctrl+C to stop
 
@@ -174,7 +168,7 @@ Press Ctrl+C to stop
 ```bash
 screen -S ibkr
 source ibkr_env/bin/activate
-python3 ibkr_bridge_download.py wss://[your-url]/bridge
+python3 ibkr_bridge_download.py https://[your-url]
 ```
 - Press Ctrl+A then D to detach
 - To check it later: `screen -r ibkr`
@@ -207,6 +201,6 @@ If something isn't working:
 
 1. Check the terminal output for error messages
 2. Verify IB Gateway is logged in and active (port 7497)
-3. Make sure you're using `wss://` URL format with `/bridge` at the end
+3. Make sure you're using `https://` URL format (copy from browser)
 4. Activate virtual environment: `source ibkr_env/bin/activate`
 5. Try restarting both IB Gateway and the bridge script

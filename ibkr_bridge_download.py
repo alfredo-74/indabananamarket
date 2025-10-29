@@ -5,20 +5,20 @@ IBKR Bridge - Connects local IB Gateway to Replit Trading System
 This script runs on YOUR computer (ChromeOS Linux) and:
 1. Connects to IB Gateway running locally
 2. Subscribes to ES futures market data
-3. Forwards the data to your Replit trading system via WebSocket
+3. Forwards the data to your Replit trading system via HTTP
 
 Usage:
-    python3 ibkr_bridge_download.py wss://your-replit-url/bridge
+    python3 ibkr_bridge_download.py https://your-replit-url
 
 Requirements:
-    pip install ib_insync websockets
+    pip install ib_insync requests
 """
 
 import asyncio
-import websockets
 import json
 import logging
 import sys
+import requests
 from datetime import datetime
 from ib_insync import *
 
@@ -62,10 +62,10 @@ def get_front_month_contract():
 class IBKRBridge:
     def __init__(self):
         self.ib = IB()
-        self.ws = None
         self.replit_url = None
         self.es_contract = None
         self.running = False
+        self.session = requests.Session()
         
     async def connect_to_ibkr(self):
         """Connect to local IB Gateway"""
@@ -119,39 +119,27 @@ class IBKRBridge:
             logger.error("Make sure IB Gateway is running with API enabled on port 7497")
             return False
     
-    async def connect_to_replit(self, replit_url):
-        """Connect to Replit trading system via WebSocket"""
-        self.replit_url = replit_url
+    def send_to_replit(self, data):
+        """Send data to Replit via HTTP POST"""
         try:
-            logger.info(f"Connecting to Replit at {replit_url}...")
-            self.ws = await websockets.connect(replit_url)
-            logger.info("✓ Connected to Replit trading system")
-            
-            # Send initial handshake
-            await self.ws.send(json.dumps({
-                'type': 'handshake',
-                'source': 'ibkr_bridge',
-                'timestamp': datetime.now().isoformat()
-            }))
-            
-            return True
+            response = self.session.post(
+                f"{self.replit_url}/api/bridge/data",
+                json=data,
+                timeout=5
+            )
+            return response.status_code == 200
         except Exception as e:
-            logger.error(f"Failed to connect to Replit: {e}")
-            logger.error(f"Make sure the URL is correct: {replit_url}")
-            logger.error("URL should be like: wss://your-project.replit.dev/bridge")
+            logger.error(f"Failed to send data to Replit: {e}")
             return False
     
     def on_tick(self, tickers):
         """Called when new tick data arrives from IB Gateway"""
         for ticker in tickers:
             if ticker.contract == self.es_contract:
-                asyncio.create_task(self.forward_tick(ticker))
+                self.forward_tick(ticker)
     
-    async def forward_tick(self, ticker):
+    def forward_tick(self, ticker):
         """Forward tick data to Replit"""
-        if not self.ws:
-            return
-        
         try:
             # Extract relevant data
             last_price = ticker.last if not util.isNan(ticker.last) else ticker.close
@@ -172,8 +160,8 @@ class IBKRBridge:
             }
             
             # Send to Replit
-            await self.ws.send(json.dumps(data))
-            logger.info(f"📊 ES @ {last_price:.2f} → Sent to Replit")
+            if self.send_to_replit(data):
+                logger.info(f"📊 ES @ {last_price:.2f} → Sent to Replit")
             
         except Exception as e:
             logger.error(f"Error forwarding tick: {e}")
@@ -181,20 +169,24 @@ class IBKRBridge:
     async def run(self, replit_url):
         """Main run loop"""
         self.running = True
+        self.replit_url = replit_url.rstrip('/')  # Remove trailing slash if present
         
         print("\n" + "="*60)
         print("IBKR BRIDGE - Real-time Data Forwarder")
         print("="*60)
-        print("\n📝 Using IB Gateway credentials from environment")
-        print(f"🌐 Replit URL: {replit_url}")
+        print(f"\n🌐 Replit URL: {replit_url}")
         print()
         
         # Connect to IB Gateway
         if not await self.connect_to_ibkr():
             return
         
-        # Connect to Replit
-        if not await self.connect_to_replit(replit_url):
+        # Send handshake to Replit
+        logger.info(f"Connecting to Replit at {replit_url}...")
+        if self.send_to_replit({'type': 'handshake', 'source': 'ibkr_bridge', 'timestamp': datetime.now().isoformat()}):
+            logger.info("✓ Connected to Replit trading system")
+        else:
+            logger.error("Failed to connect to Replit - check the URL and try again")
             return
         
         print("\n" + "="*60)
@@ -219,8 +211,7 @@ class IBKRBridge:
     
     async def cleanup(self):
         """Clean shutdown"""
-        if self.ws:
-            await self.ws.close()
+        self.session.close()
         if self.ib.isConnected():
             self.ib.disconnect()
         logger.info("Bridge stopped")
@@ -231,27 +222,20 @@ async def main():
         print("IBKR BRIDGE - Usage")
         print("="*60)
         print("\nUsage:")
-        print("  python3 ibkr_bridge_download.py wss://your-replit-url/bridge")
+        print("  python3 ibkr_bridge_download.py https://your-replit-url")
         print("\nExample:")
-        print("  python3 ibkr_bridge_download.py wss://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev/bridge")
-        print("\nNote: Replace the URL with your actual Replit project URL")
-        print("      Change https:// to wss:// and add /bridge at the end")
+        print("  python3 ibkr_bridge_download.py https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev")
+        print("\nNote: Use your actual Replit project URL (with https://)")
         print("="*60 + "\n")
         sys.exit(1)
     
     replit_url = sys.argv[1]
     
     # Validate URL format
-    if not replit_url.startswith('wss://'):
-        print("\n⚠ ERROR: URL must start with wss:// (not https://)")
+    if not (replit_url.startswith('https://') or replit_url.startswith('http://')):
+        print("\n⚠ ERROR: URL must start with https:// or http://")
         print(f"   You provided: {replit_url}")
-        print(f"   Should be: wss://{replit_url.replace('https://', '').replace('http://', '')}")
-        sys.exit(1)
-    
-    if not replit_url.endswith('/bridge'):
-        print("\n⚠ ERROR: URL must end with /bridge")
-        print(f"   You provided: {replit_url}")
-        print(f"   Should be: {replit_url}/bridge")
+        print(f"   Should be: https://{replit_url}")
         sys.exit(1)
     
     bridge = IBKRBridge()
