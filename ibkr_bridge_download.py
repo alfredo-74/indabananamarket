@@ -106,9 +106,13 @@ class IBKRBridge:
                 else:
                     raise Exception("Failed to qualify ES contract")
             
-            # Subscribe to market data
+            # Subscribe to DELAYED market data (free for paper trading accounts)
+            # reqMktData(contract, genericTickList, snapshot, regulatorySnapshot, mktDataOptions)
             self.ib.reqMktData(self.es_contract, '', False, False)
-            logger.info("✓ Subscribed to ES market data")
+            
+            # Request delayed market data (required for accounts without real-time subscription)
+            self.ib.reqMarketDataType(3)  # 3 = Delayed data (15 min), 1 = Live data, 2 = Frozen data
+            logger.info("✓ Subscribed to ES delayed market data (15-min delay)")
             
             # Setup tick callback
             self.ib.pendingTickersEvent += self.on_tick
