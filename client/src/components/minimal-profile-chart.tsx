@@ -48,7 +48,7 @@ export default function MinimalProfileChart({
   const chartInstance = useRef<Chart | null>(null);
 
   useEffect(() => {
-    if (!chartRef.current || candles.length === 0) return;
+    if (!chartRef.current) return;
 
     const ctx = chartRef.current.getContext("2d");
     if (!ctx) return;
@@ -56,11 +56,15 @@ export default function MinimalProfileChart({
     // Destroy existing chart
     if (chartInstance.current) {
       chartInstance.current.destroy();
+      chartInstance.current = null;
     }
 
     // Prepare candlestick data - filter out invalid timestamps
-    const validCandles = candles.filter(c => c.timestamp > 0);
-    if (validCandles.length === 0) return;
+    const validCandles = candles.filter(c => c && c.timestamp > 0);
+    if (validCandles.length === 0) {
+      // No valid data - just return without creating chart
+      return;
+    }
     
     const candleData = validCandles.map((c) => ({
       x: c.timestamp,
