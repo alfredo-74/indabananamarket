@@ -47,6 +47,9 @@ export default function MinimalProfileChart({
   const chartRef = useRef<HTMLCanvasElement>(null);
   const chartInstance = useRef<Chart | null>(null);
 
+  // Filter out invalid candles BEFORE useEffect
+  const validCandles = candles.filter(c => c && c.timestamp > 0);
+
   useEffect(() => {
     if (!chartRef.current) return;
 
@@ -59,10 +62,8 @@ export default function MinimalProfileChart({
       chartInstance.current = null;
     }
 
-    // Prepare candlestick data - filter out invalid timestamps
-    const validCandles = candles.filter(c => c && c.timestamp > 0);
+    // Don't render chart if no valid data
     if (validCandles.length === 0) {
-      // No valid data - just return without creating chart
       return;
     }
     
