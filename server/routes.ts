@@ -308,8 +308,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   }
 
-  // Attempt to start IBKR connector
-  startIBKRConnector();
+  // DISABLED: Backend no longer connects to IBKR directly
+  // The local bridge script (ibkr_bridge_download.py) handles IBKR connection
+  // and sends data to /api/bridge/data endpoint
+  // startIBKRConnector();
 
   // Simulate market data updates (500ms interval)
   setInterval(async () => {
