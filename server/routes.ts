@@ -505,6 +505,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
           );
         }
 
+        // Log auto-trading decision (even if NONE)
+        if (signal.action === "NONE") {
+          console.log(`[AUTO-TRADE] No trade signal - ${signal.reason}`);
+        }
+
         // Execute trade if signal is not NONE
         if (signal.action !== "NONE" && signal.action !== "CLOSE") {
           // Open new position
@@ -534,7 +539,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           await storage.setPosition(position);
 
-          console.log(`[AUTO-TRADE] ${signal.action} ${signal.quantity} @ ${signal.entry_price.toFixed(2)} - ${signal.reason}`);
+          console.log(`[AUTO-TRADE] ✅ ${signal.action} ${signal.quantity} @ ${signal.entry_price.toFixed(2)} - ${signal.reason}`);
           
           broadcast({
             type: "trade_executed",
@@ -569,6 +574,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           position.unrealized_pnl = 0;
 
           await storage.setPosition(position);
+
+          console.log(`[AUTO-TRADE] ❌ CLOSE position - ${signal.reason} - P&L: ${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)}`);
 
           // Update daily P&L in system status
           if (status) {
