@@ -442,7 +442,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const position = await storage.getPosition();
       
       if (status && status.auto_trading_enabled && position) {
-        let signal: any;
+        // SAFETY: Only trade during RTH (9:30 AM - 4:00 PM ET) for best liquidity
+        // This respects ET timezone regardless of user's local time (handles DST automatically)
+        const currentSession = sessionDetector.detectSession(timestamp);
+        
+        // If we're in ETH and have an open position, close it
+        if (currentSession === "ETH" && position.contracts !== 0) {
+          const exitPrice = marketData.last_price;
+          const priceDiff = position.side === "LONG"
+            ? exitPrice - position.entry_price!
+            : position.entry_price! - exitPrice;
+          const pnl = priceDiff * Math.abs(position.contracts) * 5; // MES multiplier
+
+          const trade = await storage.addTrade({
+            timestamp,
+            type: position.side === "LONG" ? "SELL" : "BUY",
+            entry_price: exitPrice,
+            exit_price: exitPrice,
+            contracts: Math.abs(position.contracts),
+            pnl,
+            duration_ms: null,
+            regime: regimeUpdate.regime,
+            cumulative_delta: latestCandle.cumulative_delta,
+            status: "CLOSED",
+          });
+
+          position.realized_pnl += pnl;
+          position.contracts = 0;
+          position.side = "FLAT";
+          position.entry_price = null;
+          position.unrealized_pnl = 0;
+          autoTrader.resetPositionEntryTime();
+
+          await storage.setPosition(position);
+
+          console.log(`[AUTO-TRADE] ❌ ETH session detected - closing position @ ${exitPrice.toFixed(2)} - P&L: ${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)}`);
+          
+          broadcast({
+            type: "trade_executed",
+            data: trade,
+          });
+          
+          if (status) {
+            status.daily_pnl += pnl;
+            await storage.setSystemStatus(status);
+          }
+        }
+        
+        // Only execute new trades during RTH
+        if (currentSession === "RTH") {
+          let signal: any;
 
         // First, check for high-probability PRO Course setups
         const compositeProfile = compositeProfileSystem.getCompositeProfile();
@@ -595,6 +644,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
             type: "trade_executed",
             data: trade,
           });
+        }
+        } else {
+          // ETH session - log that we're skipping
+          console.log(`[AUTO-TRADE] Skipping - ETH session. Trading only during RTH (2:30 PM - 9:00 PM London / 9:30 AM - 4:00 PM ET)`);
         }
       }
     }
