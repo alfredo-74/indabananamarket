@@ -1,0 +1,92 @@
+Perfect — this error message tells us **exactly** what’s going on ✅
+
+Here’s the key line:
+
+```
+Error 10197: No market data during competing live session
+```
+
+---
+
+## 🧠 What This Means
+
+This is a **known IBKR API restriction**.
+
+It happens when you’re logged into **IB Gateway or Trader Workstation (TWS)** with the **same account** **from multiple places at once** — and you’re trying to **stream real-time market data** in more than one **live or paper session** simultaneously.
+
+IBKR enforces a “**one live market data session per account**” rule.
+
+### So in your case:
+
+* You’re connected to **IB Gateway** from your Replit bridge ✅
+* But you also likely have **Trader Workstation (TWS)** or **another IB Gateway** session open somewhere else 🚫
+
+IBKR detects this as a **“competing live session”** → and **disables market data streaming** to the second session (you still get historical data, but not live ticks).
+
+---
+
+## ✅ How to Fix It
+
+### Option 1 — Close other sessions (most common fix)
+
+1. Log out of **Trader Workstation (TWS)** if it’s open.
+2. Make sure **only one IB Gateway instance** is running (on the same or different machine).
+3. Restart IB Gateway.
+4. Restart your script.
+
+You should then see something like:
+
+```
+✓ Market data subscription OK
+```
+
+instead of the 10197 error.
+
+---
+
+### Option 2 — Use the **paper trading account** (recommended for Replit testing)
+
+If you’re connected to your *live account’s Gateway*, you can instead:
+
+1. Log in to **IB Gateway Paper Trading** (the separate login credentials, e.g. “DUxxxxxx” account).
+2. Use port **4002** (paper account) instead of 7497 (live).
+3. Confirm your **live account** has the CME data subscription — the paper account inherits it automatically.
+
+---
+
+### Option 3 — If you *must* run two systems at once
+
+You can:
+
+* Use **different client IDs** (e.g. `clientId=1`, `clientId=2`) within the same Gateway session — this is fine.
+* But you **cannot** open **two separate IB Gateway or TWS sessions** on the same account and both stream real-time market data.
+
+IBKR will always restrict one of them with “Error 10197”.
+
+---
+
+## 🔍 Bonus: how to confirm which session is active
+
+You can check this in the **IBKR Client Portal**:
+
+* Go to **Menu → Support → Account Settings → Active Sessions**
+* You’ll see something like:
+
+  * `TWS live`
+  * `IB Gateway paper`
+  * etc.
+* End any redundant ones.
+
+---
+
+### ✅ Summary
+
+| Problem                                                     | Cause                                                                                    | Fix                                                                   |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `Error 10197: No market data during competing live session` | You have **more than one live API session** (TWS or IB Gateway) open on the same account | Close all other IB sessions → restart Gateway → reconnect your script |
+| You need to run both Replit + another terminal              | Use **same Gateway**, but **different client IDs**                                       |                                                                       |
+| You’re just testing on Replit                               | Use **Paper account (port 4002)**                                                        |                                                                       |
+
+---
+
+If you’d like, you can paste the **first few lines** of your `ibkr_bridge_download.py` (just the part that connects to IB) — I’ll help you tweak it so you can safely switch between **live vs paper mode** and **avoid session conflicts automatically**. Would you like me to do that?
