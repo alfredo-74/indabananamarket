@@ -110,14 +110,16 @@ Not currently implemented, as the system is designed for a single-user paper tra
 ### Trading Platform Integration
 
 **Interactive Brokers (IBKR)**:
-- A Python bridge (`server/ibkr_connector.py`) using `ib_insync` connects to IB Gateway/TWS (port 7497 for paper trading).
+- A Python bridge (`server/ibkr_connector.py`) using `ib_insync` connects to IB Gateway on port 4002 (paper trading).
 - Uses ES contracts for price display and MES contracts for trade execution (market orders).
 - Subscribes to **real-time Level II (DOM) market data** from ES futures via CME Real-Time subscription.
 - Fetches account balance, unrealized/realized P&L from IBKR `accountSummary()` API.
 
 **Account Configuration**:
-- Paper Trading Username: `rcmrns534` (account number: DU0070151)
-- Live Account Username: `fredpaper74` (shares Level II data subscription with paper account)
+- Login Credentials: `fredpaper74` / `m!j8r5C%WF3W-#2` (main account - select paper mode in IB Gateway)
+- Paper Account Number: DU0070151 (username: `rcmrns534` - identifier only, not used for login)
+- IB Gateway Port: **4002** (paper trading) / 4001 (live trading)
+  - Note: TWS uses different ports: 7497 (paper) / 7496 (live)
 - Level II Subscription: CME Real-Time (NP/L2) - £8.34/month (waived with £15-20+ in monthly commissions)
 - Market Data: Real-time bid/ask depth, accurate buy/sell volume classification, institutional order flow
 

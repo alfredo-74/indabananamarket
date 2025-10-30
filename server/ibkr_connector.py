@@ -26,7 +26,7 @@ class IBKRConnector:
         self.volume = 0
         self.account_currency = "USD"  # Default to USD
         self.usd_to_gbp_rate = 0.79  # Default exchange rate (will be updated from IB)
-        self.port = 7497  # Track which port we're connected to
+        self.port = 4002  # IB Gateway default port (4002=paper, 4001=live)
         self.account_balance = 0.0  # NetLiquidation value from IBKR
         self.unrealized_pnl = 0.0  # Unrealized P&L from open positions
         self.realized_pnl = 0.0  # Realized P&L from closed positions
@@ -36,10 +36,11 @@ class IBKRConnector:
         self.dom_asks = []  # List of (price, size) tuples for ask side
         
     async def connect(self, username: str, password: str):
-        """Connect to IBKR Paper Trading"""
+        """Connect to IBKR Paper Trading via IB Gateway"""
         try:
-            # Connect to IB Gateway or TWS (Paper Trading port 7497, Live port 7496)
-            self.port = 7497  # Paper trading by default
+            # Connect to IB Gateway (Paper Trading port 4002, Live port 4001)
+            # Note: TWS uses 7497 (paper) / 7496 (live) if you're using TWS instead
+            self.port = 4002  # IB Gateway paper trading port
             await self.ib.connectAsync('127.0.0.1', self.port, clientId=1)
             self.connected = True
             
@@ -102,7 +103,8 @@ class IBKRConnector:
             for item in account_values:
                 if item.tag == 'AccountType':
                     # Detect if this is a paper or live account based on port
-                    # Port 7497 = paper, 7496 = live
+                    # IB Gateway: Port 4002 = paper, 4001 = live
+                    # TWS: Port 7497 = paper, 7496 = live
                     pass
                 elif item.tag == 'Currency':
                     self.account_currency = item.value
@@ -302,7 +304,7 @@ async def main():
                         "unrealized_pnl": connector.unrealized_pnl,
                         "realized_pnl": connector.realized_pnl,
                         "usd_to_account_rate": connector.usd_to_gbp_rate if connector.account_currency == 'GBP' else 1.0,
-                        "account_type": "PAPER" if connector.port == 7497 else "LIVE"
+                        "account_type": "PAPER" if connector.port in [4002, 7497] else "LIVE"
                     }
                     print(json.dumps(data))
                     sys.stdout.flush()
