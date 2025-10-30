@@ -9,7 +9,7 @@ Your ChromeOS Computer          →          Replit Cloud
 ┌──────────────────┐                      ┌──────────────────┐
 │  IB Gateway      │                      │  Trading System  │
 │  (Paper Trading) │                      │  (Runs 24/7)     │
-│  Port 7497       │                      │                  │
+│  Port 4002       │                      │                  │
 └────────┬─────────┘                      └────────┬─────────┘
          │                                         │
          │                                         │
@@ -55,10 +55,11 @@ pip install ib_insync requests
 3. Select **Paper Trading** mode
 4. Make sure it connects successfully
 
-**Important:** Check that IB Gateway is set to port **7497**:
+**Important:** Check that IB Gateway is set to port **4002** (paper trading):
 - Click **Configure** → **Settings** → **API** → **Settings**
-- Socket port should be: **7497**
+- Socket port should be: **4002** (paper trading) or **4001** (live trading)
 - Check "Enable ActiveX and Socket Clients"
+- Note: TWS uses ports 7497 (paper) / 7496 (live) - but IB Gateway uses 4002/4001
 
 ### Step 3: Download the Bridge Script
 
@@ -99,7 +100,7 @@ IBKR BRIDGE - Real-time Data Forwarder
 
 🌐 Replit URL: https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
 
-Connecting to IB Gateway on 127.0.0.1:7497...
+Connecting to IB Gateway on 127.0.0.1:4002...
 ✓ Connected to IB Gateway
 📅 Calculated front month contract: ES 202503
 ✓ Contract qualified: ES 202503
@@ -128,8 +129,9 @@ Press Ctrl+C to stop
 
 **Fix:**
 - Make sure IB Gateway is running and logged in
-- Check it's on port **7497** (not 7496 or 4002)
+- Check it's on port **4002** for paper trading (or 4001 for live)
 - In IB Gateway settings, verify "Enable ActiveX and Socket Clients" is checked
+- Note: IB Gateway uses port 4002 (paper) / 4001 (live), NOT TWS ports 7497/7496
 
 ### "Failed to connect to Replit"
 
@@ -200,7 +202,7 @@ Your IBKR password is only used on your local computer and never sent to Replit.
 If something isn't working:
 
 1. Check the terminal output for error messages
-2. Verify IB Gateway is logged in and active (port 7497)
+2. Verify IB Gateway is logged in and active (port 4002 for paper trading)
 3. Make sure you're using `https://` URL format (copy from browser)
 4. Activate virtual environment: `source ibkr_env/bin/activate`
 5. Try restarting both IB Gateway and the bridge script
