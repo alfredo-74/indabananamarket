@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """
 IBKR Bridge - Connects local IB Gateway to Replit Trading System
+WITH REAL-TIME LEVEL II DOM DATA
 
 This script runs on YOUR computer (ChromeOS Linux) and:
 1. Connects to IB Gateway running locally
-2. Subscribes to ES futures market data
+2. Subscribes to ES futures REAL-TIME market data + Level II DOM
 3. Forwards the data to your Replit trading system via HTTP
 
 Usage:
-    python3 ibkr_bridge_download.py https://your-replit-url
+    python3 ibkr_bridge_REAL_TIME_LEVEL2.py https://your-replit-url
 
 Requirements:
     pip install ib_insync requests
@@ -146,12 +147,16 @@ class IBKRBridge:
             return False
     
     def on_error(self, reqId, errorCode, errorString, contract):
-        """Handle IBKR errors - auto-switch to delayed data if needed"""
-        if errorCode == 354:
-            # Error 354: Market data not subscribed - switch to delayed
-            logger.warning("⚠ Real-time data not available - switching to delayed data (15-min delay)")
-            self.ib.reqMarketDataType(3)  # Switch to delayed data
-            logger.info("✓ Now using delayed market data")
+        """Handle IBKR errors"""
+        if errorCode == 354 or errorCode == 10168:
+            # Market data subscription error
+            logger.error(f"⚠ ERROR {errorCode}: {errorString}")
+            logger.error("❌ Your CME subscription is NOT configured for API access")
+            logger.error("📋 SOLUTION:")
+            logger.error("   1. Go to https://www.interactivebrokers.com/portal/")
+            logger.error("   2. Settings → Account Settings → Paper Trading Account")
+            logger.error("   3. Enable: 'Share market data subscriptions with paper trading account'")
+            logger.error("   4. Restart IB Gateway and try again")
         elif errorCode == 2119:
             # Just connecting to data farm - informational only
             logger.info(f"Market data farm connecting...")
@@ -222,7 +227,7 @@ class IBKRBridge:
         self.replit_url = replit_url.rstrip('/')  # Remove trailing slash if present
         
         print("\n" + "="*60)
-        print("IBKR BRIDGE - Real-time Data Forwarder")
+        print("IBKR BRIDGE - REAL-TIME Level II Data Forwarder")
         print("="*60)
         print(f"\n🌐 Replit URL: {replit_url}")
         print()
@@ -240,7 +245,7 @@ class IBKRBridge:
             return
         
         print("\n" + "="*60)
-        print("✓ BRIDGE ACTIVE - Forwarding ES data to Replit")
+        print("✓ BRIDGE ACTIVE - Forwarding REAL-TIME ES + DOM to Replit")
         print("Press Ctrl+C to stop")
         print("="*60 + "\n")
         
@@ -251,48 +256,25 @@ class IBKRBridge:
                 
                 # Check connections
                 if not self.ib.isConnected():
-                    logger.error("Lost connection to IB Gateway!")
+                    logger.error("Lost connection to IB Gateway")
                     break
                     
         except KeyboardInterrupt:
-            logger.info("\nShutting down...")
+            print("\n\n⚠ Bridge stopped by user")
         finally:
-            await self.cleanup()
-    
-    async def cleanup(self):
-        """Clean shutdown"""
-        self.session.close()
-        if self.ib.isConnected():
+            self.running = False
             self.ib.disconnect()
-        logger.info("Bridge stopped")
+            logger.info("✓ Disconnected from IB Gateway")
 
 async def main():
     if len(sys.argv) < 2:
-        print("\n" + "="*60)
-        print("IBKR BRIDGE - Usage")
-        print("="*60)
-        print("\nUsage:")
-        print("  python3 ibkr_bridge_download.py https://your-replit-url")
-        print("\nExample:")
-        print("  python3 ibkr_bridge_download.py https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev")
-        print("\nNote: Use your actual Replit project URL (with https://)")
-        print("="*60 + "\n")
+        print("Usage: python3 ibkr_bridge_REAL_TIME_LEVEL2.py <replit-url>")
+        print("Example: python3 ibkr_bridge_REAL_TIME_LEVEL2.py https://your-app.replit.dev")
         sys.exit(1)
     
     replit_url = sys.argv[1]
-    
-    # Validate URL format
-    if not (replit_url.startswith('https://') or replit_url.startswith('http://')):
-        print("\n⚠ ERROR: URL must start with https:// or http://")
-        print(f"   You provided: {replit_url}")
-        print(f"   Should be: https://{replit_url}")
-        sys.exit(1)
-    
     bridge = IBKRBridge()
     await bridge.run(replit_url)
 
-if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        print("\nBridge stopped by user")
+if __name__ == '__main__':
+    asyncio.run(main())

@@ -166,6 +166,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
         res.json({ type: 'ack' });
       }
+      else if (message.type === 'dom_update') {
+        // Handle Level II DOM data
+        bridgeLastHeartbeat = Date.now();
+        console.log(`[DOM] Received ${message.bids?.length || 0} bids, ${message.asks?.length || 0} asks`);
+        
+        // Store DOM data for DomProcessor to use
+        const domData = {
+          bids: message.bids || [],
+          asks: message.asks || [],
+          timestamp: Date.now()
+        };
+        
+        // Update DOM processor with real Level II data
+        if (domProcessor && typeof domProcessor.updateFromBridge === 'function') {
+          await domProcessor.updateFromBridge(domData);
+        }
+        
+        res.json({ type: 'ack' });
+      }
       else {
         res.json({ type: 'ack' });
       }
