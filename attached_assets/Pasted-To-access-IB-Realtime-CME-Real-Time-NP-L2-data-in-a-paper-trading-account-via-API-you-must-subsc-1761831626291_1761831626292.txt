@@ -1,0 +1,112 @@
+To access IB Realtime CME Real-Time (NP, L2) data in a paper trading account via API, you must subscribe and pay for the market data through your live Interactive Brokers account, and then configure your account settings to share the live data with your paper trading account. API data is considered "off-platform" by exchanges and is not free, even for paper trading. You cannot access the real-time API data without a corresponding subscription on your live account. 
+Here are the steps to set up API access to the real-time data:
+Fund your live account: Your live account must have a minimum equity of $500 to be eligible for market data subscriptions.
+Subscribe to CME market data: Log in to the Client Portal using your live account credentials. Navigate to Settings > Account Configuration > Market Data Subscriptions to purchase the necessary CME Level 2 data package.
+Enable data sharing for your paper account: In the Client Portal, go to Settings > Account Configuration > Paper Trading Account.
+Confirm data sharing: Set the option "Share real-time market data with your paper trading account" to YES.
+Connect your API: You can now connect your API application (e.g., using IB Gateway) to your paper trading account. The real-time data from your live account subscription will now be available through the API for your paper trading. 
+Important considerations:
+If your live and paper trading API sessions are running simultaneously, they must be on the same device to receive the live market data.
+The TWS API is capable of providing real-time data, including ticks and bars as short as five seconds.
+CME Level 2 data, also known as Market Depth, includes the order book with multiple levels of bids and offers, providing insight into market liquidity. 
+AI responses may include mistakes. For financial advice, consult a professional. Learn more
+
+
+
+
+undefined
+undefined
+undefined
+9 sites
+Paper Trading Account - IBKR Guides
+14 Sept 2025 — Instructions. Paper trading lets you use the full range of trading capabilities in a simulated environment under real ...
+favicon
+IBKR Guides
+
+Python API - Requesting Market Data TWS API
+1 Jul 2024 — data please note that these are the most popular methods of requesting market data however Interactive Brokers also offe...
+
+
+YouTube·Interactive Brokers
+
+2m
+Manage Subscriptions - IBKR Guides
+24 Jul 2025 — Instructions * Select the News. menu from the left-hand side. * Select the Manage Subscriptions tab. * The Client Porta...
+favicon
+IBKR Guides
+
+Show all
+I subscribed to this:CME Real-Time (NP,L2) -
+Even after subscribing to CME Real-Time (NP, L2) data, you must configure your account settings within Interactive Brokers to share that live market data with your paper trading account. The subscription is tied to your live account and will not automatically appear in your paper trading environment for API access. 
+To share your live market data with your paper account:
+Log in to the Client Portal for your live account.
+Navigate to Settings > Account Settings.
+Click the Configure (gear) icon and find the paper trading account configuration settings.
+Set the option to share market data subscriptions with your paper trading account to "YES". 
+Additional conditions for API access:
+On the same device: If both your live and paper trading API sessions are running simultaneously, they must be running on the same computer to receive the live market data. The live session receives the data directly, and the paper session mirrors it.
+API Platform Type: When subscribing, you are given options for different platform types. Ensure you selected "Non-Display (API trading applications)" for the correct region when you subscribed to CME data to ensure it is available for API usage.
+Active Status: Market data subscriptions are tied to logging into TWS. If you do not log in for an extended period, subscriptions can be terminated. Ensure you stay active to keep your subscription running smoothly. 
+AI responses may include mistakes. For financial advice, consult a professional. Learn more
+
+
+
+
+undefined
+undefined
+5 sites
+Market Data Considerations for the Paper Trading Account
+31 Mar 2025 — Market Data Considerations for the Paper Trading Account. As a licensed distributor of exchange market data, we are obl...
+favicon
+IBKR Guides
+How to Set Up a Paper Trading Account on Interactive Brokers ...
+28 May 2025 — now the first software that we're going to need throughout this course is the IBKR. desktop application you can downloa...
+
+
+YouTube·Ryan O'Connell, CFA, FRM
+
+5:17
+Subscribe to Market Data - IBKR Guides
+25 Aug 2025 — To view or change your current market data subscriptions: * Click Settings > Trading Platform > Market Data Subscriptio...
+favicon
+IBKR Guides
+
+Show all
+I don't use TWS have I ?
+You don't have to use Trader Workstation (TWS) directly for API access, but you still need to run a piece of software called IB Gateway. The API connects to either TWS or IB Gateway, with IB Gateway being the minimal client designed specifically for API users. You must run IB Gateway on the same machine as your API application to receive the real-time data. 
+Here's a summary of the required setup, as confirmed by Interactive Brokers' documentation and forums: 
+Install and run IB Gateway: Download and install the IB Gateway software. When you run it, you will have the option to connect to either your live or your paper trading account.
+Select the "Simulated account" option: When starting IB Gateway for your paper trading, make sure you explicitly choose the "Simulated account" option and enter your paper trading account credentials.
+Share your subscription: As mentioned previously, the market data subscription is tied to your live account. You must explicitly configure your live account to share the subscription with your paper account through the Client Portal.
+Same device requirement: For the market data to be shared, both your live account session (or the market data being fed to IB Gateway) and your paper trading IB Gateway session must be running on the same device. 
+AI responses may include mistakes. Learn more
+
+
+
+
+undefined
+undefined
+undefined
+4 sites
+Market Data Considerations for the Paper Trading Account
+31 Mar 2025 — In this scenario, if the real and paper trading sessions are running simultaneously, they must reside on the same devic...
+favicon
+IBKR Guides
+Learn how to trade with Interactive Brokers and Python
+10 Mar 2024 — Setting up a paper account. If you already have an Interactive Brokers account, activate the Paper trading or simulated...
+favicon
+Medium
+
+Using live data in Paper trading after paying for data ... - Reddit
+5 Jun 2023 — "Kindly follow the below procedure to share your live trading account's real-time market data with your paper account: *
+favicon
+Reddit
+
+Show all
+after subscribing IB didn't ask me to pay immediately is that normal, how can I know if am I actually subscribed to the realtime?
+It is normal for Interactive Brokers not to charge you immediately for a market data subscription. Subscription fees are typically billed toward the end of the calendar month. Your subscription is for the entire calendar month, and the charges will appear on your account statement later. 
+To verify that you are successfully subscribed to the real-time data, follow these steps:
+Log in to the Client Portal: Use your live account credentials to log in.
+Go to Market Data Subscriptions: Navigate to Settings > Trading Platform > Market Data Subscriptions.
+Check your status: On this screen, you can review your current subscriptions. The Current Subscriptions panel will display the CME Real-Time (NP, L2) data if your subscription is active.
+Confirm platform access: Click the Configure (gear) icon in the Current Subscriptions panel. This will show you which platform and region your market data is enabled for. Make sure that when you subscribed, you selected the option for Non-Display (API trading applications) to ensure it is available for your API usage and not just TWS. 

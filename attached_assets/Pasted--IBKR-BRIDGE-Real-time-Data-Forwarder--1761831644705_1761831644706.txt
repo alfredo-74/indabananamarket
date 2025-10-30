@@ -1,0 +1,30 @@
+============================================================
+IBKR BRIDGE - Real-time Data Forwarder
+============================================================
+
+🌐 Replit URL: https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
+
+2025-10-30 13:38:14,696 - INFO - Connecting to IB Gateway on 127.0.0.1:4002...
+2025-10-30 13:38:14,696 - INFO - Connecting to 127.0.0.1:4002 with clientId 1...
+2025-10-30 13:38:14,696 - INFO - Connected
+2025-10-30 13:38:14,699 - INFO - Logged on to server version 176
+2025-10-30 13:38:14,742 - INFO - Warning 2104, reqId -1: Market data farm connection is OK:usfuture
+2025-10-30 13:38:14,742 - INFO - Warning 2104, reqId -1: Market data farm connection is OK:usfarm
+2025-10-30 13:38:14,742 - INFO - Warning 2107, reqId -1: HMDS data farm connection is inactive but should be available upon demand.ushmds
+2025-10-30 13:38:14,742 - INFO - Warning 2158, reqId -1: Sec-def data farm connection is OK:secdefil
+2025-10-30 13:38:14,743 - INFO - API connection ready
+2025-10-30 13:38:15,149 - INFO - Synchronization complete
+2025-10-30 13:38:15,149 - INFO - ✓ Connected to IB Gateway
+2025-10-30 13:38:15,150 - INFO - 📅 Calculated front month contract: ES 202512
+2025-10-30 13:38:15,268 - INFO - ✓ Contract qualified: ES 202512
+2025-10-30 13:38:15,269 - INFO - ✓ Requested real-time market data (will auto-switch to delayed if not subscribed)
+2025-10-30 13:38:15,269 - INFO - Connecting to Replit at https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev...
+2025-10-30 13:38:16,074 - INFO - ✓ Connected to Replit trading system
+
+============================================================
+✓ BRIDGE ACTIVE - Forwarding ES data to Replit
+Press Ctrl+C to stop
+============================================================
+
+2025-10-30 13:38:20,276 - ERROR - Error 10197, reqId 4: No market data during competing live session, contract: Future(conId=495512563, symbol='ES', lastTradeDateOrContractMonth='20251219', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ5', tradingClass='ES')
+2025-10-30 13:38:20,276 - INFO - IBKR Error 10197: No market data during competing live session
