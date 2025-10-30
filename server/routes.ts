@@ -448,7 +448,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const compositeProfile = compositeProfileSystem.getCompositeProfile();
         const volumeProfile = volumeProfileCalculator.getProfile();
         
-        if (volumeProfile) {
+        // Only use PRO setup recognizer if we have both composite profile and volume profile
+        if (volumeProfile && compositeProfile) {
           const migration = valueMigrationDetector.detectMigration(volumeProfile, compositeProfile);
           const overnightHigh = marketData.last_price * 1.005;
           const overnightLow = marketData.last_price * 0.995;
@@ -478,7 +479,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             vwapSD2Lower: vwap.sd2_lower,
             volumeProfile: {
               poc: volumeProfile.poc,
-              vah: volumeProfile.vah,
+              vah: volumeProfile.val,
               val: volumeProfile.val,
             },
           };
@@ -933,7 +934,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get current market data for hypothesis generation
       const volumeProfile = await storage.getVolumeProfile();
       const marketData = await storage.getMarketData();
-      const vwapData = vwapCalculator.getVWAP();
+      const vwapData = await storage.getVWAPData();
       
       if (!volumeProfile || !marketData) {
         return res.json(null);
@@ -987,6 +988,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const compositeProfile = compositeProfileSystem.getCompositeProfile();
+      
+      // Only generate recommendations if we have composite profile
+      if (!compositeProfile) {
+        return res.json([]);
+      }
+      
       const migration = valueMigrationDetector.detectMigration(volumeProfile, compositeProfile);
       
       // Generate hypothesis for context
@@ -1105,7 +1112,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`[AUTO-TRADING] ${enabled ? "ENABLED" : "DISABLED"}`);
 
       broadcast({
-        type: "status_update",
+        type: "system_status",
         data: status,
       });
 
