@@ -1,0 +1,35 @@
+alfredo@penguin:~$ python3 ibkr_bridge_download.py https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
+
+============================================================
+IBKR BRIDGE - Real-time Data Forwarder
+============================================================
+
+🌐 Replit URL: https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
+
+2025-10-30 13:44:44,760 - INFO - Connecting to IB Gateway on 127.0.0.1:4002...
+2025-10-30 13:44:44,760 - INFO - Connecting to 127.0.0.1:4002 with clientId 1...
+2025-10-30 13:44:44,760 - INFO - Connected
+2025-10-30 13:44:44,833 - INFO - Logged on to server version 176
+2025-10-30 13:44:44,894 - INFO - Warning 2104, reqId -1: Market data farm connection is OK:usfarm
+2025-10-30 13:44:44,894 - INFO - Warning 2106, reqId -1: HMDS data farm connection is OK:ushmds
+2025-10-30 13:44:44,894 - INFO - Warning 2158, reqId -1: Sec-def data farm connection is OK:secdefil
+2025-10-30 13:44:44,894 - INFO - API connection ready
+2025-10-30 13:44:45,331 - INFO - Synchronization complete
+2025-10-30 13:44:45,331 - INFO - ✓ Connected to IB Gateway
+2025-10-30 13:44:45,331 - INFO - 📅 Calculated front month contract: ES 202512
+2025-10-30 13:44:45,867 - INFO - ✓ Contract qualified: ES 202512
+2025-10-30 13:44:45,867 - INFO - ✓ Requested real-time market data (will auto-switch to delayed if not subscribed)
+2025-10-30 13:44:45,867 - INFO - Connecting to Replit at https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev...
+2025-10-30 13:44:46,501 - INFO - ✓ Connected to Replit trading system
+
+============================================================
+✓ BRIDGE ACTIVE - Forwarding ES data to Replit
+Press Ctrl+C to stop
+============================================================
+
+2025-10-30 13:44:46,501 - INFO - Warning 2119, reqId -1: Market data farm is connecting:usfuture
+2025-10-30 13:44:46,501 - INFO - Market data farm connecting...
+2025-10-30 13:44:46,711 - INFO - Warning 2104, reqId -1: Market data farm connection is OK:usfuture
+2025-10-30 13:44:46,943 - ERROR - Error 354, reqId 4: Requested market data is not subscribed. Check API status by selecting the Account menu then under Management choose Market Data Subscription Manager and/or availability of delayed data.Delayed market data is available.ES DEC'25 (ESZ5) /TOP/ALL, contract: Future(conId=495512563, symbol='ES', lastTradeDateOrContractMonth='20251219', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ5', tradingClass='ES')
+2025-10-30 13:44:46,943 - WARNING - ⚠ Real-time data not available - switching to delayed data (15-min delay)
+2025-10-30 13:44:46,943 - INFO - ✓ Now using delayed market data
