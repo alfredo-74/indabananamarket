@@ -106,13 +106,13 @@ class IBKRBridge:
                 else:
                     raise Exception("Failed to qualify ES contract")
             
-            # Try real-time data first, will auto-fallback to delayed if not subscribed
-            # reqMktData(contract, genericTickList, snapshot, regulatorySnapshot, mktDataOptions)
-            self.ib.reqMktData(self.es_contract, '', False, False)
+            # Request DELAYED market data (free, works without subscription)
+            # Market data types: 1 = Live data, 3 = Delayed (15 min), 2 = Frozen
+            self.ib.reqMarketDataType(3)  # Request delayed data from the start
+            logger.info("✓ Requesting delayed market data (15-min delay, free)")
             
-            # Request LIVE market data first (will use if subscribed)
-            self.ib.reqMarketDataType(1)  # 1 = Live data, 3 = Delayed (15 min), 2 = Frozen
-            logger.info("✓ Requested real-time market data (will auto-switch to delayed if not subscribed)")
+            # Subscribe to market data
+            self.ib.reqMktData(self.es_contract, '', False, False)
             
             # Setup tick callback
             self.ib.pendingTickersEvent += self.on_tick
