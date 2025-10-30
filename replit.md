@@ -112,11 +112,18 @@ Not currently implemented, as the system is designed for a single-user paper tra
 **Interactive Brokers (IBKR)**:
 - A Python bridge (`server/ibkr_connector.py`) using `ib_insync` connects to IB Gateway/TWS (port 7497 for paper trading).
 - Uses ES contracts for price display and MES contracts for trade execution (market orders).
-- Subscribes to real-time tick data from ES and fetches account balance, unrealized/realized P&L from IBKR `accountSummary()` API.
+- Subscribes to **real-time Level II (DOM) market data** from ES futures via CME Real-Time subscription.
+- Fetches account balance, unrealized/realized P&L from IBKR `accountSummary()` API.
+
+**Account Configuration**:
+- Paper Trading Username: `rcmrns534` (account number: DU0070151)
+- Live Account Username: `fredpaper74` (shares Level II data subscription with paper account)
+- Level II Subscription: CME Real-Time (NP/L2) - £8.34/month (waived with £15-20+ in monthly commissions)
+- Market Data: Real-time bid/ask depth, accurate buy/sell volume classification, institutional order flow
 
 ### Third-Party Services
 
-**Market Data**: Interactive Brokers delayed market data (free tier).
+**Market Data**: Interactive Brokers CME Real-Time Level II (NP/L2) subscription with Depth of Market (DOM) data.
 **Charting Library**: Chart.js, extended with `chartjs-chart-financial` for candlestick charts and `chartjs-adapter-date-fns` for time scaling.
 
 ### Key NPM Dependencies

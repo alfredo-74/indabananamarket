@@ -31,6 +31,10 @@ class IBKRConnector:
         self.unrealized_pnl = 0.0  # Unrealized P&L from open positions
         self.realized_pnl = 0.0  # Realized P&L from closed positions
         
+        # Level II DOM data (bid/ask depth)
+        self.dom_bids = []  # List of (price, size) tuples for bid side
+        self.dom_asks = []  # List of (price, size) tuples for ask side
+        
     async def connect(self, username: str, password: str):
         """Connect to IBKR Paper Trading"""
         try:
@@ -69,11 +73,17 @@ class IBKRConnector:
                 self.trade_contract = Future('MES', '202503', 'CME')
                 await self.ib.qualifyContractsAsync(self.trade_contract)
             
-            # Request delayed market data (delayed quotes - free)
-            self.ib.reqMarketDataType(3)  # 3 = delayed data
+            # Request REAL-TIME Level II market data (with subscription)
+            self.ib.reqMarketDataType(1)  # 1 = real-time data (requires subscription)
             
             # Subscribe to ES market data for display
             self.ib.reqMktData(self.display_contract, '', False, False)
+            
+            # Subscribe to Level II DOM (Depth of Market) data
+            self.ib.reqMktDepth(self.display_contract, numRows=10)
+            
+            # Set up DOM update handlers
+            self.ib.updateEvent += self._on_dom_update
             
             return {"success": True, "message": f"Connected to IBKR Paper Trading - Display: {self.display_contract.lastTradeDateOrContractMonth}, Trade: {self.trade_contract.lastTradeDateOrContractMonth}"}
         except Exception as e:
@@ -202,6 +212,38 @@ class IBKRConnector:
             print(f"Error getting position: {e}", file=sys.stderr)
             return None
     
+    def _on_dom_update(self):
+        """Handler for DOM updates"""
+        try:
+            if not self.connected or not self.display_contract:
+                return
+            
+            # Get DOM data from the ticker
+            ticker = self.ib.ticker(self.display_contract)
+            
+            if ticker and hasattr(ticker, 'domBids') and hasattr(ticker, 'domAsks'):
+                # Update bid side
+                self.dom_bids = [(level.price, level.size) for level in ticker.domBids if level.price > 0]
+                # Update ask side
+                self.dom_asks = [(level.price, level.size) for level in ticker.domAsks if level.price > 0]
+        except Exception as e:
+            print(f"Error updating DOM: {e}", file=sys.stderr)
+    
+    async def get_dom_data(self):
+        """Get current Level II DOM (Depth of Market) data"""
+        try:
+            if not self.connected:
+                return None
+            
+            return {
+                "bids": self.dom_bids[:10],  # Top 10 bid levels
+                "asks": self.dom_asks[:10],  # Top 10 ask levels
+                "timestamp": int(datetime.now().timestamp() * 1000)
+            }
+        except Exception as e:
+            print(f"Error getting DOM data: {e}", file=sys.stderr)
+            return None
+    
     def disconnect(self):
         """Disconnect from IBKR"""
         if self.connected:
@@ -262,6 +304,11 @@ async def main():
                         "usd_to_account_rate": connector.usd_to_gbp_rate if connector.account_currency == 'GBP' else 1.0,
                         "account_type": "PAPER" if connector.port == 7497 else "LIVE"
                     }
+                    print(json.dumps(data))
+                    sys.stdout.flush()
+                
+                elif command['action'] == 'get_dom_data':
+                    data = await connector.get_dom_data()
                     print(json.dumps(data))
                     sys.stdout.flush()
                     
