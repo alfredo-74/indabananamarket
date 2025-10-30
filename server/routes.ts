@@ -648,7 +648,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // GET /api/candles - Volumetric candles
   app.get("/api/candles", async (req, res) => {
     const candles = await storage.getCandles();
-    res.json(candles);
+    // Filter out invalid candles (timestamp 0 or null) before sending to frontend
+    const validCandles = candles.filter(c => c && c.timestamp > 0);
+    res.json(validCandles);
   });
 
   // GET /api/vwap - VWAP data
