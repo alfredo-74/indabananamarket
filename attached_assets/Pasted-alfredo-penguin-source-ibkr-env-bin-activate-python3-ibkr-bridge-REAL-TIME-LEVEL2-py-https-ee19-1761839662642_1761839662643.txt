@@ -1,0 +1,76 @@
+alfredo@penguin:~$ source ibkr_env/bin/activate
+python3 ibkr_bridge_REAL_TIME_LEVEL2.py https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
+
+============================================================
+IBKR BRIDGE - REAL-TIME Level II Data Forwarder
+============================================================
+
+🌐 Replit URL: https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
+
+2025-10-30 15:53:45,349 - INFO - Connecting to IB Gateway on 127.0.0.1:4002...
+2025-10-30 15:53:45,349 - INFO - Connecting to 127.0.0.1:4002 with clientId 1...
+2025-10-30 15:53:45,349 - INFO - Connected
+2025-10-30 15:53:45,417 - INFO - Logged on to server version 176
+2025-10-30 15:53:45,475 - INFO - Warning 2104, reqId -1: Market data farm connection is OK:usfarm
+2025-10-30 15:53:45,475 - INFO - Warning 2106, reqId -1: HMDS data farm connection is OK:ushmds
+2025-10-30 15:53:45,475 - INFO - Warning 2158, reqId -1: Sec-def data farm connection is OK:secdefil
+2025-10-30 15:53:45,475 - INFO - API connection ready
+2025-10-30 15:53:45,910 - INFO - Synchronization complete
+2025-10-30 15:53:45,910 - INFO - ✓ Connected to IB Gateway
+2025-10-30 15:53:45,910 - INFO - 📅 Calculated front month contract: ES 202512
+2025-10-30 15:53:46,552 - INFO - ✓ Contract qualified: ES 202512
+2025-10-30 15:53:46,552 - INFO - ✓ Requesting REAL-TIME Level II market data
+2025-10-30 15:53:46,552 - INFO - ✓ Subscribed to Level II DOM (10 levels)
+2025-10-30 15:53:46,552 - INFO - Connecting to Replit at https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev...
+2025-10-30 15:53:47,259 - INFO - ✓ Connected to Replit trading system
+
+============================================================
+✓ BRIDGE ACTIVE - Forwarding REAL-TIME ES + DOM to Replit
+Press Ctrl+C to stop
+============================================================
+
+2025-10-30 15:53:47,260 - INFO - Warning 2119, reqId -1: Market data farm is connecting:usfuture
+2025-10-30 15:53:47,260 - INFO - Market data farm connecting...
+2025-10-30 15:53:47,260 - INFO - Warning 2119, reqId -1: Market data farm is connecting:usfuture
+2025-10-30 15:53:47,260 - INFO - Market data farm connecting...
+2025-10-30 15:53:47,260 - ERROR - Value () caused exception for event Event<updateEvent, [[None, <weakref at 0x7f92f4c52e30; to 'IBKRBridge' at 0x7f93158f4650>, <function IBKRBridge.on_dom_update at 0x7f92f4c6c400>]]>
+Traceback (most recent call last):
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/eventkit/event.py", line 205, in emit
+    result = func(obj, *args)
+             ^^^^^^^^^^^^^^^^
+TypeError: IBKRBridge.on_dom_update() missing 1 required positional argument: 'ticker'
+2025-10-30 15:53:47,435 - INFO - Warning 2104, reqId -1: Market data farm connection is OK:usfuture
+2025-10-30 15:53:47,435 - ERROR - Value () caused exception for event Event<updateEvent, [[None, <weakref at 0x7f92f4c52e30; to 'IBKRBridge' at 0x7f93158f4650>, <function IBKRBridge.on_dom_update at 0x7f92f4c6c400>]]>
+Traceback (most recent call last):
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/eventkit/event.py", line 205, in emit
+    result = func(obj, *args)
+             ^^^^^^^^^^^^^^^^
+TypeError: IBKRBridge.on_dom_update() missing 1 required positional argument: 'ticker'
+2025-10-30 15:53:47,586 - ERROR - Error 354, reqId 4: Requested market data is not subscribed. Check API status by selecting the Account menu then under Management choose Market Data Subscription Manager and/or availability of delayed data.Delayed market data is available.ES DEC'25 (ESZ5) /TOP/ALL, contract: Future(conId=495512563, symbol='ES', lastTradeDateOrContractMonth='20251219', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ5', tradingClass='ES')
+2025-10-30 15:53:47,586 - ERROR - ⚠ ERROR 354: Requested market data is not subscribed. Check API status by selecting the Account menu then under Management choose Market Data Subscription Manager and/or availability of delayed data.Delayed market data is available.ES DEC'25 (ESZ5) /TOP/ALL
+2025-10-30 15:53:47,586 - ERROR - ❌ Your CME subscription is NOT configured for API access
+2025-10-30 15:53:47,586 - ERROR - 📋 SOLUTION:
+2025-10-30 15:53:47,586 - ERROR -    1. Go to https://www.interactivebrokers.com/portal/
+2025-10-30 15:53:47,586 - ERROR -    2. Settings → Account Settings → Paper Trading Account
+2025-10-30 15:53:47,586 - ERROR -    3. Enable: 'Share market data subscriptions with paper trading account'
+2025-10-30 15:53:47,586 - ERROR -    4. Restart IB Gateway and try again
+2025-10-30 15:53:47,586 - ERROR - Value () caused exception for event Event<updateEvent, [[None, <weakref at 0x7f92f4c52e30; to 'IBKRBridge' at 0x7f93158f4650>, <function IBKRBridge.on_dom_update at 0x7f92f4c6c400>]]>
+Traceback (most recent call last):
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/eventkit/event.py", line 205, in emit
+    result = func(obj, *args)
+             ^^^^^^^^^^^^^^^^
+TypeError: IBKRBridge.on_dom_update() missing 1 required positional argument: 'ticker'
+2025-10-30 15:53:47,703 - ERROR - Error 354, reqId 5: Requested market data is not subscribed. Check API status by selecting the Account menu then under Management choose Market Data Subscription Manager and/or availability of delayed data.ES DEC'25 (ESZ5) /DEEP, contract: Future(conId=495512563, symbol='ES', lastTradeDateOrContractMonth='20251219', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ5', tradingClass='ES')
+2025-10-30 15:53:47,703 - ERROR - ⚠ ERROR 354: Requested market data is not subscribed. Check API status by selecting the Account menu then under Management choose Market Data Subscription Manager and/or availability of delayed data.ES DEC'25 (ESZ5) /DEEP
+2025-10-30 15:53:47,704 - ERROR - ❌ Your CME subscription is NOT configured for API access
+2025-10-30 15:53:47,704 - ERROR - 📋 SOLUTION:
+2025-10-30 15:53:47,704 - ERROR -    1. Go to https://www.interactivebrokers.com/portal/
+2025-10-30 15:53:47,704 - ERROR -    2. Settings → Account Settings → Paper Trading Account
+2025-10-30 15:53:47,704 - ERROR -    3. Enable: 'Share market data subscriptions with paper trading account'
+2025-10-30 15:53:47,704 - ERROR -    4. Restart IB Gateway and try again
+2025-10-30 15:53:47,704 - ERROR - Value () caused exception for event Event<updateEvent, [[None, <weakref at 0x7f92f4c52e30; to 'IBKRBridge' at 0x7f93158f4650>, <function IBKRBridge.on_dom_update at 0x7f92f4c6c400>]]>
+Traceback (most recent call last):
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/eventkit/event.py", line 205, in emit
+    result = func(obj, *args)
+             ^^^^^^^^^^^^^^^^
+TypeError: IBKRBridge.on_dom_update() missing 1 required positional argument: 'ticker'

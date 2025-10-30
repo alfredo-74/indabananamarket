@@ -201,25 +201,29 @@ class IBKRBridge:
         except Exception as e:
             logger.error(f"Error forwarding tick: {e}")
     
-    def on_dom_update(self, ticker):
+    def on_dom_update(self):
         """Handle Level II DOM updates"""
-        if hasattr(ticker, 'domBids') and hasattr(ticker, 'domAsks'):
-            try:
-                # Build DOM data
-                dom_data = {
-                    'type': 'dom_update',
-                    'symbol': 'ES',
-                    'bids': [[level.price, level.size] for level in ticker.domBids[:10]],
-                    'asks': [[level.price, level.size] for level in ticker.domAsks[:10]],
-                    'timestamp': datetime.now().isoformat()
-                }
+        try:
+            # Get the ticker object for our contract
+            ticker = self.ib.ticker(self.es_contract)
+            
+            if ticker and hasattr(ticker, 'domBids') and hasattr(ticker, 'domAsks'):
+                if ticker.domBids and ticker.domAsks:
+                    # Build DOM data
+                    dom_data = {
+                        'type': 'dom_update',
+                        'symbol': 'ES',
+                        'bids': [[level.price, level.size] for level in ticker.domBids[:10]],
+                        'asks': [[level.price, level.size] for level in ticker.domAsks[:10]],
+                        'timestamp': datetime.now().isoformat()
+                    }
+                    
+                    # Send DOM update to Replit
+                    self.send_to_replit(dom_data)
+                    logger.info(f"📊 DOM: {len(dom_data['bids'])} bids, {len(dom_data['asks'])} asks → Sent to Replit")
                 
-                # Send DOM update to Replit
-                self.send_to_replit(dom_data)
-                logger.info(f"📊 DOM: {len(dom_data['bids'])} bids, {len(dom_data['asks'])} asks → Sent to Replit")
-                
-            except Exception as e:
-                logger.error(f"Error forwarding DOM: {e}")
+        except Exception as e:
+            logger.error(f"Error forwarding DOM: {e}")
     
     async def run(self, replit_url):
         """Main run loop"""
