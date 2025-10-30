@@ -107,16 +107,17 @@ class IBKRBridge:
                 else:
                     raise Exception("Failed to qualify ES contract")
             
-            # Request REAL-TIME market data (requires subscription)
-            self.ib.reqMarketDataType(1)  # 1 = Live data (real-time)
-            logger.info("✓ Requesting REAL-TIME Level II market data")
+            # Request DELAYED market data (free, always works)
+            self.ib.reqMarketDataType(3)  # 3 = Delayed (15-min), 1 = Live
+            logger.info("✓ Requesting DELAYED market data (15-min delay - free)")
             
-            # Subscribe to basic market data with real-time volume (tick 233)
+            # Subscribe to basic market data with volume (tick 233)
             self.ib.reqMktData(self.es_contract, '233', False, False)
+            logger.info("✓ Subscribed to market data feed")
             
-            # Subscribe to Level II Market Depth (DOM) - 10 levels deep
-            self.ib.reqMktDepth(self.es_contract, 10)
-            logger.info("✓ Subscribed to Level II DOM (10 levels)")
+            # Note: Level II DOM requires real-time subscription
+            # Delayed data does not include DOM
+            logger.info("⚠ Level II DOM not available with delayed data")
             
             # Setup tick callback
             self.ib.pendingTickersEvent += self.on_tick

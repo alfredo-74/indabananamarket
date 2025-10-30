@@ -1,0 +1,55 @@
+alfredo@penguin:~$ source ibkr_env/bin/activate
+python3 ibkr_bridge_REAL_TIME_LEVEL2.py https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
+
+============================================================
+IBKR BRIDGE - REAL-TIME Level II Data Forwarder
+============================================================
+
+🌐 Replit URL: https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
+
+2025-10-30 16:05:21,548 - INFO - Connecting to IB Gateway on 127.0.0.1:4002...
+2025-10-30 16:05:21,548 - INFO - Connecting to 127.0.0.1:4002 with clientId 1...
+2025-10-30 16:05:21,548 - INFO - Connected
+2025-10-30 16:05:21,606 - INFO - Logged on to server version 176
+2025-10-30 16:05:21,657 - INFO - Warning 2104, reqId -1: Market data farm connection is OK:eufarm
+2025-10-30 16:05:21,657 - INFO - Warning 2106, reqId -1: HMDS data farm connection is OK:euhmds
+2025-10-30 16:05:21,657 - INFO - Warning 2158, reqId -1: Sec-def data farm connection is OK:secdefeu
+2025-10-30 16:05:21,657 - INFO - API connection ready
+2025-10-30 16:05:22,080 - INFO - Synchronization complete
+2025-10-30 16:05:22,080 - INFO - ✓ Connected to IB Gateway
+2025-10-30 16:05:22,080 - INFO - 📅 Calculated front month contract: ES 202512
+2025-10-30 16:05:22,386 - INFO - ✓ Contract qualified: ES 202512
+2025-10-30 16:05:22,386 - INFO - ✓ Requesting REAL-TIME Level II market data
+2025-10-30 16:05:22,386 - INFO - ✓ Subscribed to Level II DOM (10 levels)
+2025-10-30 16:05:22,386 - INFO - Connecting to Replit at https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev...
+2025-10-30 16:05:23,026 - INFO - ✓ Connected to Replit trading system
+
+============================================================
+✓ BRIDGE ACTIVE - Forwarding REAL-TIME ES + DOM to Replit
+Press Ctrl+C to stop
+============================================================
+
+2025-10-30 16:05:23,027 - INFO - Warning 2119, reqId -1: Market data farm is connecting:usfuture
+2025-10-30 16:05:23,027 - INFO - Market data farm connecting...
+2025-10-30 16:05:23,027 - INFO - Warning 2119, reqId -1: Market data farm is connecting:usfuture
+2025-10-30 16:05:23,027 - INFO - Market data farm connecting...
+2025-10-30 16:05:23,458 - INFO - Warning 2104, reqId -1: Market data farm connection is OK:usfuture
+2025-10-30 16:05:23,644 - ERROR - Error 354, reqId 4: Requested market data is not subscribed. Check API status by selecting the Account menu then under Management choose Market Data Subscription Manager and/or availability of delayed data.Delayed market data is available.ES DEC'25 (ESZ5) /TOP/ALL, contract: Future(conId=495512563, symbol='ES', lastTradeDateOrContractMonth='20251219', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ5', tradingClass='ES')
+2025-10-30 16:05:23,644 - ERROR - ⚠ ERROR 354: Requested market data is not subscribed. Check API status by selecting the Account menu then under Management choose Market Data Subscription Manager and/or availability of delayed data.Delayed market data is available.ES DEC'25 (ESZ5) /TOP/ALL
+2025-10-30 16:05:23,644 - ERROR - ❌ Your CME subscription is NOT configured for API access
+2025-10-30 16:05:23,644 - ERROR - 📋 SOLUTION:
+2025-10-30 16:05:23,644 - ERROR -    1. Go to https://www.interactivebrokers.com/portal/
+2025-10-30 16:05:23,644 - ERROR -    2. Settings → Account Settings → Paper Trading Account
+2025-10-30 16:05:23,645 - ERROR -    3. Enable: 'Share market data subscriptions with paper trading account'
+2025-10-30 16:05:23,645 - ERROR -    4. Restart IB Gateway and try again
+2025-10-30 16:05:23,861 - ERROR - Error 354, reqId 5: Requested market data is not subscribed. Check API status by selecting the Account menu then under Management choose Market Data Subscription Manager and/or availability of delayed data.ES DEC'25 (ESZ5) /DEEP, contract: Future(conId=495512563, symbol='ES', lastTradeDateOrContractMonth='20251219', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ5', tradingClass='ES')
+2025-10-30 16:05:23,861 - ERROR - ⚠ ERROR 354: Requested market data is not subscribed. Check API status by selecting the Account menu then under Management choose Market Data Subscription Manager and/or availability of delayed data.ES DEC'25 (ESZ5) /DEEP
+2025-10-30 16:05:23,861 - ERROR - ❌ Your CME subscription is NOT configured for API access
+2025-10-30 16:05:23,861 - ERROR - 📋 SOLUTION:
+2025-10-30 16:05:23,862 - ERROR -    1. Go to https://www.interactivebrokers.com/portal/
+2025-10-30 16:05:23,862 - ERROR -    2. Settings → Account Settings → Paper Trading Account
+2025-10-30 16:05:23,862 - ERROR -    3. Enable: 'Share market data subscriptions with paper trading account'
+2025-10-30 16:05:23,862 - ERROR -    4. Restart IB Gateway and try again
+^P^Psource ibkr_env/bin/activate
+python3 ibkr_bridge_REAL_TIME_LEVEL2.py https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.devalfredo@penguin:~$ source ibkr_env/bin/activate
+python3 ibkr_bridge_REAL_TIME_LEVEL2.py https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
