@@ -48,7 +48,7 @@ export default function MinimalProfileChart({
   const chartInstance = useRef<Chart | null>(null);
 
   // Filter out invalid candles BEFORE useEffect
-  const validCandles = candles.filter(c => c && c.timestamp > 0);
+  const validCandles = (candles || []).filter(c => c && typeof c.timestamp === 'number' && c.timestamp > 0 && !isNaN(c.timestamp));
 
   useEffect(() => {
     if (!chartRef.current) return;
@@ -64,6 +64,7 @@ export default function MinimalProfileChart({
 
     // Don't render chart if no valid data
     if (validCandles.length === 0) {
+      console.log('[MinimalProfileChart] No valid candles to display');
       return;
     }
     
@@ -298,6 +299,17 @@ export default function MinimalProfileChart({
       }
     };
   }, [candles, cva, dva, vwap, absorptionEvents, currentPrice]);
+
+  // Show loading state if no valid candles
+  if (validCandles.length === 0) {
+    return (
+      <div className="h-full w-full bg-black rounded flex items-center justify-center">
+        <div className="text-gray-500 text-sm">
+          Building candles from tick data...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full w-full bg-black rounded">
