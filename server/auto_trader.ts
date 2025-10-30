@@ -22,6 +22,8 @@ export class AutoTrader {
   private maxPositionSize: number = 1; // Max 1 MES contract for small account
   private minCapital: number = 2000;
   private orderflowStrategy: OrderFlowStrategy;
+  private positionEntryTime: number = 0; // Track when position was opened
+  private minHoldTimeMs: number = 10000; // Minimum 10 seconds hold time before early exit
 
   constructor(settings: OrderFlowSettings) {
     this.orderflowStrategy = new OrderFlowStrategy(settings);
@@ -120,11 +122,17 @@ export class AutoTrader {
     const isLong = position.contracts > 0;
     const isShort = position.contracts < 0;
 
+    // Calculate time in position
+    const timeInPosition = Date.now() - this.positionEntryTime;
+    const hasMinHoldTime = timeInPosition >= this.minHoldTimeMs;
+
     // For simplicity, we'll rely on the IBKR bracket orders for take profit/stop loss
     // But we can add order flow-based early exit logic here in the future
 
     // Check for adverse absorption (institutional activity against our position)
-    if (absorptionEvents && absorptionEvents.length > 0) {
+    // FIXED: Only check for adverse absorption after minimum hold time
+    // FIXED: Increased threshold from 2.0 to 5.0 to avoid false exits
+    if (hasMinHoldTime && absorptionEvents && absorptionEvents.length > 0) {
       const recentAbsorption = absorptionEvents.filter(
         e => Date.now() - e.timestamp < 60000 // Last 1 minute
       );
@@ -133,7 +141,8 @@ export class AutoTrader {
         const latestAbsorption = recentAbsorption[recentAbsorption.length - 1];
 
         // If we're LONG and see SELL_ABSORPTION (buyers being absorbed at resistance)
-        if (isLong && latestAbsorption.side === 'SELL_ABSORPTION' && latestAbsorption.ratio >= 2.0) {
+        // Require 5:1 ratio or higher to exit (stronger signal)
+        if (isLong && latestAbsorption.side === 'SELL_ABSORPTION' && latestAbsorption.ratio >= 5.0) {
           return {
             action: 'CLOSE',
             quantity: Math.abs(position.contracts),
@@ -143,7 +152,8 @@ export class AutoTrader {
         }
 
         // If we're SHORT and see BUY_ABSORPTION (sellers being absorbed at support)
-        if (isShort && latestAbsorption.side === 'BUY_ABSORPTION' && latestAbsorption.ratio >= 2.0) {
+        // Require 5:1 ratio or higher to exit (stronger signal)
+        if (isShort && latestAbsorption.side === 'BUY_ABSORPTION' && latestAbsorption.ratio >= 5.0) {
           return {
             action: 'CLOSE',
             quantity: Math.abs(position.contracts),
@@ -192,6 +202,20 @@ export class AutoTrader {
       reason: "Holding position - order flow remains favorable",
       entry_price: currentPrice,
     };
+  }
+
+  /**
+   * Set position entry time when a new position is opened
+   */
+  setPositionEntryTime(timestamp: number = Date.now()) {
+    this.positionEntryTime = timestamp;
+  }
+
+  /**
+   * Reset position entry time when position is closed
+   */
+  resetPositionEntryTime() {
+    this.positionEntryTime = 0;
   }
 
   /**

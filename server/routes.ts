@@ -537,6 +537,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             position.entry_price = signal.entry_price;
           }
 
+          // Track position entry time for hold time enforcement
+          autoTrader.setPositionEntryTime(timestamp);
+
           await storage.setPosition(position);
 
           console.log(`[AUTO-TRADE] ✅ ${signal.action} ${signal.quantity} @ ${signal.entry_price.toFixed(2)} - ${signal.reason}`);
@@ -572,6 +575,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           position.side = "FLAT";
           position.entry_price = null;
           position.unrealized_pnl = 0;
+
+          // Reset position entry time when position is closed
+          autoTrader.resetPositionEntryTime();
 
           await storage.setPosition(position);
 
