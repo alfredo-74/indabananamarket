@@ -1,0 +1,89 @@
+alfredo@penguin:~$ source ibkr_env/bin/activate
+python3 ~/ibkr_bridge_LIVE_READONLY.py https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
+
+============================================================
+IBKR BRIDGE - LIVE ACCOUNT TEST (READ-ONLY)
+============================================================
+
+🌐 Replit URL: https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
+
+2025-10-30 16:48:12,759 - INFO - ============================================================
+2025-10-30 16:48:12,759 - INFO - ⚠️  CONNECTING TO LIVE ACCOUNT (READ-ONLY MODE)
+2025-10-30 16:48:12,759 - INFO - ⚠️  NO TRADES WILL BE EXECUTED - DATA ONLY
+2025-10-30 16:48:12,760 - INFO - ============================================================
+2025-10-30 16:48:12,760 - INFO - Connecting to IB Gateway on 127.0.0.1:4001 (LIVE)...
+2025-10-30 16:48:12,760 - INFO - Connecting to 127.0.0.1:4001 with clientId 1...
+2025-10-30 16:48:12,760 - INFO - Connected
+2025-10-30 16:48:12,769 - INFO - Logged on to server version 176
+2025-10-30 16:48:12,774 - INFO - Warning 2104, reqId -1: Market data farm connection is OK:usfuture
+2025-10-30 16:48:12,774 - INFO - Warning 2104, reqId -1: Market data farm connection is OK:eufarm
+2025-10-30 16:48:12,774 - INFO - Warning 2106, reqId -1: HMDS data farm connection is OK:euhmds
+2025-10-30 16:48:12,774 - INFO - Warning 2158, reqId -1: Sec-def data farm connection is OK:secdefeu
+2025-10-30 16:48:12,774 - INFO - API connection ready
+2025-10-30 16:48:12,875 - ERROR - Error 321, reqId -1: Error validating request.-'ct' : cause - The API interface is currently in Read-Only mode.
+2025-10-30 16:48:12,975 - ERROR - Error 321, reqId -1: Error validating request.-'b3' : cause - The API interface is currently in Read-Only mode.
+2025-10-30 16:48:16,779 - ERROR - open orders request timed out
+2025-10-30 16:48:16,779 - ERROR - completed orders request timed out
+2025-10-30 16:48:16,782 - INFO - Synchronization complete
+2025-10-30 16:48:16,783 - INFO - ✓ Connected to IB Gateway (LIVE ACCOUNT)
+2025-10-30 16:48:16,783 - INFO - 📅 Calculated front month contract: ES 202512
+2025-10-30 16:48:16,868 - INFO - ✓ Contract qualified: ES 202512
+2025-10-30 16:48:16,869 - INFO - ✓ Requesting REAL-TIME market data with CME subscription
+2025-10-30 16:48:16,869 - INFO - ✓ Subscribed to market data feed
+2025-10-30 16:48:16,869 - INFO - ✓ Subscribed to Level II DOM (10 levels)
+2025-10-30 16:48:16,869 - INFO - Connecting to Replit at https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev...
+2025-10-30 16:48:17,542 - INFO - ✓ Connected to Replit trading system
+
+============================================================
+✓ BRIDGE ACTIVE - TESTING CME SUBSCRIPTION ON LIVE ACCOUNT
+⚠️  READ-ONLY MODE - NO TRADES WILL BE EXECUTED
+Press Ctrl+C to stop
+============================================================
+
+2025-10-30 16:48:17,542 - ERROR - Error 354, reqId 4: Requested market data is not subscribed. Check API status by selecting the Account menu then under Management choose Market Data Subscription Manager and/or availability of delayed data.Delayed market data is available.ES DEC'25 (ESZ5) /TOP/ALL, contract: Future(conId=495512563, symbol='ES', lastTradeDateOrContractMonth='20251219', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ5', tradingClass='ES')
+2025-10-30 16:48:17,543 - ERROR - ⚠ ERROR 354: Requested market data is not subscribed. Check API status by selecting the Account menu then under Management choose Market Data Subscription Manager and/or availability of delayed data.Delayed market data is available.ES DEC'25 (ESZ5) /TOP/ALL
+2025-10-30 16:48:17,543 - ERROR - 
+2025-10-30 16:48:17,543 - ERROR - ❌ LIVE ACCOUNT STILL GETTING ERROR 354
+2025-10-30 16:48:17,543 - ERROR - 
+2025-10-30 16:48:17,543 - ERROR - This confirms: Your 'CME Real-Time (NP,L2) Trader Workstation'
+2025-10-30 16:48:17,543 - ERROR - subscription does NOT support API access.
+2025-10-30 16:48:17,543 - ERROR - 
+2025-10-30 16:48:17,543 - ERROR - You MUST contact IBKR support and ask for:
+2025-10-30 16:48:17,543 - ERROR - 'CME Real-Time (NP,L2) Non-Display (API)' subscription
+2025-10-30 16:48:17,543 - ERROR - 
+2025-10-30 16:48:17,544 - ERROR - Error 354, reqId 5: Requested market data is not subscribed. Check API status by selecting the Account menu then under Management choose Market Data Subscription Manager and/or availability of delayed data.ES DEC'25 (ESZ5) /DEEP, contract: Future(conId=495512563, symbol='ES', lastTradeDateOrContractMonth='20251219', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ5', tradingClass='ES')
+2025-10-30 16:48:17,544 - ERROR - ⚠ ERROR 354: Requested market data is not subscribed. Check API status by selecting the Account menu then under Management choose Market Data Subscription Manager and/or availability of delayed data.ES DEC'25 (ESZ5) /DEEP
+2025-10-30 16:48:17,544 - ERROR - 
+2025-10-30 16:48:17,544 - ERROR - ❌ LIVE ACCOUNT STILL GETTING ERROR 354
+2025-10-30 16:48:17,544 - ERROR - 
+2025-10-30 16:48:17,544 - ERROR - This confirms: Your 'CME Real-Time (NP,L2) Trader Workstation'
+2025-10-30 16:48:17,544 - ERROR - subscription does NOT support API access.
+2025-10-30 16:48:17,544 - ERROR - 
+2025-10-30 16:48:17,544 - ERROR - You MUST contact IBKR support and ask for:
+2025-10-30 16:48:17,544 - ERROR - 'CME Real-Time (NP,L2) Non-Display (API)' subscription
+2025-10-30 16:48:17,544 - ERROR - 
+2025-10-30 16:48:17,544 - ERROR - Value () caused exception for event Event<updateEvent, [[None, <weakref at 0x7fac8ee4fd80; to 'IBKRBridge' at 0x7facaf90b610>, <function IBKRBridge.on_dom_update at 0x7fac8ee65440>]]>
+Traceback (most recent call last):
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/eventkit/event.py", line 205, in emit
+    result = func(obj, *args)
+             ^^^^^^^^^^^^^^^^
+TypeError: IBKRBridge.on_dom_update() missing 1 required positional argument: 'obj'
+source ibkr_env/bin/activate
+python3 ~/ibkr_bridge_LIVE_READONLY.py https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev2025-10-30 16:48:22,441 - ERROR - Value () caused exception for event Event<updateEvent, [[None, <weakref at 0x7fac8ee4fd80; to 'IBKRBridge' at 0x7facaf90b610>, <function IBKRBridge.on_dom_update at 0x7fac8ee65440>]]>
+Traceback (most recent call last):
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/eventkit/event.py", line 205, in emit
+    result = func(obj, *args)
+             ^^^^^^^^^^^^^^^^
+TypeError: IBKRBridge.on_dom_update() missing 1 required positional argument: 'obj'
+2025-10-30 16:48:22,442 - ERROR - Value () caused exception for event Event<updateEvent, [[None, <weakref at 0x7fac8ee4fd80; to 'IBKRBridge' at 0x7facaf90b610>, <function IBKRBridge.on_dom_update at 0x7fac8ee65440>]]>
+Traceback (most recent call last):
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/eventkit/event.py", line 205, in emit
+    result = func(obj, *args)
+             ^^^^^^^^^^^^^^^^
+TypeError: IBKRBridge.on_dom_update() missing 1 required positional argument: 'obj'
+2025-10-30 16:48:22,443 - ERROR - Value () caused exception for event Event<updateEvent, [[None, <weakref at 0x7fac8ee4fd80; to 'IBKRBridge' at 0x7facaf90b610>, <function IBKRBridge.on_dom_update at 0x7fac8ee65440>]]>
+Traceback (most recent call last):
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/eventkit/event.py", line 205, in emit
+    result = func(obj, *args)
+             ^^^^^^^^^^^^^^^^
+TypeError: IBKRBridge.on_dom_update() missing 1 required positional argument: 'obj'
