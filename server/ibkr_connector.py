@@ -246,6 +246,80 @@ class IBKRConnector:
             print(f"Error getting DOM data: {e}", file=sys.stderr)
             return None
     
+    async def get_historical_data(self, days: int = 5):
+        """
+        Fetch historical 5-minute bars for building Composite Value Area (CVA)
+        
+        Args:
+            days: Number of trading days to fetch (default 5 for CVA)
+        
+        Returns:
+            List of daily bar data grouped by date
+        """
+        try:
+            if not self.connected or not self.display_contract:
+                return {"success": False, "error": "Not connected to IBKR"}
+            
+            print(f"Fetching {days} days of historical 5-min bars for CVA...", file=sys.stderr)
+            
+            # Request historical data
+            # Duration: days trading days
+            # Bar size: 5 mins (optimal for volume profile construction)
+            # What to show: TRADES (actual transaction data)
+            bars = await self.ib.reqHistoricalDataAsync(
+                self.display_contract,
+                endDateTime='',  # '' = most recent data
+                durationStr=f'{days} D',  # D = trading days (excludes weekends/holidays)
+                barSizeSetting='5 mins',
+                whatToShow='TRADES',
+                useRTH=True,  # Regular Trading Hours only (9:30 AM - 4:00 PM ET)
+                formatDate=1  # 1 = yyyyMMdd HH:mm:ss format
+            )
+            
+            if not bars:
+                return {"success": False, "error": "No historical data returned"}
+            
+            print(f"Received {len(bars)} bars from IBKR", file=sys.stderr)
+            
+            # Group bars by trading date
+            daily_bars = {}
+            for bar in bars:
+                # Extract date from datetime (format: yyyyMMdd HH:mm:ss)
+                date_str = bar.date.strftime('%Y-%m-%d')
+                
+                if date_str not in daily_bars:
+                    daily_bars[date_str] = []
+                
+                daily_bars[date_str].append({
+                    "timestamp": int(bar.date.timestamp() * 1000),
+                    "open": float(bar.open),
+                    "high": float(bar.high),
+                    "low": float(bar.low),
+                    "close": float(bar.close),
+                    "volume": int(bar.volume)
+                })
+            
+            # Convert to list and sort by date
+            result = []
+            for date in sorted(daily_bars.keys()):
+                result.append({
+                    "date": date,
+                    "bars": daily_bars[date]
+                })
+            
+            print(f"Grouped into {len(result)} trading days", file=sys.stderr)
+            
+            return {
+                "success": True,
+                "days": result
+            }
+            
+        except Exception as e:
+            print(f"Error fetching historical data: {e}", file=sys.stderr)
+            import traceback
+            traceback.print_exc(file=sys.stderr)
+            return {"success": False, "error": str(e)}
+    
     def disconnect(self):
         """Disconnect from IBKR"""
         if self.connected:
@@ -311,6 +385,12 @@ async def main():
                 
                 elif command['action'] == 'get_dom_data':
                     data = await connector.get_dom_data()
+                    print(json.dumps(data))
+                    sys.stdout.flush()
+                
+                elif command['action'] == 'get_historical_data':
+                    days = command.get('days', 5)
+                    data = await connector.get_historical_data(days)
                     print(json.dumps(data))
                     sys.stdout.flush()
                     

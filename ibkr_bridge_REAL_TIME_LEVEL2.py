@@ -254,6 +254,84 @@ class IBKRBridge:
             logger.error(f"Error polling orders: {e}")
             return []
     
+    async def fetch_and_send_historical_data(self, days=5):
+        """Fetch 5 days of historical data and send to Replit to build CVA"""
+        try:
+            logger.info(f"📊 Fetching {days} days of historical 5-min bars for CVA initialization...")
+            
+            # Request historical data from IBKR
+            bars = await self.ib.reqHistoricalDataAsync(
+                self.es_contract,
+                endDateTime='',  # Most recent data
+                durationStr=f'{days} D',  # Trading days (excludes weekends)
+                barSizeSetting='5 mins',
+                whatToShow='TRADES',
+                useRTH=True,  # Regular Trading Hours only (9:30 AM - 4:00 PM ET)
+                formatDate=1
+            )
+            
+            if not bars:
+                logger.warning("⚠ No historical data received from IBKR")
+                return
+            
+            logger.info(f"✓ Received {len(bars)} bars from IBKR")
+            
+            # Group bars by trading date
+            daily_bars = {}
+            for bar in bars:
+                date_str = bar.date.strftime('%Y-%m-%d')
+                
+                if date_str not in daily_bars:
+                    daily_bars[date_str] = []
+                
+                daily_bars[date_str].append({
+                    "timestamp": int(bar.date.timestamp() * 1000),
+                    "open": float(bar.open),
+                    "high": float(bar.high),
+                    "low": float(bar.low),
+                    "close": float(bar.close),
+                    "volume": int(bar.volume)
+                })
+            
+            # Convert to list and sort by date
+            days_data = []
+            for date in sorted(daily_bars.keys()):
+                days_data.append({
+                    "date": date,
+                    "bars": daily_bars[date]
+                })
+            
+            logger.info(f"✓ Grouped into {len(days_data)} trading days")
+            
+            # Send to Replit CVA initialization endpoint
+            try:
+                response = self.session.post(
+                    f"{self.replit_url}/api/bridge/initialize-cva",
+                    json={"days": days_data},
+                    timeout=30
+                )
+                
+                if response.status_code == 200:
+                    result = response.json()
+                    if result.get('success'):
+                        cva = result.get('cva', {})
+                        logger.info(f"✅ CVA initialized successfully!")
+                        logger.info(f"   Days: {cva.get('days_included')}/5")
+                        logger.info(f"   POC: {cva.get('composite_poc', 0):.2f}")
+                        logger.info(f"   VAH: {cva.get('composite_vah', 0):.2f}")
+                        logger.info(f"   VAL: {cva.get('composite_val', 0):.2f}")
+                    else:
+                        logger.warning(f"⚠ CVA initialization failed: {result.get('error')}")
+                else:
+                    logger.warning(f"⚠ CVA endpoint returned status {response.status_code}")
+            except Exception as e:
+                logger.error(f"❌ Failed to send historical data to Replit: {e}")
+                
+        except Exception as e:
+            logger.error(f"❌ Historical data fetch failed: {e}")
+            import traceback
+            traceback.print_exc()
+    
     async def execute_order(self, order):
         """Execute order via IBKR on MES contract"""
         try:
@@ -328,6 +406,12 @@ class IBKRBridge:
         else:
             logger.error("Failed to connect to Replit - check the URL and try again")
             return
+        
+        # Fetch historical data to initialize CVA
+        logger.info("\n" + "="*60)
+        logger.info("INITIALIZING COMPOSITE VALUE AREA (CVA)")
+        logger.info("="*60)
+        await self.fetch_and_send_historical_data(days=5)
         
         print("\n" + "="*60)
         print("✓ BRIDGE ACTIVE - Forwarding ES + DOM & Executing Orders")

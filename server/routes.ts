@@ -263,6 +263,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   console.log('✓ Bridge HTTP endpoint initialized at /api/bridge/data');
 
+  // POST /api/bridge/initialize-cva - Fetch historical data and build CVA
+  app.post('/api/bridge/initialize-cva', async (req, res) => {
+    try {
+      const { days } = req.body;
+      
+      if (!days || !Array.isArray(days)) {
+        return res.status(400).json({ error: 'Invalid historical data format' });
+      }
+      
+      console.log(`[CVA INIT] Received ${days.length} days of historical data`);
+      
+      // Process each day's bars into a volume profile
+      for (const dayData of days) {
+        const { date, bars } = dayData;
+        
+        if (!date || !bars || bars.length === 0) {
+          console.log(`[CVA INIT] Skipping invalid day: ${date}`);
+          continue;
+        }
+        
+        // Build volume profile from 5-minute bars
+        const dailyProfileCalc = new VolumeProfileCalculator(0.25);
+        
+        for (const bar of bars) {
+          // Estimate buy/sell volume from bar data
+          // Simple heuristic: if close > open, assume more buying, else more selling
+          const totalVol = bar.volume;
+          const isGreen = bar.close > bar.open;
+          const buyVolume = isGreen ? totalVol * 0.6 : totalVol * 0.4;
+          const sellVolume = totalVol - buyVolume;
+          
+          // Add mid-point of bar as transaction price
+          const price = (bar.high + bar.low) / 2;
+          dailyProfileCalc.addTransaction(price, buyVolume, "BUY");
+          dailyProfileCalc.addTransaction(price, sellVolume, "SELL");
+        }
+        
+        // Get the completed daily profile
+        const dailyProfile = dailyProfileCalc.getProfile(
+          bars[0].timestamp,
+          bars[bars.length - 1].timestamp
+        );
+        
+        // Add to composite profile system
+        if (dailyProfile.poc > 0) {
+          compositeProfileSystem.addDailyProfile(date, dailyProfile);
+          console.log(`[CVA INIT] Added ${date}: POC ${dailyProfile.poc.toFixed(2)}, VAH ${dailyProfile.vah.toFixed(2)}, VAL ${dailyProfile.val.toFixed(2)}`);
+        }
+      }
+      
+      const compositeProfile = compositeProfileSystem.getCompositeProfile();
+      if (compositeProfile) {
+        console.log(`[CVA INIT] ✓ Composite Value Area built from ${compositeProfile.days_included} days`);
+        console.log(`[CVA INIT]   CVA POC: ${compositeProfile.composite_poc.toFixed(2)}`);
+        console.log(`[CVA INIT]   CVA VAH: ${compositeProfile.composite_vah.toFixed(2)}`);
+        console.log(`[CVA INIT]   CVA VAL: ${compositeProfile.composite_val.toFixed(2)}`);
+        res.json({ success: true, cva: compositeProfile });
+      } else {
+        res.json({ success: false, error: 'Failed to build CVA' });
+      }
+    } catch (error) {
+      console.error('[CVA INIT] Error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
   // Order execution endpoints for IBKR bridge
   // POST /api/execute-order - Add order to execution queue
   app.post('/api/execute-order', async (req, res) => {
@@ -638,8 +704,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // Initialize signal to NONE (only trade if we have a valid high-probability setup)
         let signal: any = { action: "NONE", reason: "No high-probability setup detected" };
         
-        // Only trade if we have full PRO Course context
-        if (volumeProfile && compositeProfile) {
+        // Only trade if we have full PRO Course context with VALID CVA data
+        // CVA must have actual values (not zeros) and at least 3 days of data
+        const isValidCVA = compositeProfile && 
+                          compositeProfile.composite_poc > 0 && 
+                          compositeProfile.composite_vah > 0 &&
+                          compositeProfile.composite_val > 0 &&
+                          compositeProfile.days_included >= 3;
+        
+        if (volumeProfile && isValidCVA) {
           const migration = valueMigrationDetector.detectMigration(volumeProfile, compositeProfile);
           const overnightHigh = marketData.last_price * 1.005;
           const overnightLow = marketData.last_price * 0.995;
@@ -685,9 +758,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
             };
           }
         } else {
+          const cvaStatus = compositeProfile 
+            ? `CVA: ${compositeProfile.days_included}/5 days, POC=${compositeProfile.composite_poc.toFixed(2)}`
+            : "CVA: not initialized";
           signal = {
             action: "NONE",
-            reason: "Insufficient context - need both CVA and DVA for PRO Course setups"
+            reason: `Insufficient context - need valid CVA (3+ days) and DVA. ${cvaStatus}`
           };
         }
 
