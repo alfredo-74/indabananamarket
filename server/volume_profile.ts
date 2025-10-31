@@ -27,14 +27,28 @@ export class VolumeProfileCalculator {
    * @param candle - VolumetricCandle with OHLC and buy/sell volume
    */
   addCandle(candle: { open: number; high: number; low: number; close: number; buy_volume: number; sell_volume: number }): void {
-    // Add buy volume at the candle's close price (simplified - real implementation would use tick data)
-    if (candle.buy_volume > 0) {
-      this.addTransaction(candle.close, candle.buy_volume, "BUY");
-    }
+    // Distribute volume across the candle's price range (high to low)
+    // This creates a proper volume histogram instead of concentrating everything at close
     
-    // Add sell volume at the candle's close price (simplified - real implementation would use tick data)
-    if (candle.sell_volume > 0) {
-      this.addTransaction(candle.close, candle.sell_volume, "SELL");
+    // Calculate price range and number of levels
+    const priceRange = candle.high - candle.low;
+    const numLevels = Math.max(1, Math.floor(priceRange / this.tickSize) + 1);
+    
+    // Distribute buy and sell volume proportionally across all price levels
+    const buyVolumePerLevel = candle.buy_volume / numLevels;
+    const sellVolumePerLevel = candle.sell_volume / numLevels;
+    
+    // Add volume at each tick level from low to high
+    for (let i = 0; i < numLevels; i++) {
+      const price = candle.low + (i * this.tickSize);
+      
+      if (buyVolumePerLevel > 0) {
+        this.addTransaction(price, buyVolumePerLevel, "BUY");
+      }
+      
+      if (sellVolumePerLevel > 0) {
+        this.addTransaction(price, sellVolumePerLevel, "SELL");
+      }
     }
   }
 

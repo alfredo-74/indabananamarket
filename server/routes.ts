@@ -199,7 +199,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // 1. Add tick to Time & Sales and process for absorption
         const tapeTick = timeAndSalesProcessor.processTick(price, volume, isBuy ? "BUY" : "SELL", timestamp);
         
-        // 2. Process tick for absorption detection
+        // 2. Build Volume Profile from real tick data (not candles)
+        volumeProfileCalculator.addTransaction(price, volume, isBuy ? "BUY" : "SELL");
+        
+        // 3. Process tick for absorption detection
         const absorption = absorptionDetector.processTick(tapeTick);
         if (absorption) {
           await storage.addAbsorptionEvent(absorption);
@@ -213,10 +216,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // New candle completed - add to storage
           await storage.addCandle(completedCandle);
           
-          // Update volume profile with new candle
-          volumeProfileCalculator.addCandle(completedCandle);
-          
-          // CRITICAL FIX: Save updated volume profile to storage
+          // Save updated volume profile to storage (built from ticks, not candles)
           const volumeProfile = volumeProfileCalculator.getProfile();
           if (volumeProfile) {
             await storage.setVolumeProfile(volumeProfile);
@@ -561,6 +561,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     // Process tick through Order Flow processors
     const tapeTick = timeAndSalesProcessor.processTick(mockPrice, 1, isBuy ? 'BUY' : 'SELL', timestamp);
+    
+    // Build Volume Profile from real tick data
+    volumeProfileCalculator.addTransaction(mockPrice, 1, isBuy ? 'BUY' : 'SELL');
 
     // Update DOM processor (mock data - will be replaced with real IBKR L2 data)
     const mockBids: Array<[number, number]> = [
@@ -582,11 +585,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log(`[ABSORPTION] ${absorptionEvent.side} @ ${absorptionEvent.price.toFixed(2)} - Ratio: ${absorptionEvent.ratio.toFixed(2)}:1`);
     }
 
-    // Update volume profile when candle completes
+    // Save volume profile when candle completes (profile built from ticks, not candles)
     if (completedCandle) {
-      volumeProfileCalculator.addCandle(completedCandle);
-      
-      // Save updated volume profile to storage
       const volumeProfile = volumeProfileCalculator.getProfile();
       if (volumeProfile) {
         await storage.setVolumeProfile(volumeProfile);
