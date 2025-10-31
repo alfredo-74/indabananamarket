@@ -630,13 +630,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         // Only execute new trades during RTH
         if (currentSession === "RTH") {
-          let signal: any;
-
-        // First, check for high-probability PRO Course setups
+        // ONLY trade on high-probability PRO Course setups (75%+ confidence)
+        // No fallback strategies - strict adherence to PRO methodology
         const compositeProfile = compositeProfileSystem.getCompositeProfile();
         const volumeProfile = volumeProfileCalculator.getProfile();
         
-        // Only use PRO setup recognizer if we have both composite profile and volume profile
+        // Initialize signal to NONE (only trade if we have a valid high-probability setup)
+        let signal: any = { action: "NONE", reason: "No high-probability setup detected" };
+        
+        // Only trade if we have full PRO Course context
         if (volumeProfile && compositeProfile) {
           const migration = valueMigrationDetector.detectMigration(volumeProfile, compositeProfile);
           const overnightHigh = marketData.last_price * 1.005;
@@ -653,44 +655,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           const orderFlowSignals = orderFlowSignalDetector.getRecentSignals(20);
           
-          // Build market context for recommendations
-          const context = {
-            currentPrice: marketData.last_price,
-            compositeProfile,
-            valueMigration: migration,
-            hypothesis,
-            orderFlowSignals,
-            vwap: vwap.vwap,
-            vwapSD1Upper: vwap.sd1_upper,
-            vwapSD1Lower: vwap.sd1_lower,
-            vwapSD2Upper: vwap.sd2_upper,
-            vwapSD2Lower: vwap.sd2_lower,
-            volumeProfile: {
-              poc: volumeProfile.poc,
-              vah: volumeProfile.val,
-              val: volumeProfile.val,
-            },
+          // Build market context for recommendations (only if we have valid VWAP)
+          if (vwap.vwap !== null) {
+            const context = {
+              currentPrice: marketData.last_price,
+              compositeProfile,
+              valueMigration: migration,
+              hypothesis,
+              orderFlowSignals,
+              vwap: vwap.vwap,
+              vwapSD1Upper: vwap.sd1_upper,
+              vwapSD1Lower: vwap.sd1_lower,
+              vwapSD2Upper: vwap.sd2_upper,
+              vwapSD2Lower: vwap.sd2_lower,
+              volumeProfile: {
+                poc: volumeProfile.poc,
+                vah: volumeProfile.val,
+                val: volumeProfile.val,
+              },
+            };
+            
+            // Generate recommendations and evaluate with 75% minimum confidence
+            const recommendations = setupRecognizer.generateRecommendations(context);
+            signal = autoTrader.evaluateRecommendations(recommendations, position, 75);
+          } else {
+            signal = {
+              action: "NONE",
+              reason: "Insufficient VWAP data - need more candles for PRO Course setups"
+            };
+          }
+        } else {
+          signal = {
+            action: "NONE",
+            reason: "Insufficient context - need both CVA and DVA for PRO Course setups"
           };
-          
-          const recommendations = setupRecognizer.generateRecommendations(context);
-          signal = autoTrader.evaluateRecommendations(recommendations, position, 75); // 75% min confidence
-        }
-
-        // Fallback to order flow strategy if no PRO setup found
-        if (!signal || signal.action === "NONE") {
-          const absorptionEvents = absorptionDetector.getRecentEvents(60);
-          const domSnapshot = domProcessor.getSnapshot() || null;
-          const timeAndSalesEntries = timeAndSalesProcessor.getEntries(50);
-          const volumeProfile = volumeProfileCalculator.getProfile() || null;
-
-          signal = autoTrader.analyzeMarket(
-            marketData,
-            absorptionEvents,
-            domSnapshot,
-            timeAndSalesEntries,
-            volumeProfile,
-            position
-          );
         }
 
         // Log auto-trading decision (even if NONE)
