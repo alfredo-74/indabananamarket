@@ -586,18 +586,73 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     }
 
-    // Calculate VWAP
-    const candles = await storage.getCandles();
-    if (candles.length > 0) {
-      const vwap = vwapCalculator.calculate(candles);
+    // Calculate VWAP and run advanced order flow detection
+    const allCandles = await storage.getCandles();
+    if (allCandles.length > 0) {
+      const vwap = vwapCalculator.calculate(allCandles);
       await storage.setVWAPData(vwap);
       broadcast({
         type: "vwap_update",
         data: vwap,
       });
 
+      // ADVANCED ORDER FLOW SIGNAL DETECTION (PRO Course)
+      // Detect: Lack of Participation, Stacked Imbalances, Trapped Traders, Initiative/Responsive, Exhaustion
+      const storedVolumeProfile = await storage.getVolumeProfile();
+      
+      if (allCandles.length >= 10 && storedVolumeProfile) {
+        // Build arrays for signal detection
+        const recentCandles = allCandles.slice(-20);
+        const recentPrices = recentCandles.map(c => c.close);
+        const recentDeltas = recentCandles.map(c => c.cumulative_delta);
+        const recentVolumes = recentCandles.map(c => c.accumulated_volume);
+        
+        // Get recent imbalances from time & sales
+        const recentTicks = timeAndSalesProcessor.getEntries(50);
+        const imbalances: Array<{ price: number; ratio: number; direction: "BUY" | "SELL" }> = [];
+        
+        // Build imbalance data from consecutive ticks
+        for (let i = 1; i < recentTicks.length; i++) {
+          const prev = recentTicks[i - 1];
+          const curr = recentTicks[i];
+          
+          // Check for buy/sell imbalance
+          const buyVolume = curr.side === 'BUY' ? curr.volume : 0;
+          const sellVolume = curr.side === 'SELL' ? curr.volume : 0;
+          
+          if (buyVolume > 0 && sellVolume === 0) {
+            imbalances.push({ price: curr.price, ratio: buyVolume, direction: "BUY" });
+          } else if (sellVolume > 0 && buyVolume === 0) {
+            imbalances.push({ price: curr.price, ratio: sellVolume, direction: "SELL" });
+          }
+        }
+        
+        const avgVolume = recentVolumes.reduce((a, b) => a + b, 0) / recentVolumes.length;
+        const currentCandle = allCandles[allCandles.length - 1];
+        
+        // Process market data through advanced order flow detector
+        const newSignals = orderFlowSignalDetector.processMarketData({
+          currentPrice: mockPrice,
+          currentDelta: currentCandle.cumulative_delta,
+          currentVolume: currentCandle.accumulated_volume,
+          recentPrices,
+          recentDeltas,
+          recentVolumes,
+          recentImbalances: imbalances,
+          vah: storedVolumeProfile.vah,
+          val: storedVolumeProfile.val,
+          avgVolume,
+          timeOutsideValue: 0 // TODO: Track time outside value
+        });
+        
+        // Log any new signals
+        for (const signal of newSignals) {
+          console.log(`[ORDER FLOW] ${signal.signal_type} - ${signal.direction} @ ${signal.price.toFixed(2)} - ${signal.description} (Confidence: ${signal.confidence}%)`);
+        }
+      }
+
       // Session-aware regime detection
-      const latestCandle = candles[candles.length - 1];
+      const latestCandle = allCandles[allCandles.length - 1];
       const tickDelta = isBuy ? 1 : -1; // Delta for this tick
       const regimeUpdate = sessionRegimeManager.updateRegime(timestamp, tickDelta);
 
@@ -631,7 +686,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (completedCandle) {
         const previousDayCandles = await storage.getPreviousDayCandles();
         const keyLevels = keyLevelsDetector.detectKeyLevels(
-          candles,
+          allCandles,
           vwap,
           previousDayCandles
         );
