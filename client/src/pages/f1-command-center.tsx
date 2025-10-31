@@ -220,7 +220,7 @@ export default function F1CommandCenter() {
                   {volumeProfile?.vah?.toFixed(2) || vwapData?.sd1_upper?.toFixed(2) || "----"}
                 </span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between pl-6">
                 <span className="text-gray-500">{volumeProfile ? "POC:" : "VWAP:"}</span>
                 <span className="text-yellow-400 font-bold tabular-nums">
                   {volumeProfile?.poc?.toFixed(2) || vwapData?.vwap?.toFixed(2) || "----"}
@@ -520,22 +520,22 @@ export default function F1CommandCenter() {
               <div className="flex gap-6 text-sm">
                 <div className="space-y-1">
                   <div className="text-cyan-400 font-bold text-xs uppercase tracking-wide">CVA (5-Day)</div>
-                  <div className="text-gray-500">POC: <span className="text-cyan-400 font-mono">{compositeProfile?.composite_poc?.toFixed(2) || "—"}</span></div>
                   <div className="text-gray-500">VAH: <span className="text-cyan-400 font-mono">{compositeProfile?.composite_vah?.toFixed(2) || "—"}</span></div>
+                  <div className="text-gray-500 pl-4">POC: <span className="text-cyan-400 font-mono">{compositeProfile?.composite_poc?.toFixed(2) || "—"}</span></div>
                   <div className="text-gray-500">VAL: <span className="text-cyan-400 font-mono">{compositeProfile?.composite_val?.toFixed(2) || "—"}</span></div>
                 </div>
                 <div className="border-l border-green-900/30"></div>
                 <div className="space-y-1">
                   <div className="text-yellow-400 font-bold text-xs uppercase tracking-wide">DVA (Daily)</div>
-                  <div className="text-gray-500">POC: <span className="text-yellow-400 font-mono">{volumeProfile?.poc?.toFixed(2) || "—"}</span></div>
                   <div className="text-gray-500">VAH: <span className="text-yellow-400 font-mono">{volumeProfile?.vah?.toFixed(2) || "—"}</span></div>
+                  <div className="text-gray-500 pl-4">POC: <span className="text-yellow-400 font-mono">{volumeProfile?.poc?.toFixed(2) || "—"}</span></div>
                   <div className="text-gray-500">VAL: <span className="text-yellow-400 font-mono">{volumeProfile?.val?.toFixed(2) || "—"}</span></div>
                 </div>
                 <div className="border-l border-green-900/30"></div>
                 <div className="space-y-1">
                   <div className="text-white font-bold text-xs uppercase tracking-wide">VWAP</div>
-                  <div className="text-gray-500">VWAP: <span className="text-white font-mono">{vwapData?.vwap?.toFixed(2) || "—"}</span></div>
                   <div className="text-gray-500">+SD1: <span className="text-white/60 font-mono">{vwapData?.sd1_upper?.toFixed(2) || "—"}</span></div>
+                  <div className="text-gray-500 pl-4">VWAP: <span className="text-white font-mono">{vwapData?.vwap?.toFixed(2) || "—"}</span></div>
                   <div className="text-gray-500">-SD1: <span className="text-white/60 font-mono">{vwapData?.sd1_lower?.toFixed(2) || "—"}</span></div>
                 </div>
               </div>
