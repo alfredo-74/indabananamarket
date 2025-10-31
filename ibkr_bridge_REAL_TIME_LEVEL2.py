@@ -236,13 +236,83 @@ class IBKRBridge:
         except Exception as e:
             logger.error(f"Error forwarding DOM: {e}")
     
+    def get_mes_contract(self):
+        """Get MES contract for trading"""
+        # MES (Micro E-mini S&P 500) uses same contract months as ES
+        contract_month = get_front_month_contract()
+        mes_contract = Future('MES', contract_month, 'CME')
+        return mes_contract
+    
+    def poll_pending_orders(self):
+        """Check for pending orders from Replit"""
+        try:
+            response = self.session.get(f"{self.replit_url}/api/pending-orders", timeout=5)
+            if response.status_code == 200:
+                return response.json()
+            return []
+        except Exception as e:
+            logger.error(f"Error polling orders: {e}")
+            return []
+    
+    async def execute_order(self, order):
+        """Execute order via IBKR on MES contract"""
+        try:
+            logger.info(f"🔄 Executing {order['action']} {order['quantity']} MES (ID: {order['id']})")
+            
+            # Get MES contract
+            mes_contract = self.get_mes_contract()
+            contracts = await self.ib.qualifyContractsAsync(mes_contract)
+            if not contracts:
+                raise Exception("Could not qualify MES contract")
+            mes_contract = contracts[0]
+            
+            # Create market order
+            from ib_insync import MarketOrder
+            ib_order = MarketOrder(order['action'], order['quantity'])
+            
+            # Place order
+            trade = self.ib.placeOrder(mes_contract, ib_order)
+            
+            # Wait for fill (with timeout)
+            for _ in range(10):  # Wait up to 10 seconds
+                await asyncio.sleep(1)
+                if trade.orderStatus.status in ['Filled', 'Cancelled', 'ApiCancelled']:
+                    break
+            
+            result = {
+                'order_id': trade.order.orderId,
+                'status': trade.orderStatus.status,
+                'filled': trade.orderStatus.filled,
+                'avg_fill_price': trade.orderStatus.avgFillPrice,
+            }
+            
+            # Report result back to Replit
+            self.send_to_replit({
+                'type': 'order_result',
+                'orderId': order['id'],
+                'status': 'EXECUTED' if trade.orderStatus.status == 'Filled' else 'FAILED',
+                'result': result
+            })
+            
+            logger.info(f"✅ Order executed: {order['action']} {order['quantity']} MES @ {trade.orderStatus.avgFillPrice:.2f}")
+            
+        except Exception as e:
+            logger.error(f"❌ Order execution failed: {e}")
+            # Report failure
+            self.send_to_replit({
+                'type': 'order_result',
+                'orderId': order['id'],
+                'status': 'FAILED',
+                'result': {'error': str(e)}
+            })
+    
     async def run(self, replit_url):
         """Main run loop"""
         self.running = True
         self.replit_url = replit_url.rstrip('/')  # Remove trailing slash if present
         
         print("\n" + "="*60)
-        print("IBKR BRIDGE - REAL-TIME Level II Data Forwarder")
+        print("IBKR BRIDGE - REAL-TIME Level II Data Forwarder + Order Execution")
         print("="*60)
         print(f"\n🌐 Replit URL: {replit_url}")
         print()
@@ -260,14 +330,23 @@ class IBKRBridge:
             return
         
         print("\n" + "="*60)
-        print("✓ BRIDGE ACTIVE - Forwarding REAL-TIME ES + DOM to Replit")
+        print("✓ BRIDGE ACTIVE - Forwarding ES + DOM & Executing Orders")
         print("Press Ctrl+C to stop")
         print("="*60 + "\n")
         
         try:
             # Keep running
+            order_poll_counter = 0
             while self.running:
                 await asyncio.sleep(1)
+                
+                # Poll for orders every 2 seconds
+                order_poll_counter += 1
+                if order_poll_counter >= 2:
+                    order_poll_counter = 0
+                    pending_orders = self.poll_pending_orders()
+                    for order in pending_orders:
+                        await self.execute_order(order)
                 
                 # Check connections
                 if not self.ib.isConnected():

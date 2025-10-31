@@ -110,6 +110,18 @@ let ibkrConnected = false;
 let mockPrice = 6004.0;  // ES contract pricing for display
 let mockTick = 0;
 
+// Order execution queue for IBKR bridge
+interface PendingOrder {
+  id: string;
+  action: "BUY" | "SELL";
+  quantity: number;
+  timestamp: number;
+  status: "PENDING" | "EXECUTED" | "FAILED";
+  result?: any;
+}
+
+const pendingOrders: Map<string, PendingOrder> = new Map();
+
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
 
@@ -250,6 +262,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }, 5000);
 
   console.log('✓ Bridge HTTP endpoint initialized at /api/bridge/data');
+
+  // Order execution endpoints for IBKR bridge
+  // POST /api/execute-order - Add order to execution queue
+  app.post('/api/execute-order', async (req, res) => {
+    try {
+      const { action, quantity } = req.body;
+      
+      if (!action || !quantity) {
+        return res.status(400).json({ error: 'Missing action or quantity' });
+      }
+      
+      if (action !== 'BUY' && action !== 'SELL') {
+        return res.status(400).json({ error: 'Action must be BUY or SELL' });
+      }
+      
+      const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const order: PendingOrder = {
+        id: orderId,
+        action,
+        quantity,
+        timestamp: Date.now(),
+        status: 'PENDING',
+      };
+      
+      pendingOrders.set(orderId, order);
+      console.log(`[ORDER QUEUE] Added ${action} ${quantity} (ID: ${orderId})`);
+      
+      res.json({ success: true, orderId });
+    } catch (error) {
+      console.error('Execute order error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  // GET /api/pending-orders - Bridge polls for orders to execute
+  app.get('/api/pending-orders', (req, res) => {
+    const pending = Array.from(pendingOrders.values()).filter(o => o.status === 'PENDING');
+    res.json(pending);
+  });
+
+  // POST /api/order-result - Bridge reports execution results
+  app.post('/api/order-result', async (req, res) => {
+    try {
+      const { orderId, status, result } = req.body;
+      
+      const order = pendingOrders.get(orderId);
+      if (order) {
+        order.status = status;
+        order.result = result;
+        console.log(`[ORDER RESULT] ${orderId}: ${status} - ${JSON.stringify(result)}`);
+      }
+      
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Order result error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
 
   // Initialize system status with $2,000 starting capital (default before IBKR connection)
   // NOTE: Capital will be updated from IBKR account balance when connection is established
@@ -661,6 +731,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.setPosition(position);
 
           console.log(`[AUTO-TRADE] ✅ ${signal.action} ${signal.quantity} @ ${signal.entry_price.toFixed(2)} - ${signal.reason}`);
+          
+          // SEND REAL ORDER TO IBKR
+          if (ibkrConnected) {
+            const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            const order: PendingOrder = {
+              id: orderId,
+              action: signal.action,
+              quantity: signal.quantity,
+              timestamp: Date.now(),
+              status: 'PENDING',
+            };
+            pendingOrders.set(orderId, order);
+            console.log(`[IBKR ORDER] Queued ${signal.action} ${signal.quantity} MES (ID: ${orderId})`);
+          } else {
+            console.log(`[IBKR ORDER] ⚠ Bridge not connected - trade logged but not sent to IBKR`);
+          }
           
           broadcast({
             type: "trade_executed",
