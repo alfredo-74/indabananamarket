@@ -216,6 +216,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Update volume profile with new candle
           volumeProfileCalculator.addCandle(completedCandle);
           
+          // CRITICAL FIX: Save updated volume profile to storage
+          const volumeProfile = volumeProfileCalculator.getProfile();
+          if (volumeProfile) {
+            await storage.setVolumeProfile(volumeProfile);
+            console.log(`[VOLUME PROFILE] Updated: POC=${volumeProfile.poc.toFixed(2)}, VAH=${volumeProfile.vah.toFixed(2)}, VAL=${volumeProfile.val.toFixed(2)}, Levels=${volumeProfile.levels.length}`);
+          }
+          
           console.log(`[CANDLE] ${new Date(completedCandle.timestamp).toLocaleTimeString()} - O:${completedCandle.open.toFixed(2)} H:${completedCandle.high.toFixed(2)} L:${completedCandle.low.toFixed(2)} C:${completedCandle.close.toFixed(2)} Vol:${completedCandle.accumulated_volume} CD:${completedCandle.cumulative_delta.toFixed(0)}`);
         }
         
@@ -784,7 +791,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const orderFlowSignals = orderFlowSignalDetector.getRecentSignals(20);
           
           // Build market context for recommendations (only if we have valid VWAP)
-          if (vwap.vwap !== null) {
+          if (vwap.vwap !== null && vwap.sd1_upper !== null && vwap.sd1_lower !== null && vwap.sd2_upper !== null && vwap.sd2_lower !== null) {
             const context = {
               currentPrice: marketData.last_price,
               compositeProfile,
@@ -1314,7 +1321,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         compositeProfile,
         null, // yesterdayProfile - would be stored from previous day
         migration,
-        vwapData
+        vwapData || null
       );
       res.json(hypothesis);
     } catch (error) {
@@ -1372,6 +1379,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
       
       const orderFlowSignals = orderFlowSignalDetector.getRecentSignals(20);
+      
+      // Only generate recommendations if we have valid VWAP data
+      if (vwapData.vwap === null || vwapData.sd1_upper === null || vwapData.sd1_lower === null || vwapData.sd2_upper === null || vwapData.sd2_lower === null) {
+        return res.json([]);
+      }
       
       // Build market context
       const context = {
