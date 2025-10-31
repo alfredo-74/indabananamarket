@@ -71,7 +71,7 @@ const orderFlowSignalDetector = new OrderFlowSignalDetector();
 const setupRecognizer = new HighProbabilitySetupRecognizer(); // PRO Course trade setups
 
 // Helper function to sync current volume profile into composite system
-async function syncCompositeProfile(storage: IStorage) {
+async function syncCompositeProfile(storage: typeof import("./storage").storage) {
   try {
     const volumeProfile = await storage.getVolumeProfile();
     if (volumeProfile && volumeProfile.poc > 0) {
@@ -177,6 +177,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
             await storage.setSystemStatus(status);
           }
         }
+
+        // CRITICAL FIX: Feed tick into candle builder and order flow systems
+        const timestamp = Date.now();
+        const price = message.last_price;
+        const volume = message.volume || 1; // Default to 1 contract if not provided
+        const isBuy = message.bid && message.ask ? (price >= (message.bid + message.ask) / 2) : (Math.random() > 0.5);
+        
+        // 1. Add tick to Time & Sales and process for absorption
+        const tapeTick = timeAndSalesProcessor.processTick(price, volume, isBuy ? "BUY" : "SELL", timestamp);
+        
+        // 2. Process tick for absorption detection
+        const absorption = absorptionDetector.processTick(tapeTick);
+        if (absorption) {
+          await storage.addAbsorptionEvent(absorption);
+          console.log(`[ABSORPTION] ${absorption.side} @ ${absorption.price.toFixed(2)} - Ratio: ${absorption.ratio.toFixed(2)}:1`);
+        }
+        
+        // 3. Process tick through candle builder
+        const completedCandle = candleBuilder.processTick(price, volume, isBuy, timestamp);
+        
+        if (completedCandle) {
+          // New candle completed - add to storage
+          await storage.addCandle(completedCandle);
+          
+          // Update volume profile with new candle
+          volumeProfileCalculator.addCandle(completedCandle);
+          
+          console.log(`[CANDLE] ${new Date(completedCandle.timestamp).toLocaleTimeString()} - O:${completedCandle.open.toFixed(2)} H:${completedCandle.high.toFixed(2)} L:${completedCandle.low.toFixed(2)} C:${completedCandle.close.toFixed(2)} Vol:${completedCandle.accumulated_volume} CD:${completedCandle.cumulative_delta.toFixed(0)}`);
+        }
+        
         res.json({ type: 'ack' });
       }
       else if (message.type === 'dom_update') {
@@ -184,17 +214,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         bridgeLastHeartbeat = Date.now();
         console.log(`[DOM] Received ${message.bids?.length || 0} bids, ${message.asks?.length || 0} asks`);
         
-        // Store DOM data for DomProcessor to use
-        const domData = {
-          bids: message.bids || [],
-          asks: message.asks || [],
-          timestamp: Date.now()
-        };
-        
         // Update DOM processor with real Level II data
-        if (domProcessor && typeof domProcessor.updateFromBridge === 'function') {
-          await domProcessor.updateFromBridge(domData);
-        }
+        const domSnapshot = domProcessor.updateSnapshot(
+          message.bids || [],
+          message.asks || [],
+          mockPrice
+        );
+        
+        // Store DOM snapshot
+        await storage.setDomSnapshot(domSnapshot);
         
         res.json({ type: 'ack' });
       }
@@ -385,6 +413,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         type: "candle_update",
         data: completedCandle,
       });
+      console.log(`[CANDLE] ${new Date(completedCandle.timestamp).toLocaleTimeString()} - O:${completedCandle.open.toFixed(2)} H:${completedCandle.high.toFixed(2)} L:${completedCandle.low.toFixed(2)} C:${completedCandle.close.toFixed(2)} Vol:${completedCandle.accumulated_volume} CD:${completedCandle.cumulative_delta.toFixed(0)}`);
     }
 
     // Process tick through Order Flow processors
