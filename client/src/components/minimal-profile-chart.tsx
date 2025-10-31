@@ -48,7 +48,17 @@ export default function MinimalProfileChart({
   const chartInstance = useRef<Chart | null>(null);
 
   // Filter out invalid candles BEFORE useEffect
-  const validCandles = (candles || []).filter(c => c && typeof c.timestamp === 'number' && c.timestamp > 0 && !isNaN(c.timestamp));
+  // Also ensure timestamps are reasonable (not too old, not in future)
+  const now = Date.now();
+  const oneWeekAgo = now - (7 * 24 * 60 * 60 * 1000);
+  const validCandles = (candles || []).filter(c => 
+    c && 
+    typeof c.timestamp === 'number' && 
+    c.timestamp > 0 && 
+    !isNaN(c.timestamp) &&
+    c.timestamp >= oneWeekAgo && // Not older than 1 week
+    c.timestamp <= now + 60000 // Not more than 1 min in future
+  );
 
   useEffect(() => {
     if (!chartRef.current) return;
@@ -226,11 +236,12 @@ export default function MinimalProfileChart({
       );
     }
 
-    // Create chart
-    chartInstance.current = new Chart(ctx, {
-      type: "line",
-      data: { datasets },
-      options: {
+    // Create chart with error handling
+    try {
+      chartInstance.current = new Chart(ctx, {
+        type: "line",
+        data: { datasets },
+        options: {
         responsive: true,
         maintainAspectRatio: false,
         backgroundColor: "#000",
@@ -291,7 +302,15 @@ export default function MinimalProfileChart({
           intersect: false,
         },
       },
-    });
+      });
+    } catch (error) {
+      console.error('[MinimalProfileChart] Chart creation failed:', error);
+      // Destroy any partial chart
+      if (chartInstance.current) {
+        chartInstance.current.destroy();
+        chartInstance.current = null;
+      }
+    }
 
     return () => {
       if (chartInstance.current) {
