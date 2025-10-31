@@ -71,9 +71,13 @@ class IBKRBridge:
     async def connect_to_ibkr(self):
         """Connect to local IB Gateway"""
         try:
+            logger.info("=" * 60)
+            logger.info("Connecting to IB Gateway - LIVE account on port 4002")
+            logger.info("(As instructed by IBKR support)")
+            logger.info("=" * 60)
             logger.info("Connecting to IB Gateway on 127.0.0.1:4002...")
             await self.ib.connectAsync('127.0.0.1', 4002, clientId=1)
-            logger.info("✓ Connected to IB Gateway")
+            logger.info("✓ Connected to IB Gateway (LIVE account via port 4002)")
             
             # Get front month contract automatically
             contract_month = get_front_month_contract()
@@ -131,7 +135,10 @@ class IBKRBridge:
             return True
         except Exception as e:
             logger.error(f"Failed to connect to IB Gateway: {e}")
-            logger.error("Make sure IB Gateway is running with API enabled on port 4002 (paper trading)")
+            logger.error("Make sure IB Gateway is running with:")
+            logger.error("  - LIVE account mode (fredpaper74)")
+            logger.error("  - API enabled")
+            logger.error("  - Port 4002 (as instructed by IBKR support)")
             return False
     
     def send_to_replit(self, data):
