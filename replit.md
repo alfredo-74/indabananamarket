@@ -10,6 +10,27 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+### CVA Historical Data Integration (October 31, 2025)
+- **Production-Ready CVA Initialization:**
+  - Bridge now fetches 5 days of historical 5-minute bars from IBKR on startup
+  - Automatically builds daily volume profiles and populates Composite Value Area (CVA) before live trading
+  - Eliminates "cold start" problem - CVA has valid data immediately instead of building from scratch
+  - Historical data request: 5 trading days (RTH only: 9:30 AM - 4:00 PM ET) via `reqHistoricalDataAsync()`
+  
+- **CVA Validation & Safety:**
+  - Auto-trading now validates CVA before executing any trades (requires POC/VAH/VAL > 0 and ≥3 days of data)
+  - System logs helpful status messages: `"Insufficient context - need valid CVA (3+ days) and DVA. CVA: 4/5 days, POC=6050.25"`
+  - Prevents trading with invalid zero values that would cause incorrect setup recognition
+  
+- **New API Endpoint:**
+  - `/api/bridge/initialize-cva` - Receives historical bars from bridge, builds volume profiles, populates CVA
+  - Endpoint processes daily bars → calculates volume histogram → determines POC/VAH/VAL → updates CompositeProfileManager
+  
+- **Bridge Enhancement** (`ibkr_bridge_REAL_TIME_LEVEL2.py`):
+  - Added `fetch_and_send_historical_data()` method - fetches 5 days, groups by date, sends to server
+  - Startup sequence: Connect → Handshake → Fetch Historical → Initialize CVA → Begin Live Data Stream
+  - Clear logging shows CVA initialization status with POC/VAH/VAL values
+
 ### UI Layout Overhaul (October 28, 2025)
 - **Layout Restructure:**
   - Converted traffic light indicator from vertical to horizontal for better space utilization
