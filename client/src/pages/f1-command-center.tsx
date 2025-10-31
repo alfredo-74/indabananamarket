@@ -104,10 +104,12 @@ export default function F1CommandCenter() {
   });
 
   // Derive display values from PRO data
-  const marketCondition = hypothesis?.condition || status?.regime || "UNKNOWN";
-  const buyPressure = valueMigration ? Math.max(0, valueMigration.migration_strength * 50) : (status?.cumulative_delta && status.cumulative_delta > 0 ? Math.min(100, status.cumulative_delta) : 50);
-  const sellPressure = valueMigration ? Math.max(0, -valueMigration.migration_strength * 50) : (status?.cumulative_delta && status.cumulative_delta < 0 ? Math.min(100, Math.abs(status.cumulative_delta)) : 50);
-  const deltaStrength = valueMigration ? Math.round(valueMigration.migration_strength * 100) : (status?.cumulative_delta || 0);
+  const latestCandle = candles && candles.length > 0 ? candles[candles.length - 1] : null;
+  const marketCondition = hypothesis?.condition || regimeData?.regime || "UNKNOWN";
+  const cumulativeDelta = latestCandle?.cumulative_delta || 0;
+  const buyPressure = valueMigration ? Math.max(0, valueMigration.migration_strength * 50) : (cumulativeDelta > 0 ? Math.min(100, cumulativeDelta) : 50);
+  const sellPressure = valueMigration ? Math.max(0, -valueMigration.migration_strength * 50) : (cumulativeDelta < 0 ? Math.min(100, Math.abs(cumulativeDelta)) : 50);
+  const deltaStrength = valueMigration ? Math.round(valueMigration.migration_strength * 100) : cumulativeDelta;
 
   return (
     <div className="h-screen flex flex-col bg-black text-green-400 font-mono overflow-hidden">
@@ -312,7 +314,7 @@ export default function F1CommandCenter() {
                       ABSORPTION
                     </span>
                     <span className="text-xs text-gray-500">
-                      {event.ratio.toFixed(1)}:1 @ {event.price.toFixed(2)}
+                      {event.ratio?.toFixed(1) || "N/A"}:1 @ {event.price?.toFixed(2) || "N/A"}
                     </span>
                   </div>
                 </div>
@@ -418,19 +420,19 @@ export default function F1CommandCenter() {
                   <div className="grid grid-cols-2 gap-1 text-xs">
                     <div>
                       <span className="text-gray-600">Entry:</span>
-                      <span className="text-white font-bold ml-1">{rec.entry_price.toFixed(2)}</span>
+                      <span className="text-white font-bold ml-1">{rec.entry_price?.toFixed(2) || "N/A"}</span>
                     </div>
                     <div>
                       <span className="text-gray-600">Stop:</span>
-                      <span className="text-red-400 ml-1">{rec.stop_loss.toFixed(2)}</span>
+                      <span className="text-red-400 ml-1">{rec.stop_loss?.toFixed(2) || "N/A"}</span>
                     </div>
                     <div>
                       <span className="text-gray-600">Target:</span>
-                      <span className="text-green-400 ml-1">{rec.target_1.toFixed(2)}</span>
+                      <span className="text-green-400 ml-1">{rec.target_1?.toFixed(2) || "N/A"}</span>
                     </div>
                     <div>
                       <span className="text-gray-600">R:R:</span>
-                      <span className="text-yellow-400 ml-1">{rec.risk_reward_ratio.toFixed(1)}:1</span>
+                      <span className="text-yellow-400 ml-1">{rec.risk_reward_ratio?.toFixed(1) || "N/A"}:1</span>
                     </div>
                   </div>
                 </div>
@@ -468,11 +470,11 @@ export default function F1CommandCenter() {
                 <div className="text-xs text-gray-300 space-y-1">
                   <div className="flex justify-between">
                     <span>R1:</span>
-                    <span className="text-red-400 tabular-nums">{hypothesis.key_levels.resistance_1.toFixed(2)}</span>
+                    <span className="text-red-400 tabular-nums">{hypothesis.key_levels?.resistance_1?.toFixed(2) || "N/A"}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>S1:</span>
-                    <span className="text-green-400 tabular-nums">{hypothesis.key_levels.support_1.toFixed(2)}</span>
+                    <span className="text-green-400 tabular-nums">{hypothesis.key_levels?.support_1?.toFixed(2) || "N/A"}</span>
                   </div>
                 </div>
               </div>
@@ -490,7 +492,7 @@ export default function F1CommandCenter() {
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Balance:</span>
                 <span className="text-green-400 font-bold tabular-nums">
-                  £{status?.capital.toFixed(0) || "0"}
+                  £{status?.capital?.toFixed(0) || "0"}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
@@ -498,7 +500,7 @@ export default function F1CommandCenter() {
                 <span className={`font-bold tabular-nums ${
                   (status?.daily_pnl || 0) >= 0 ? "text-green-400" : "text-red-400"
                 }`}>
-                  {(status?.daily_pnl || 0) >= 0 ? "+" : ""}£{status?.daily_pnl.toFixed(2) || "0.00"}
+                  {(status?.daily_pnl || 0) >= 0 ? "+" : ""}£{status?.daily_pnl?.toFixed(2) || "0.00"}
                 </span>
               </div>
             </div>
