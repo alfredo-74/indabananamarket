@@ -128,16 +128,16 @@ export default function F1CommandCenter() {
         <div className="flex items-center gap-6" data-testid="regime-indicator">
           {/* Traffic Light Visual - Horizontal */}
           <div className="flex flex-row gap-2 p-3 bg-gray-950 rounded border border-gray-800">
-            <div className={`h-6 w-6 rounded-full ${marketCondition.includes("BULLISH") ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-gray-800"}`} />
-            <div className={`h-6 w-6 rounded-full ${marketCondition === "BALANCE" || marketCondition === "BREAKOUT_PENDING" ? "bg-yellow-500 shadow-lg shadow-yellow-500/50" : "bg-gray-800"}`} />
-            <div className={`h-6 w-6 rounded-full ${marketCondition.includes("BEARISH") ? "bg-red-500 shadow-lg shadow-red-500/50" : "bg-gray-800"}`} />
+            <div className={`h-6 w-6 rounded-full ${marketCondition.includes("BULLISH") || marketCondition === "TREND_UP" ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-gray-800"}`} />
+            <div className={`h-6 w-6 rounded-full ${marketCondition === "BALANCE" || marketCondition === "BREAKOUT_PENDING" || marketCondition === "OPENING_DRIVE" ? "bg-yellow-500 shadow-lg shadow-yellow-500/50 animate-pulse" : "bg-gray-800"}`} />
+            <div className={`h-6 w-6 rounded-full ${marketCondition.includes("BEARISH") || marketCondition === "TREND_DOWN" ? "bg-red-500 shadow-lg shadow-red-500/50" : "bg-gray-800"}`} />
           </div>
 
           {/* Regime Label */}
           <div className="text-center">
             <div className={`text-4xl font-bold tracking-wider ${
-              marketCondition.includes("BULLISH") ? "text-green-500" :
-              marketCondition.includes("BEARISH") ? "text-red-500" :
+              marketCondition.includes("BULLISH") || marketCondition === "TREND_UP" ? "text-green-500" :
+              marketCondition.includes("BEARISH") || marketCondition === "TREND_DOWN" ? "text-red-500" :
               "text-yellow-500"
             }`}>
               {marketCondition.replace("_", " ")}
