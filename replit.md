@@ -10,6 +10,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
 
+### CRITICAL: Cumulative Delta Flush at RTH Open (October 31, 2025)
+- **FIXED: Violated PRO Course Requirement - CD Not Flushing at Market Open:**
+  - Root cause: `session_aware_regime_manager.ts` was blending 30% of overnight CD into RTH session
+  - Fix: Changed `this.rthCumulativeDelta = this.ethCumulativeDelta * 0.3` to `this.rthCumulativeDelta = 0`
+  - Impact: RTH cumulative delta now FLUSHES to 0 at 9:30 AM ET (no overnight contamination)
+  - Log output: `[Session Transition] ETH→RTH: CD FLUSHED at RTH open (was -450.0). RTH CD reset to 0 per PRO course methodology.`
+  - **This ensures clean RTH trading signals per G7FX PRO methodology**
+
 ### Critical Bug Fixes - System Now Fully Operational (October 31, 2025)
 - **FIXED: DVA (Volume Profile) Storage Bug:**
   - Root cause: Bridge handler in `routes.ts` called `volumeProfileCalculator.addCandle()` but never saved result to storage
