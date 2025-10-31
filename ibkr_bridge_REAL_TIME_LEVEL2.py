@@ -107,17 +107,17 @@ class IBKRBridge:
                 else:
                     raise Exception("Failed to qualify ES contract")
             
-            # Request DELAYED market data (free, always works)
-            self.ib.reqMarketDataType(3)  # 3 = Delayed (15-min), 1 = Live
-            logger.info("✓ Requesting DELAYED market data (15-min delay - free)")
+            # Request REAL-TIME market data (now that account is funded)
+            self.ib.reqMarketDataType(1)  # 1 = Live (real-time)
+            logger.info("✓ Requesting REAL-TIME market data with funded account")
             
-            # Subscribe to basic market data with volume (tick 233)
+            # Subscribe to basic market data with real-time volume (tick 233)
             self.ib.reqMktData(self.es_contract, '233', False, False)
-            logger.info("✓ Subscribed to market data feed")
+            logger.info("✓ Subscribed to real-time market data feed")
             
-            # Note: Level II DOM requires real-time subscription
-            # Delayed data does not include DOM
-            logger.info("⚠ Level II DOM not available with delayed data")
+            # Subscribe to Level II DOM (10 levels deep)
+            self.ib.reqMktDepth(self.es_contract, 10)
+            logger.info("✓ Subscribed to Level II DOM (10 levels)")
             
             # Setup tick callback
             self.ib.pendingTickersEvent += self.on_tick
@@ -152,12 +152,15 @@ class IBKRBridge:
         if errorCode == 354 or errorCode == 10168:
             # Market data subscription error
             logger.error(f"⚠ ERROR {errorCode}: {errorString}")
-            logger.error("❌ Your CME subscription is NOT configured for API access")
-            logger.error("📋 SOLUTION:")
-            logger.error("   1. Go to https://www.interactivebrokers.com/portal/")
-            logger.error("   2. Settings → Account Settings → Paper Trading Account")
-            logger.error("   3. Enable: 'Share market data subscriptions with paper trading account'")
-            logger.error("   4. Restart IB Gateway and try again")
+            logger.error("")
+            logger.error("❌ Market data subscription not accessible")
+            logger.error("📋 TROUBLESHOOTING CHECKLIST:")
+            logger.error("   1. ✓ Live account funded (required by IBKR)")
+            logger.error("   2. ✓ Data sharing enabled in Client Portal")
+            logger.error("   3. ⚠ Wait 5-10 minutes after funding for IBKR systems to update")
+            logger.error("   4. ⚠ Restart IB Gateway after funding settles")
+            logger.error("   5. If still failing, contact IBKR support")
+            logger.error("")
         elif errorCode == 2119:
             # Just connecting to data farm - informational only
             logger.info(f"Market data farm connecting...")
