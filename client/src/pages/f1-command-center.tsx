@@ -511,36 +511,32 @@ export default function F1CommandCenter() {
             <Target className="h-4 w-4" />
             Tactical Chart: CVA/DVA + Absorption Force Fields
           </div>
-          <div className="h-[calc(100%-2rem)]">
-            {candles && candles.length > 0 ? (
-              <MinimalProfileChart
-                candles={candles.slice(-50)} // Last 50 candles
-                cva={compositeProfile ? {
-                  poc: compositeProfile.composite_poc,
-                  vah: compositeProfile.composite_vah,
-                  val: compositeProfile.composite_val,
-                } : undefined}
-                dva={volumeProfile ? {
-                  poc: volumeProfile.poc,
-                  vah: volumeProfile.vah,
-                  val: volumeProfile.val,
-                } : undefined}
-                vwap={vwapData ? {
-                  value: vwapData.vwap,
-                  sd1_upper: vwapData.sd1_upper,
-                  sd1_lower: vwapData.sd1_lower,
-                } : undefined}
-                absorptionEvents={absorptionEvents}
-                currentPrice={marketData?.last_price}
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full text-gray-600">
-                <div className="text-center">
-                  <Target className="h-12 w-12 mx-auto mb-3 opacity-30" />
-                  <div className="text-xs">Loading chart data...</div>
+          <div className="h-[calc(100%-2rem)] flex items-center justify-center bg-gray-950 rounded border border-green-900/20">
+            <div className="text-center space-y-4">
+              <div className="flex gap-6 text-sm">
+                <div className="space-y-1">
+                  <div className="text-cyan-400 font-bold text-xs uppercase tracking-wide">CVA (5-Day)</div>
+                  <div className="text-gray-500">POC: <span className="text-cyan-400 font-mono">{compositeProfile?.composite_poc.toFixed(2) || "—"}</span></div>
+                  <div className="text-gray-500">VAH: <span className="text-cyan-400 font-mono">{compositeProfile?.composite_vah.toFixed(2) || "—"}</span></div>
+                  <div className="text-gray-500">VAL: <span className="text-cyan-400 font-mono">{compositeProfile?.composite_val.toFixed(2) || "—"}</span></div>
+                </div>
+                <div className="border-l border-green-900/30"></div>
+                <div className="space-y-1">
+                  <div className="text-yellow-400 font-bold text-xs uppercase tracking-wide">DVA (Daily)</div>
+                  <div className="text-gray-500">POC: <span className="text-yellow-400 font-mono">{volumeProfile?.poc.toFixed(2) || "—"}</span></div>
+                  <div className="text-gray-500">VAH: <span className="text-yellow-400 font-mono">{volumeProfile?.vah.toFixed(2) || "—"}</span></div>
+                  <div className="text-gray-500">VAL: <span className="text-yellow-400 font-mono">{volumeProfile?.val.toFixed(2) || "—"}</span></div>
+                </div>
+                <div className="border-l border-green-900/30"></div>
+                <div className="space-y-1">
+                  <div className="text-white font-bold text-xs uppercase tracking-wide">VWAP</div>
+                  <div className="text-gray-500">VWAP: <span className="text-white font-mono">{vwapData?.vwap.toFixed(2) || "—"}</span></div>
+                  <div className="text-gray-500">+SD1: <span className="text-white/60 font-mono">{vwapData?.sd1_upper.toFixed(2) || "—"}</span></div>
+                  <div className="text-gray-500">-SD1: <span className="text-white/60 font-mono">{vwapData?.sd1_lower.toFixed(2) || "—"}</span></div>
                 </div>
               </div>
-            )}
+              <div className="text-xs text-gray-600">Chart visualization in development</div>
+            </div>
           </div>
         </Card>
       </div>
