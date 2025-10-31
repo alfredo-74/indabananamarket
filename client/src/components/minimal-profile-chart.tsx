@@ -63,19 +63,32 @@ export default function MinimalProfileChart({
   useEffect(() => {
     if (!chartRef.current) return;
 
-    const ctx = chartRef.current.getContext("2d");
-    if (!ctx) return;
-
-    // Destroy existing chart
-    if (chartInstance.current) {
-      chartInstance.current.destroy();
-      chartInstance.current = null;
-    }
-
     // Don't render chart if no valid data
     if (validCandles.length === 0) {
       console.log('[MinimalProfileChart] No valid candles to display');
+      // Destroy any existing chart when no data
+      if (chartInstance.current) {
+        try {
+          chartInstance.current.destroy();
+        } catch (e) {
+          console.error('[MinimalProfileChart] Error destroying chart:', e);
+        }
+        chartInstance.current = null;
+      }
       return;
+    }
+
+    const ctx = chartRef.current.getContext("2d");
+    if (!ctx) return;
+
+    // Destroy existing chart before creating new one
+    if (chartInstance.current) {
+      try {
+        chartInstance.current.destroy();
+      } catch (e) {
+        console.error('[MinimalProfileChart] Error destroying chart:', e);
+      }
+      chartInstance.current = null;
     }
     
     const candleData = validCandles.map((c) => ({
@@ -88,11 +101,21 @@ export default function MinimalProfileChart({
 
     // Prepare absorption markers (force field effect) - filter out invalid timestamps
     const buyAbsorption = absorptionEvents
-      ?.filter((e) => e.side === "BUY_ABSORPTION" && e.timestamp > 0)
+      ?.filter((e) => 
+        e.side === "BUY_ABSORPTION" && 
+        e.timestamp > 0 && 
+        e.timestamp >= oneWeekAgo && 
+        e.timestamp <= now + 60000
+      )
       .map((e) => ({ x: e.timestamp, y: e.price })) || [];
     
     const sellAbsorption = absorptionEvents
-      ?.filter((e) => e.side === "SELL_ABSORPTION" && e.timestamp > 0)
+      ?.filter((e) => 
+        e.side === "SELL_ABSORPTION" && 
+        e.timestamp > 0 && 
+        e.timestamp >= oneWeekAgo && 
+        e.timestamp <= now + 60000
+      )
       .map((e) => ({ x: e.timestamp, y: e.price })) || [];
 
     const datasets: any[] = [

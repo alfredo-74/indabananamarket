@@ -1,0 +1,99 @@
+client:536 WebSocket connection to 'wss://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev/?token=Lgei0LCOt_lk' failed: 
+setupWebSocket	@	client:536
+
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=Lgei0LCOt_lk' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+chunk-RPCDYKBN.js?v=25fb0e61:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: 0 and 1761930840000 are too far apart with stepSize of 1 minute
+    at TimeScale._generate (chunk-FUEEYFOX.js?v=25fb0e61:14210:13)
+    at TimeScale.buildTicks (chunk-FUEEYFOX.js?v=25fb0e61:14144:88)
+    at TimeScale.update (chunk-FUEEYFOX.js?v=25fb0e61:6874:23)
+    at fitBoxes (chunk-FUEEYFOX.js?v=25fb0e61:5999:9)
+    at Object.update (chunk-FUEEYFOX.js?v=25fb0e61:6129:9)
+    at Chart._updateLayout (chunk-FUEEYFOX.js?v=25fb0e61:8939:13)
+    at Chart.update (chunk-FUEEYFOX.js?v=25fb0e61:8870:10)
+    at Chart.<anonymous> (chunk-FUEEYFOX.js?v=25fb0e61:8619:46)
+    at Chart._doResize (chunk-FUEEYFOX.js?v=25fb0e61:1011:10)
+    at Chart._resize (chunk-FUEEYFOX.js?v=25fb0e61:8708:16)
+37
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+2
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+2
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+2
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+2
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+2
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+2
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
+46
+minimal-profile-chart.tsx:307 [MinimalProfileChart] Chart creation failed: Error: Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused.
+    at minimal-profile-chart.tsx:241:31
