@@ -87,31 +87,31 @@ export class SessionAwareRegimeManager {
   }
 
   /**
-   * Handle smart regime transition when session changes
-   * Blends previous session's regime into new session instead of hard reset
+   * Handle session transition when market opens/closes
+   * PRO COURSE: Cumulative delta is FLUSHED at RTH open (9:30 AM ET)
+   * Clean start for each session - no data contamination
    */
   private handleSessionTransition(newSession: SessionType): void {
     if (newSession === "RTH") {
-      // Transitioning from ETH to RTH (market open)
-      // Blend ETH cumulative delta into RTH with decay factor
-      // This prevents false regime switches if character hasn't changed
-      const blendFactor = 0.3; // 30% weight to overnight session
-      this.rthCumulativeDelta = this.ethCumulativeDelta * blendFactor;
+      // Transitioning from ETH to RTH (market open at 9:30 AM ET)
+      // PRO COURSE REQUIREMENT: FLUSH cumulative delta at RTH open
+      // No overnight data should contaminate RTH trading signals
+      this.rthCumulativeDelta = 0;
       
       // Start with rotational regime but will quickly adjust based on actual flow
       this.rthRegime = "ROTATIONAL";
 
       console.log(
-        `[Session Transition] ETH→RTH: Blended ETH CD (${this.ethCumulativeDelta.toFixed(1)}) ` +
-        `into RTH with factor ${blendFactor}, RTH CD now: ${this.rthCumulativeDelta.toFixed(1)}`
+        `[Session Transition] ETH→RTH: CD FLUSHED at RTH open (was ${this.ethCumulativeDelta.toFixed(1)}). ` +
+        `RTH CD reset to 0 per PRO course methodology.`
       );
     } else {
-      // Transitioning from RTH to ETH (market close)
+      // Transitioning from RTH to ETH (market close at 4:00 PM ET)
       // Reset ETH cumulative delta (overnight session is fresh start)
       this.ethCumulativeDelta = 0;
       this.ethRegime = "ROTATIONAL";
 
-      console.log(`[Session Transition] RTH→ETH: Fresh ETH session started`);
+      console.log(`[Session Transition] RTH→ETH: Fresh ETH session started, CD reset to 0`);
     }
   }
 
