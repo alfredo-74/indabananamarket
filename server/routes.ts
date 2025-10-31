@@ -92,62 +92,6 @@ async function syncCompositeProfile(storage: typeof import("./storage").storage)
   }
 }
 
-// Helper function to populate mock historical daily profiles for testing
-async function populateMockHistoricalProfiles(storage: typeof import("./storage").storage) {
-  const tickSize = 0.25;
-  const basePrice = 6850; // ES futures base price
-  
-  // Generate 5 days of mock completed daily profiles with different price ranges
-  const mockProfiles = [
-    { date: "2025-10-25", pocOffset: -5, vahOffset: -4, valOffset: -6, volume: 1500000000 },
-    { date: "2025-10-26", pocOffset: -3, vahOffset: -2, valOffset: -4, volume: 1600000000 },
-    { date: "2025-10-27", pocOffset: 0, vahOffset: 1, valOffset: -1, volume: 1700000000 },
-    { date: "2025-10-28", pocOffset: 2, vahOffset: 3, valOffset: 1, volume: 1650000000 },
-    { date: "2025-10-29", pocOffset: 4, vahOffset: 5, valOffset: 3, volume: 1550000000 },
-  ];
-  
-  for (const { date, pocOffset, vahOffset, valOffset, volume } of mockProfiles) {
-    const profile: VolumeProfile = {
-      levels: [
-        {
-          price: basePrice + vahOffset,
-          total_volume: Math.floor(volume * 0.4),
-          buy_volume: Math.floor(volume * 0.25),
-          sell_volume: Math.floor(volume * 0.15),
-          delta: Math.floor(volume * 0.1),
-          tpo_count: 0
-        },
-        {
-          price: basePrice + pocOffset,
-          total_volume: Math.floor(volume * 0.6), // POC has highest volume
-          buy_volume: Math.floor(volume * 0.35),
-          sell_volume: Math.floor(volume * 0.25),
-          delta: Math.floor(volume * 0.1),
-          tpo_count: 0
-        },
-        {
-          price: basePrice + valOffset,
-          total_volume: Math.floor(volume * 0.3),
-          buy_volume: Math.floor(volume * 0.15),
-          sell_volume: Math.floor(volume * 0.15),
-          delta: 0,
-          tpo_count: 0
-        }
-      ],
-      poc: basePrice + pocOffset,
-      vah: basePrice + vahOffset,
-      val: basePrice + valOffset,
-      total_volume: volume,
-      profile_type: "P",
-      hvn_levels: [basePrice + pocOffset],
-      lvn_levels: []
-    };
-    
-    await storage.addDailyProfile(date, profile);
-    console.log(`[MOCK DATA] Added daily profile for ${date}: POC=${profile.poc}, VAH=${profile.vah}, VAL=${profile.val}`);
-  }
-}
-
 // Default Order Flow Settings for AutoTrader
 const defaultOrderFlowSettings: OrderFlowSettings = {
   absorption_threshold: 2.0,
@@ -378,8 +322,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           bars[bars.length - 1].timestamp
         );
         
-        // Add to composite profile system
+        // Save to storage AND add to composite profile system
         if (dailyProfile.poc > 0) {
+          await storage.addDailyProfile(date, dailyProfile);
           compositeProfileSystem.addDailyProfile(date, dailyProfile);
           console.log(`[CVA INIT] Added ${date}: POC ${dailyProfile.poc.toFixed(2)}, VAH ${dailyProfile.vah.toFixed(2)}, VAL ${dailyProfile.val.toFixed(2)}`);
         }
@@ -1787,12 +1732,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Populate mock historical daily profiles for testing CVA
-  populateMockHistoricalProfiles(storage).then(async () => {
-    console.log("✓ Mock historical daily profiles loaded");
-    
-    // Initialize composite profile with historical data
-    await syncCompositeProfile(storage);
+  // Initialize composite profile (will be populated from IBKR historical data via bridge)
+  syncCompositeProfile(storage).then(() => {
     console.log("✓ Composite profile initialized");
   });
 
