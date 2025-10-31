@@ -70,6 +70,10 @@ export interface IStorage {
   
   getDiscordLevels(): Promise<DiscordLevel[]>;
   setDiscordLevels(levels: DiscordLevel[]): Promise<void>;
+  
+  // Daily Volume Profiles (for CVA composition)
+  getDailyProfiles(): Promise<Array<{ date: string; profile: VolumeProfile }>>;
+  addDailyProfile(date: string, profile: VolumeProfile): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -92,6 +96,7 @@ export class MemStorage implements IStorage {
   private volumeProfile: VolumeProfile | undefined;
   private absorptionEvents: AbsorptionEvent[] = [];
   private discordLevels: DiscordLevel[] = [];
+  private dailyProfiles: Array<{ date: string; profile: VolumeProfile }> = [];
 
   async getCandles(): Promise<VolumetricCandle[]> {
     return this.candles;
@@ -257,6 +262,28 @@ export class MemStorage implements IStorage {
 
   async setDiscordLevels(levels: DiscordLevel[]): Promise<void> {
     this.discordLevels = levels;
+  }
+  
+  async getDailyProfiles(): Promise<Array<{ date: string; profile: VolumeProfile }>> {
+    return this.dailyProfiles;
+  }
+  
+  async addDailyProfile(date: string, profile: VolumeProfile): Promise<void> {
+    // Check if this date already exists
+    const existingIndex = this.dailyProfiles.findIndex(d => d.date === date);
+    if (existingIndex !== -1) {
+      this.dailyProfiles[existingIndex] = { date, profile };
+    } else {
+      this.dailyProfiles.push({ date, profile });
+    }
+    
+    // Sort by date (newest first)
+    this.dailyProfiles.sort((a, b) => b.date.localeCompare(a.date));
+    
+    // Keep only last 10 days
+    if (this.dailyProfiles.length > 10) {
+      this.dailyProfiles = this.dailyProfiles.slice(0, 10);
+    }
   }
 }
 

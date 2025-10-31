@@ -70,16 +70,81 @@ const hypothesisGenerator = new HypothesisGenerator();
 const orderFlowSignalDetector = new OrderFlowSignalDetector();
 const setupRecognizer = new HighProbabilitySetupRecognizer(); // PRO Course trade setups
 
-// Helper function to sync current volume profile into composite system
+// Helper function to sync completed daily profiles into composite system
+// NOTE: This builds CVA from COMPLETED daily profiles, NOT today's intraday profile
 async function syncCompositeProfile(storage: typeof import("./storage").storage) {
   try {
-    const volumeProfile = await storage.getVolumeProfile();
-    if (volumeProfile && volumeProfile.poc > 0) {
-      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-      compositeProfileSystem.addDailyProfile(today, volumeProfile);
+    // Load completed daily profiles from storage (up to 5 days)
+    const dailyProfiles = await storage.getDailyProfiles();
+    
+    // Clear and reload composite system with stored profiles
+    const newComposite = new CompositeProfileManager(5);
+    for (const { date, profile } of dailyProfiles) {
+      if (profile.poc > 0) {
+        newComposite.addDailyProfile(date, profile);
+      }
     }
+    
+    // Replace global composite system
+    Object.assign(compositeProfileSystem, newComposite);
   } catch (error) {
     console.error("Error syncing composite profile:", error);
+  }
+}
+
+// Helper function to populate mock historical daily profiles for testing
+async function populateMockHistoricalProfiles(storage: typeof import("./storage").storage) {
+  const tickSize = 0.25;
+  const basePrice = 6850; // ES futures base price
+  
+  // Generate 5 days of mock completed daily profiles with different price ranges
+  const mockProfiles = [
+    { date: "2025-10-25", pocOffset: -5, vahOffset: -4, valOffset: -6, volume: 1500000000 },
+    { date: "2025-10-26", pocOffset: -3, vahOffset: -2, valOffset: -4, volume: 1600000000 },
+    { date: "2025-10-27", pocOffset: 0, vahOffset: 1, valOffset: -1, volume: 1700000000 },
+    { date: "2025-10-28", pocOffset: 2, vahOffset: 3, valOffset: 1, volume: 1650000000 },
+    { date: "2025-10-29", pocOffset: 4, vahOffset: 5, valOffset: 3, volume: 1550000000 },
+  ];
+  
+  for (const { date, pocOffset, vahOffset, valOffset, volume } of mockProfiles) {
+    const profile: VolumeProfile = {
+      levels: [
+        {
+          price: basePrice + vahOffset,
+          total_volume: Math.floor(volume * 0.4),
+          buy_volume: Math.floor(volume * 0.25),
+          sell_volume: Math.floor(volume * 0.15),
+          delta: Math.floor(volume * 0.1),
+          tpo_count: 0
+        },
+        {
+          price: basePrice + pocOffset,
+          total_volume: Math.floor(volume * 0.6), // POC has highest volume
+          buy_volume: Math.floor(volume * 0.35),
+          sell_volume: Math.floor(volume * 0.25),
+          delta: Math.floor(volume * 0.1),
+          tpo_count: 0
+        },
+        {
+          price: basePrice + valOffset,
+          total_volume: Math.floor(volume * 0.3),
+          buy_volume: Math.floor(volume * 0.15),
+          sell_volume: Math.floor(volume * 0.15),
+          delta: 0,
+          tpo_count: 0
+        }
+      ],
+      poc: basePrice + pocOffset,
+      vah: basePrice + vahOffset,
+      val: basePrice + valOffset,
+      total_volume: volume,
+      profile_type: "P",
+      hvn_levels: [basePrice + pocOffset],
+      lvn_levels: []
+    };
+    
+    await storage.addDailyProfile(date, profile);
+    console.log(`[MOCK DATA] Added daily profile for ${date}: POC=${profile.poc}, VAH=${profile.vah}, VAL=${profile.val}`);
   }
 }
 
@@ -1722,8 +1787,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Initialize composite profile with current data on startup
-  syncCompositeProfile(storage).then(() => {
+  // Populate mock historical daily profiles for testing CVA
+  populateMockHistoricalProfiles(storage).then(async () => {
+    console.log("✓ Mock historical daily profiles loaded");
+    
+    // Initialize composite profile with historical data
+    await syncCompositeProfile(storage);
     console.log("✓ Composite profile initialized");
   });
 
