@@ -104,10 +104,10 @@ export default function F1CommandCenter() {
   });
 
   // Derive display values from PRO data
-  const marketCondition = hypothesis?.condition || "UNKNOWN";
-  const buyPressure = valueMigration ? Math.max(0, valueMigration.migration_strength * 10) : 50;
-  const sellPressure = valueMigration ? Math.max(0, -valueMigration.migration_strength * 10) : 50;
-  const deltaStrength = valueMigration ? Math.round(valueMigration.migration_strength * 100) : 0;
+  const marketCondition = hypothesis?.condition || status?.regime || "UNKNOWN";
+  const buyPressure = valueMigration ? Math.max(0, valueMigration.migration_strength * 50) : (status?.cumulative_delta && status.cumulative_delta > 0 ? Math.min(100, status.cumulative_delta) : 50);
+  const sellPressure = valueMigration ? Math.max(0, -valueMigration.migration_strength * 50) : (status?.cumulative_delta && status.cumulative_delta < 0 ? Math.min(100, Math.abs(status.cumulative_delta)) : 50);
+  const deltaStrength = valueMigration ? Math.round(valueMigration.migration_strength * 100) : (status?.cumulative_delta || 0);
 
   return (
     <div className="h-screen flex flex-col bg-black text-green-400 font-mono overflow-hidden">
@@ -206,26 +206,28 @@ export default function F1CommandCenter() {
             </div>
           </Card>
 
-          {/* Value Areas */}
+          {/* Value Areas - with VWAP fallback */}
           <Card className="bg-gray-950 border-green-900 p-4" data-testid="value-areas">
-            <div className="text-xs text-green-500 mb-3 uppercase tracking-wider">Value Areas</div>
+            <div className="text-xs text-green-500 mb-3 uppercase tracking-wider">
+              {volumeProfile ? "Value Areas (DVA)" : "VWAP Levels"}
+            </div>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-500">VAH:</span>
+                <span className="text-gray-500">{volumeProfile ? "VAH:" : "+SD1:"}</span>
                 <span className="text-green-400 font-bold tabular-nums">
-                  {volumeProfile?.vah.toFixed(2) || "----"}
+                  {volumeProfile?.vah.toFixed(2) || vwapData?.sd1_upper.toFixed(2) || "----"}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">POC:</span>
+                <span className="text-gray-500">{volumeProfile ? "POC:" : "VWAP:"}</span>
                 <span className="text-yellow-400 font-bold tabular-nums">
-                  {volumeProfile?.poc.toFixed(2) || "----"}
+                  {volumeProfile?.poc.toFixed(2) || vwapData?.vwap.toFixed(2) || "----"}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">VAL:</span>
+                <span className="text-gray-500">{volumeProfile ? "VAL:" : "-SD1:"}</span>
                 <span className="text-red-400 font-bold tabular-nums">
-                  {volumeProfile?.val.toFixed(2) || "----"}
+                  {volumeProfile?.val.toFixed(2) || vwapData?.sd1_lower.toFixed(2) || "----"}
                 </span>
               </div>
             </div>

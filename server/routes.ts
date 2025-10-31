@@ -70,6 +70,19 @@ const hypothesisGenerator = new HypothesisGenerator();
 const orderFlowSignalDetector = new OrderFlowSignalDetector();
 const setupRecognizer = new HighProbabilitySetupRecognizer(); // PRO Course trade setups
 
+// Helper function to sync current volume profile into composite system
+async function syncCompositeProfile(storage: IStorage) {
+  try {
+    const volumeProfile = await storage.getVolumeProfile();
+    if (volumeProfile && volumeProfile.poc > 0) {
+      const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+      compositeProfileSystem.addDailyProfile(today, volumeProfile);
+    }
+  } catch (error) {
+    console.error("Error syncing composite profile:", error);
+  }
+}
+
 // Default Order Flow Settings for AutoTrader
 const defaultOrderFlowSettings: OrderFlowSettings = {
   absorption_threshold: 2.0,
@@ -400,6 +413,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Update volume profile when candle completes
     if (completedCandle) {
       volumeProfileCalculator.addCandle(completedCandle);
+      
+      // Save updated volume profile to storage
+      const volumeProfile = volumeProfileCalculator.getProfile();
+      if (volumeProfile) {
+        await storage.setVolumeProfile(volumeProfile);
+      }
     }
 
     // Calculate VWAP
@@ -980,6 +999,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // GET /api/composite-profile - Get 5-day Composite Value Area
   app.get("/api/composite-profile", async (req, res) => {
     try {
+      // Sync current volume profile before returning data
+      await syncCompositeProfile(storage);
+      
       const compositeData = compositeProfileSystem.getCompositeProfile();
       res.json(compositeData || { 
         composite_vah: 0, 
@@ -1000,6 +1022,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // GET /api/value-migration - Get Value Migration analysis (DVA vs CVA)
   app.get("/api/value-migration", async (req, res) => {
     try {
+      // Sync composite profile first
+      await syncCompositeProfile(storage);
+      
       // Get current volume profile for DVA
       const volumeProfile = await storage.getVolumeProfile();
       if (!volumeProfile) {
@@ -1018,6 +1043,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // GET /api/daily-hypothesis - Get pre-market hypothesis and trade plan
   app.get("/api/daily-hypothesis", async (req, res) => {
     try {
+      // Sync composite profile first
+      await syncCompositeProfile(storage);
+      
       // Get current market data for hypothesis generation
       const volumeProfile = await storage.getVolumeProfile();
       const marketData = await storage.getMarketData();
@@ -1066,6 +1094,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // GET /api/trade-recommendations - Get high-probability trade setups
   app.get("/api/trade-recommendations", async (req, res) => {
     try {
+      // Sync composite profile first
+      await syncCompositeProfile(storage);
+      
       const marketData = await storage.getMarketData();
       const vwapData = await storage.getVWAPData();
       const volumeProfile = await storage.getVolumeProfile();
@@ -1434,6 +1465,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to calculate account analysis" });
     }
   });
+
+  // Initialize composite profile with current data on startup
+  syncCompositeProfile(storage).then(() => {
+    console.log("✓ Composite profile initialized");
+  });
+
+  // Periodic sync of composite profile (every 60 seconds)
+  setInterval(async () => {
+    await syncCompositeProfile(storage);
+  }, 60000);
 
   return httpServer;
 }
