@@ -1,0 +1,46 @@
+alfredo@penguin:~$ source ibkr_env/bin/activate
+python3 ~/ibkr_bridge_REAL_TIME_LEVEL2.py https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
+
+============================================================
+IBKR BRIDGE - REAL-TIME Level II Data Forwarder
+============================================================
+
+🌐 Replit URL: https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
+
+2025-10-31 17:10:00,927 - INFO - Connecting to IB Gateway on 127.0.0.1:4002...
+2025-10-31 17:10:00,927 - INFO - Connecting to 127.0.0.1:4002 with clientId 1...
+2025-10-31 17:10:00,927 - INFO - Connected
+2025-10-31 17:10:00,985 - INFO - Logged on to server version 176
+2025-10-31 17:10:01,035 - INFO - Warning 2104, reqId -1: Market data farm connection is OK:eufarm
+2025-10-31 17:10:01,035 - INFO - Warning 2106, reqId -1: HMDS data farm connection is OK:euhmds
+2025-10-31 17:10:01,035 - INFO - Warning 2158, reqId -1: Sec-def data farm connection is OK:secdefeu
+2025-10-31 17:10:01,035 - INFO - API connection ready
+2025-10-31 17:10:01,462 - INFO - Synchronization complete
+2025-10-31 17:10:01,462 - INFO - ✓ Connected to IB Gateway
+2025-10-31 17:10:01,462 - INFO - 📅 Calculated front month contract: ES 202512
+2025-10-31 17:10:01,876 - INFO - ✓ Contract qualified: ES 202512
+2025-10-31 17:10:01,877 - INFO - ✓ Requesting REAL-TIME market data with funded account
+2025-10-31 17:10:01,877 - INFO - ✓ Subscribed to real-time market data feed
+2025-10-31 17:10:01,877 - INFO - ✓ Subscribed to Level II DOM (10 levels)
+2025-10-31 17:10:01,877 - INFO - Connecting to Replit at https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev...
+2025-10-31 17:10:02,670 - INFO - ✓ Connected to Replit trading system
+
+============================================================
+✓ BRIDGE ACTIVE - Forwarding REAL-TIME ES + DOM to Replit
+Press Ctrl+C to stop
+============================================================
+
+2025-10-31 17:10:02,670 - INFO - Warning 2119, reqId -1: Market data farm is connecting:usfuture
+2025-10-31 17:10:02,670 - INFO - Market data farm connecting...
+2025-10-31 17:10:02,670 - INFO - Warning 2119, reqId -1: Market data farm is connecting:usfuture
+2025-10-31 17:10:02,670 - INFO - Market data farm connecting...
+2025-10-31 17:10:02,945 - INFO - Warning 2104, reqId -1: Market data farm connection is OK:usfuture
+2025-10-31 17:10:03,363 - INFO - 📊 ES @ 6856.50 → Sent to Replit
+2025-10-31 17:10:03,519 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-10-31 17:10:03,671 - INFO - 📊 ES @ 6856.50 → Sent to Replit
+2025-10-31 17:10:03,823 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-10-31 17:10:03,978 - INFO - 📊 ES @ 6856.25 → Sent to Replit
+2025-10-31 17:10:04,130 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-10-31 17:10:04,327 - INFO - 📊 ES @ 6856.75 → Sent to Replit
+2025-10-31 17:10:04,482 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-10-31 17:10:04,636 - INFO - 📊 ES @ 6856.75 → Sent to Replit
