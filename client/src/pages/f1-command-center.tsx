@@ -39,43 +39,44 @@ function GridWindow({
   onDragStop: (id: string, col: number, row: number) => void;
   testId?: string;
 }) {
-  const containerWidth = window.innerWidth;
-  const containerHeight = window.innerHeight - 144;
+  const containerWidth = typeof window !== 'undefined' ? window.innerWidth : 1920;
+  const containerHeight = typeof window !== 'undefined' ? window.innerHeight - 144 : 1080;
   const winWidth = (containerWidth - MARGIN * 2 - GAP * (GRID_COLS - 1)) / GRID_COLS;
   const winHeight = (containerHeight - MARGIN * 2 - GAP * (GRID_ROWS - 1)) / GRID_ROWS;
   
-  const left = MARGIN + gridPosition.col * (winWidth + GAP);
-  const top = MARGIN + gridPosition.row * (winHeight + GAP);
-  
   return (
-    <Draggable
-      defaultPosition={{ x: left, y: top }}
-      key={`${windowId}-${gridPosition.col}-${gridPosition.row}`}
-      onStart={() => onDragStart(windowId)}
-      onStop={(_e, data) => {
-        const col = Math.max(0, Math.min(GRID_COLS - 1, Math.round((data.x - MARGIN) / (winWidth + GAP))));
-        const row = Math.max(0, Math.min(GRID_ROWS - 1, Math.round((data.y - MARGIN) / (winHeight + GAP))));
-        onDragStop(windowId, col, row);
+    <div
+      style={{
+        position: 'absolute',
+        left: MARGIN + gridPosition.col * (winWidth + GAP),
+        top: MARGIN + gridPosition.row * (winHeight + GAP),
+        width: winWidth,
+        height: winHeight,
       }}
-      bounds="parent"
     >
-      <div 
-        className="bg-gray-950/95 backdrop-blur-sm border-2 border-green-900/40 rounded-sm overflow-hidden cursor-move"
-        style={{ 
-          width: `${winWidth}px`,
-          height: `${winHeight}px`
+      <Draggable
+        onStart={() => onDragStart(windowId)}
+        onStop={(_e, data) => {
+          const col = Math.max(0, Math.min(GRID_COLS - 1, Math.round((data.x - MARGIN) / (winWidth + GAP))));
+          const row = Math.max(0, Math.min(GRID_ROWS - 1, Math.round((data.y - MARGIN) / (winHeight + GAP))));
+          onDragStop(windowId, col, row);
         }}
-        data-testid={testId}
+        bounds="parent"
       >
-        <div className="px-2 py-1 bg-green-950/30 border-b border-green-900/40 flex items-center gap-2">
-          <Move className="h-3 w-3 text-green-600" />
-          <div className="text-[10px] text-green-500 uppercase tracking-wider font-bold">{title}</div>
+        <div 
+          className="bg-gray-950/95 backdrop-blur-sm border-2 border-green-900/40 rounded-sm overflow-hidden cursor-move h-full w-full"
+          data-testid={testId}
+        >
+          <div className="px-2 py-1 bg-green-950/30 border-b border-green-900/40 flex items-center gap-2">
+            <Move className="h-3 w-3 text-green-600" />
+            <div className="text-[10px] text-green-500 uppercase tracking-wider font-bold">{title}</div>
+          </div>
+          <div className="p-2 h-[calc(100%-32px)] overflow-y-auto">
+            {children}
+          </div>
         </div>
-        <div className="p-2 h-[calc(100%-32px)] overflow-y-auto">
-          {children}
-        </div>
-      </div>
-    </Draggable>
+      </Draggable>
+    </div>
   );
 }
 
