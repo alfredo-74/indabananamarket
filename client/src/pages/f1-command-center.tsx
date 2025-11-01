@@ -39,23 +39,19 @@ function GridWindow({
   onDragStop: (id: string, col: number, row: number) => void;
   testId?: string;
 }) {
-  // Simple responsive calculation
-  const winWidth = `calc((100vw - ${MARGIN * 2}px - ${GAP * (GRID_COLS - 1)}px) / ${GRID_COLS})`;
-  const winHeight = `calc((100vh - 144px - ${MARGIN * 2}px - ${GAP * (GRID_ROWS - 1)}px) / ${GRID_ROWS})`;
+  const containerWidth = window.innerWidth;
+  const containerHeight = window.innerHeight - 144;
+  const calcWinWidth = (containerWidth - MARGIN * 2 - GAP * (GRID_COLS - 1)) / GRID_COLS;
+  const calcWinHeight = (containerHeight - MARGIN * 2 - GAP * (GRID_ROWS - 1)) / GRID_ROWS;
   
-  const left = `calc(${MARGIN}px + ${gridPosition.col} * (${winWidth} + ${GAP}px))`;
-  const top = `calc(${MARGIN}px + ${gridPosition.row} * (${winHeight} + ${GAP}px))`;
+  const x = MARGIN + gridPosition.col * (calcWinWidth + GAP);
+  const y = MARGIN + gridPosition.row * (calcWinHeight + GAP);
   
   return (
     <Draggable
-      disabled={false}
+      position={{ x, y }}
       onStart={() => onDragStart(windowId)}
       onStop={(_e, data) => {
-        const containerWidth = window.innerWidth;
-        const containerHeight = window.innerHeight - 144;
-        const calcWinWidth = (containerWidth - MARGIN * 2 - GAP * (GRID_COLS - 1)) / GRID_COLS;
-        const calcWinHeight = (containerHeight - MARGIN * 2 - GAP * (GRID_ROWS - 1)) / GRID_ROWS;
-        
         const col = Math.max(0, Math.min(GRID_COLS - 1, Math.round((data.x - MARGIN) / (calcWinWidth + GAP))));
         const row = Math.max(0, Math.min(GRID_ROWS - 1, Math.round((data.y - MARGIN) / (calcWinHeight + GAP))));
         onDragStop(windowId, col, row);
@@ -63,12 +59,10 @@ function GridWindow({
       bounds="parent"
     >
       <div 
-        className="absolute bg-gray-950/95 backdrop-blur-sm border-2 border-green-900/40 rounded-sm overflow-hidden cursor-move"
+        className="bg-gray-950/95 backdrop-blur-sm border-2 border-green-900/40 rounded-sm overflow-hidden cursor-move"
         style={{ 
-          width: winWidth,
-          height: winHeight,
-          left: left,
-          top: top
+          width: `${calcWinWidth}px`,
+          height: `${calcWinHeight}px`
         }}
         data-testid={testId}
       >
@@ -631,30 +625,47 @@ export default function F1CommandCenter() {
           title="CVA (5-DAY) + DVA COMPARISON"
           testId="window-chart"
         >
-          <div className="space-y-2 text-[10px]">
-            <div className="flex gap-4">
-              <div className="space-y-0.5">
-                <div className="text-cyan-400 font-bold">CVA (5-DAY)</div>
-                <div className="text-gray-500">VAH: <span className="text-cyan-400">{compositeProfile?.composite_vah?.toFixed(2) || "—"}</span></div>
-                <div className="text-gray-500 pl-3">POC: <span className="text-cyan-400">{compositeProfile?.composite_poc?.toFixed(2) || "—"}</span></div>
-                <div className="text-gray-500">VAL: <span className="text-cyan-400">{compositeProfile?.composite_val?.toFixed(2) || "—"}</span></div>
+          <div className="flex flex-col items-center justify-center h-full space-y-3 text-[10px]">
+            <div className="flex gap-6">
+              <div className="text-center space-y-1">
+                <div className="text-cyan-400 font-bold text-xs mb-2">CVA (5-DAY)</div>
+                <div className="space-y-0.5">
+                  <div className="text-gray-500 text-[9px]">VAH</div>
+                  <div className="text-cyan-400 font-bold text-sm">{compositeProfile?.composite_vah?.toFixed(2) || "—"}</div>
+                </div>
+                <div className="space-y-0.5">
+                  <div className="text-gray-500 text-[9px]">POC</div>
+                  <div className="text-cyan-400 font-bold text-sm">{compositeProfile?.composite_poc?.toFixed(2) || "—"}</div>
+                </div>
+                <div className="space-y-0.5">
+                  <div className="text-gray-500 text-[9px]">VAL</div>
+                  <div className="text-cyan-400 font-bold text-sm">{compositeProfile?.composite_val?.toFixed(2) || "—"}</div>
+                </div>
               </div>
               <div className="border-l border-green-900/30"></div>
-              <div className="space-y-0.5">
-                <div className="text-yellow-400 font-bold">DVA (DAILY)</div>
-                <div className="text-gray-500">VAH: <span className="text-yellow-400">{volumeProfile?.vah?.toFixed(2) || "—"}</span></div>
-                <div className="text-gray-500 pl-3">POC: <span className="text-yellow-400">{volumeProfile?.poc?.toFixed(2) || "—"}</span></div>
-                <div className="text-gray-500">VAL: <span className="text-yellow-400">{volumeProfile?.val?.toFixed(2) || "—"}</span></div>
+              <div className="text-center space-y-1">
+                <div className="text-yellow-400 font-bold text-xs mb-2">DVA (DAILY)</div>
+                <div className="space-y-0.5">
+                  <div className="text-gray-500 text-[9px]">VAH</div>
+                  <div className="text-yellow-400 font-bold text-sm">{volumeProfile?.vah?.toFixed(2) || "—"}</div>
+                </div>
+                <div className="space-y-0.5">
+                  <div className="text-gray-500 text-[9px]">POC</div>
+                  <div className="text-yellow-400 font-bold text-sm">{volumeProfile?.poc?.toFixed(2) || "—"}</div>
+                </div>
+                <div className="space-y-0.5">
+                  <div className="text-gray-500 text-[9px]">VAL</div>
+                  <div className="text-yellow-400 font-bold text-sm">{volumeProfile?.val?.toFixed(2) || "—"}</div>
+                </div>
               </div>
             </div>
             {cvaStacking && cvaStacking.stacked_levels && cvaStacking.stacked_levels.length > 0 && (
-              <div className="pt-2 border-t border-gray-800">
-                <div className="text-white font-bold mb-1">STACKED CVA LEVELS</div>
+              <div className="pt-2 border-t border-gray-800 text-center">
+                <div className="text-white font-bold mb-1 text-xs">STACKED LEVELS</div>
                 <div className="space-y-0.5">
-                  {cvaStacking.stacked_levels.slice(0, 3).map((level: any, i: number) => (
-                    <div key={i} className="flex justify-between">
-                      <span className="text-gray-500">Level {i + 1}:</span>
-                      <span className="text-cyan-400">{level.level?.toFixed(2)} ({level.count}x)</span>
+                  {cvaStacking.stacked_levels.slice(0, 2).map((level: any, i: number) => (
+                    <div key={i} className="text-cyan-400 text-[9px]">
+                      {level.level?.toFixed(2)} ({level.count}x)
                     </div>
                   ))}
                 </div>
