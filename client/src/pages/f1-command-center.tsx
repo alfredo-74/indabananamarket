@@ -39,36 +39,33 @@ function GridWindow({
   onDragStop: (id: string, col: number, row: number) => void;
   testId?: string;
 }) {
-  // Calculate responsive dimensions
-  const windowWidth = `calc((100vw - ${MARGIN_PERCENT * 2}vw - ${GAP_PERCENT * (GRID_COLS - 1)}vw) / ${GRID_COLS})`;
-  const windowHeight = `calc((100vh - 80px - 64px - ${GAP_PERCENT * (GRID_ROWS - 1)}vw - ${MARGIN_PERCENT * 2}vw) / ${GRID_ROWS})`;
+  const containerWidth = window.innerWidth;
+  const containerHeight = window.innerHeight - 80 - 64;
+  
+  const margin = (MARGIN_PERCENT / 100) * containerWidth;
+  const gap = (GAP_PERCENT / 100) * containerWidth;
+  const winWidth = (containerWidth - margin * 2 - gap * (GRID_COLS - 1)) / GRID_COLS;
+  const winHeight = (containerHeight - margin * 2 - gap * (GRID_ROWS - 1)) / GRID_ROWS;
+  
+  const x = margin + gridPosition.col * (winWidth + gap);
+  const y = margin + gridPosition.row * (winHeight + gap);
   
   return (
     <Draggable
-      disabled={false}
+      position={{ x, y }}
       onStart={() => onDragStart(windowId)}
       onStop={(_e, data) => {
-        const containerWidth = window.innerWidth;
-        const containerHeight = window.innerHeight - 80 - 64; // header + footer
-        
-        const margin = (MARGIN_PERCENT / 100) * containerWidth;
-        const gap = (GAP_PERCENT / 100) * containerWidth;
-        const winWidth = (containerWidth - margin * 2 - gap * (GRID_COLS - 1)) / GRID_COLS;
-        const winHeight = (containerHeight - margin * 2 - gap * (GRID_ROWS - 1)) / GRID_ROWS;
-        
-        const col = Math.round((data.x - margin) / (winWidth + gap));
-        const row = Math.round((data.y - margin) / (winHeight + gap));
+        const col = Math.max(0, Math.min(GRID_COLS - 1, Math.round((data.x - margin) / (winWidth + gap))));
+        const row = Math.max(0, Math.min(GRID_ROWS - 1, Math.round((data.y - margin) / (winHeight + gap))));
         onDragStop(windowId, col, row);
       }}
       bounds="parent"
     >
       <div 
-        className="absolute bg-gray-950/95 backdrop-blur-sm border-2 border-green-900/40 rounded-sm overflow-hidden cursor-move"
+        className="bg-gray-950/95 backdrop-blur-sm border-2 border-green-900/40 rounded-sm overflow-hidden cursor-move"
         style={{ 
-          width: windowWidth,
-          height: windowHeight,
-          left: `calc(${MARGIN_PERCENT}vw + ${gridPosition.col} * (${windowWidth} + ${GAP_PERCENT}vw))`,
-          top: `calc(${MARGIN_PERCENT}vw + ${gridPosition.row} * (${windowHeight} + ${GAP_PERCENT}vw))`
+          width: `${winWidth}px`,
+          height: `${winHeight}px`
         }}
         data-testid={testId}
       >
@@ -243,7 +240,10 @@ export default function F1CommandCenter() {
     <div className="h-screen w-screen bg-black text-white flex flex-col overflow-hidden">
       <div className="h-20 border-b border-green-900 flex items-center px-6 justify-between">
         <div className="flex items-center gap-4">
-          <div className="text-sm text-green-600">IBKR <span className="font-bold text-green-400">DATA</span></div>
+          <div className="text-sm">
+            <span className={status?.ibkr_connected ? "text-green-600" : "text-gray-600"}>IBKR </span>
+            <span className={status?.ibkr_connected ? "font-bold text-green-400" : "text-gray-500"}>DATA</span>
+          </div>
           <div className="text-3xl font-bold text-yellow-400 tracking-wider">{marketCondition}</div>
           <div className="text-2xl text-green-400 font-bold tabular-nums">
             ES {marketData?.last_price?.toFixed(2) || "6003.30"}
@@ -479,27 +479,27 @@ export default function F1CommandCenter() {
           gridPosition={windowPositions['value-areas']}
           onDragStart={handleDragStart}
           onDragStop={handleDragStop}
-          title={volumeProfile ? "VALUE AREAS (DVA)" : "VWAP LEVELS"}
+          title={volumeProfile ? "DVA (TODAY'S VALUE AREA)" : "VWAP LEVELS"}
           testId="window-value-areas"
         >
-          <div className="space-y-1.5 text-xs">
-            <div className="flex justify-between">
-              <span className="text-gray-500">{volumeProfile ? "VAH:" : "+SD1:"}</span>
-              <span className="text-green-400 font-bold tabular-nums">
+          <div className="flex flex-col items-center justify-center h-full space-y-2 text-sm">
+            <div className="text-center">
+              <div className="text-gray-500 text-[10px]">{volumeProfile ? "VAH:" : "+SD1:"}</div>
+              <div className="text-green-400 font-bold tabular-nums text-lg">
                 {volumeProfile?.vah?.toFixed(2) || vwapData?.sd1_upper?.toFixed(2) || "----"}
-              </span>
+              </div>
             </div>
-            <div className="flex justify-between pl-4">
-              <span className="text-gray-500">{volumeProfile ? "POC:" : "VWAP:"}</span>
-              <span className="text-yellow-400 font-bold tabular-nums">
+            <div className="text-center">
+              <div className="text-gray-500 text-[10px]">{volumeProfile ? "POC:" : "VWAP:"}</div>
+              <div className="text-yellow-400 font-bold tabular-nums text-lg">
                 {volumeProfile?.poc?.toFixed(2) || vwapData?.vwap?.toFixed(2) || "----"}
-              </span>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">{volumeProfile ? "VAL:" : "-SD1:"}</span>
-              <span className="text-red-400 font-bold tabular-nums">
+            <div className="text-center">
+              <div className="text-gray-500 text-[10px]">{volumeProfile ? "VAL:" : "-SD1:"}</div>
+              <div className="text-red-400 font-bold tabular-nums text-lg">
                 {volumeProfile?.val?.toFixed(2) || vwapData?.sd1_lower?.toFixed(2) || "----"}
-              </span>
+              </div>
             </div>
           </div>
         </GridWindow>
@@ -626,7 +626,7 @@ export default function F1CommandCenter() {
           gridPosition={windowPositions['cva-levels']}
           onDragStart={handleDragStart}
           onDragStop={handleDragStop}
-          title="CVA/DVA LEVELS + STACKING"
+          title="CVA (5-DAY) + DVA COMPARISON"
           testId="window-chart"
         >
           <div className="space-y-2 text-[10px]">
