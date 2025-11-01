@@ -39,8 +39,8 @@ function GridWindow({
   onDragStop: (id: string, col: number, row: number) => void;
   testId?: string;
 }) {
-  const [containerWidth, setContainerWidth] = useState(window.innerWidth);
-  const [containerHeight, setContainerHeight] = useState(window.innerHeight - 80 - 64);
+  const containerWidth = typeof window !== 'undefined' ? window.innerWidth : 1920;
+  const containerHeight = typeof window !== 'undefined' ? window.innerHeight - 80 - 64 : 1080;
 
   const margin = (MARGIN_PERCENT / 100) * containerWidth;
   const gap = (GAP_PERCENT / 100) * containerWidth;
