@@ -19,10 +19,8 @@ import type {
 
 const GRID_COLS = 4;
 const GRID_ROWS = 3;
-const WINDOW_WIDTH = 308;
-const WINDOW_HEIGHT = 200;
-const GAP = 20;
-const MARGIN = 20;
+const GAP_PERCENT = 1.5; // Gap as percentage of viewport width
+const MARGIN_PERCENT = 1.5; // Margin as percentage of viewport width
 
 function GridWindow({ 
   title, 
@@ -41,26 +39,36 @@ function GridWindow({
   onDragStop: (id: string, col: number, row: number) => void;
   testId?: string;
 }) {
-  const x = MARGIN + gridPosition.col * (WINDOW_WIDTH + GAP);
-  const y = gridPosition.row * (WINDOW_HEIGHT + GAP);
-
+  // Calculate responsive dimensions
+  const windowWidth = `calc((100vw - ${MARGIN_PERCENT * 2}vw - ${GAP_PERCENT * (GRID_COLS - 1)}vw) / ${GRID_COLS})`;
+  const windowHeight = `calc((100vh - 80px - 64px - ${GAP_PERCENT * (GRID_ROWS - 1)}vw - ${MARGIN_PERCENT * 2}vw) / ${GRID_ROWS})`;
+  
   return (
     <Draggable
-      position={{ x, y }}
+      disabled={false}
       onStart={() => onDragStart(windowId)}
       onStop={(_e, data) => {
-        const col = Math.round((data.x - MARGIN) / (WINDOW_WIDTH + GAP));
-        const row = Math.round(data.y / (WINDOW_HEIGHT + GAP));
+        const containerWidth = window.innerWidth;
+        const containerHeight = window.innerHeight - 80 - 64; // header + footer
+        
+        const margin = (MARGIN_PERCENT / 100) * containerWidth;
+        const gap = (GAP_PERCENT / 100) * containerWidth;
+        const winWidth = (containerWidth - margin * 2 - gap * (GRID_COLS - 1)) / GRID_COLS;
+        const winHeight = (containerHeight - margin * 2 - gap * (GRID_ROWS - 1)) / GRID_ROWS;
+        
+        const col = Math.round((data.x - margin) / (winWidth + gap));
+        const row = Math.round((data.y - margin) / (winHeight + gap));
         onDragStop(windowId, col, row);
       }}
-      grid={[WINDOW_WIDTH + GAP, WINDOW_HEIGHT + GAP]}
       bounds="parent"
     >
       <div 
         className="absolute bg-gray-950/95 backdrop-blur-sm border-2 border-green-900/40 rounded-sm overflow-hidden cursor-move"
         style={{ 
-          width: `${WINDOW_WIDTH}px`,
-          height: `${WINDOW_HEIGHT}px`
+          width: windowWidth,
+          height: windowHeight,
+          left: `calc(${MARGIN_PERCENT}vw + ${gridPosition.col} * (${windowWidth} + ${GAP_PERCENT}vw))`,
+          top: `calc(${MARGIN_PERCENT}vw + ${gridPosition.row} * (${windowHeight} + ${GAP_PERCENT}vw))`
         }}
         data-testid={testId}
       >
@@ -271,7 +279,7 @@ export default function F1CommandCenter() {
         </div>
       </div>
 
-      <div className="flex-1 relative overflow-hidden" style={{ padding: `${MARGIN}px` }}>
+      <div className="flex-1 relative overflow-hidden">
         <GridWindow
           windowId="pressure"
           gridPosition={windowPositions['pressure']}
