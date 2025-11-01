@@ -1,3 +1,18 @@
+/**
+ * F1 Command Center - Professional Trading Interface
+ * 
+ * Complete PRO Course Implementation:
+ * - Draggable windows for custom layout
+ * - Traffic light condition indicators
+ * - Footprint display with bid/ask breakdown
+ * - CVA stacking levels
+ * - Opening drive detector
+ * - 80% rule detection
+ * - Value shift signals (7 conditions)
+ * 
+ * G7FX PRO Course: 90% Context, 10% Order Flow
+ */
+
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import Draggable from "react-draggable";
@@ -17,6 +32,7 @@ import type {
   TradeRecommendation
 } from "@shared/schema";
 
+// Grid configuration
 const GRID_COLS = 4;
 const GRID_ROWS = 3;
 const WINDOW_WIDTH = 308;
@@ -24,6 +40,7 @@ const WINDOW_HEIGHT = 200;
 const GAP = 20;
 const MARGIN = 20;
 
+// Draggable Grid Window Component with Swap
 function GridWindow({ 
   title, 
   children, 
@@ -48,7 +65,8 @@ function GridWindow({
     <Draggable
       position={{ x, y }}
       onStart={() => onDragStart(windowId)}
-      onStop={(_e, data) => {
+      onStop={(e, data) => {
+        // Calculate which grid cell we're over
         const col = Math.round((data.x - MARGIN) / (WINDOW_WIDTH + GAP));
         const row = Math.round(data.y / (WINDOW_HEIGHT + GAP));
         onDragStop(windowId, col, row);
@@ -77,6 +95,7 @@ function GridWindow({
 }
 
 export default function F1CommandCenter() {
+  // Core system data
   const { data: status } = useQuery<SystemStatus>({
     queryKey: ["/api/status"],
     refetchInterval: 1000,
@@ -97,6 +116,7 @@ export default function F1CommandCenter() {
     refetchInterval: 1000,
   });
 
+  // PRO system data
   const { data: compositeProfile } = useQuery<CompositeProfileData>({ 
     queryKey: ["/api/composite-profile"],
     refetchInterval: 60000,
@@ -132,6 +152,7 @@ export default function F1CommandCenter() {
     refetchInterval: 5000,
   });
 
+  // New PRO Course features
   const { data: footprintBars } = useQuery<any[]>({
     queryKey: ["/api/footprint"],
     refetchInterval: 5000,
@@ -157,6 +178,7 @@ export default function F1CommandCenter() {
     refetchInterval: 10000,
   });
 
+  // Auto-trading mutation
   const toggleAutoTradingMutation = useMutation({
     mutationFn: async (enabled: boolean) => {
       const response = await fetch("/api/auto-trading/toggle", {
@@ -172,14 +194,15 @@ export default function F1CommandCenter() {
     },
   });
 
+  // Derive display values
   const latestCandle = candles && candles.length > 0 ? candles[candles.length - 1] : null;
   const marketCondition = hypothesis?.condition || "UNKNOWN";
   const cumulativeDelta = latestCandle?.cumulative_delta || 0;
   const buyPressure = valueMigration ? Math.max(0, valueMigration.migration_strength * 50) : (cumulativeDelta > 0 ? Math.min(100, cumulativeDelta) : 50);
   const sellPressure = valueMigration ? Math.max(0, -valueMigration.migration_strength * 50) : (cumulativeDelta < 0 ? Math.min(100, Math.abs(cumulativeDelta)) : 50);
   const deltaStrength = valueMigration ? Math.round(valueMigration.migration_strength * 100) : cumulativeDelta;
-  const latestFootprint = footprintBars && footprintBars.length > 0 ? footprintBars[footprintBars.length - 1] : null;
 
+  // Grid-based window positions (4x3 grid)
   const [windowPositions, setWindowPositions] = useState<Record<string, { col: number; row: number }>>({
     'pressure': { col: 0, row: 0 },
     'orderflow': { col: 1, row: 0 },
@@ -202,20 +225,24 @@ export default function F1CommandCenter() {
   };
 
   const handleDragStop = (id: string, col: number, row: number) => {
+    // Clamp to grid bounds
     col = Math.max(0, Math.min(GRID_COLS - 1, col));
     row = Math.max(0, Math.min(GRID_ROWS - 1, row));
 
+    // Find if there's a window at the target position
     const targetId = Object.keys(windowPositions).find(
       key => windowPositions[key].col === col && windowPositions[key].row === row
     );
 
     if (targetId && targetId !== id) {
+      // Swap positions
       setWindowPositions(prev => ({
         ...prev,
         [id]: { col, row },
         [targetId]: prev[id]
       }));
     } else {
+      // Just move to new position
       setWindowPositions(prev => ({
         ...prev,
         [id]: { col, row }
@@ -225,45 +252,82 @@ export default function F1CommandCenter() {
     setDraggingId(null);
   };
 
+  // Traffic light conditions
   const hasValidCVA = compositeProfile && compositeProfile.composite_poc > 0;
   const hasValidDVA = volumeProfile && volumeProfile.poc > 0;
   const hasVWAP = vwapData && vwapData.vwap > 0;
   const hasHypothesis = hypothesis && hypothesis.confidence > 0;
   const hasActiveSignals = (absorptionEvents && absorptionEvents.length > 0) || (orderFlowSignals && orderFlowSignals.length > 0);
 
+  const latestFootprint = footprintBars && footprintBars.length > 0 ? footprintBars[footprintBars.length - 1] : null;
+
   return (
-    <div className="h-screen w-screen bg-black text-white flex flex-col overflow-hidden">
-      <div className="h-20 border-b border-green-900 flex items-center px-6 justify-between">
-        <div className="flex items-center gap-4">
-          <div className="text-sm text-green-600">IBKR <span className="font-bold text-green-400">DATA</span></div>
-          <div className="text-3xl font-bold text-yellow-400 tracking-wider">{marketCondition}</div>
-          <div className="text-2xl text-green-400 font-bold tabular-nums">
-            ES {marketData?.last_price?.toFixed(2) || "6003.30"}
+    <div className="h-screen flex flex-col bg-black text-green-400 font-mono overflow-hidden">
+      {/* Top Band: Connection Status, Market Regime, ES Price */}
+      <div className="h-16 border-b border-green-900 flex items-center justify-between px-6">
+        {/* Left: Connection Status - Plain Text with Color */}
+        <div className="flex items-center gap-4 h-full">
+          <div className="flex items-center gap-1.5" data-testid="status-ibkr">
+            <span className={`text-3xl font-bold tracking-wider ${status?.ibkr_connected ? "text-green-500" : "text-gray-600"}`}>
+              IBKR
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5" data-testid="status-data">
+            <span className={`text-3xl font-bold tracking-wider ${status?.market_data_active ? "text-green-500" : "text-gray-600"}`}>
+              DATA
+            </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-6">
-          {/* Traffic Lights */}
+        {/* Center: Market Regime */}
+        <div className="flex items-center h-full">
+          <div className={`text-3xl font-bold tracking-wider ${
+            marketCondition.includes("BULLISH") || marketCondition === "TREND_UP" ? "text-green-500" :
+            marketCondition.includes("BEARISH") || marketCondition === "TREND_DOWN" ? "text-red-500" :
+            "text-yellow-500"
+          }`} data-testid="regime-indicator">
+            {marketCondition.replace("_", " ")}
+          </div>
+        </div>
+
+        {/* Right: ES Value */}
+        <div className="flex items-center gap-2 h-full" data-testid="es-price">
+          <span className="text-3xl font-bold text-gray-500 tracking-wider">{marketData?.symbol || "ES"}</span>
+          <span className="text-3xl font-bold text-green-400 tabular-nums tracking-wider">
+            {marketData?.last_price.toFixed(2) || "----"}
+          </span>
+        </div>
+      </div>
+
+      {/* Traffic Lights Bar - Horizontal Line Below Top Band */}
+      <div className="h-12 border-b border-green-900/50 bg-gray-950/30 flex items-center justify-center px-6">
+        <div className="flex items-center gap-8" data-testid="traffic-lights">
+          {/* CVA */}
           <div className="flex items-center gap-2">
             <div className={`h-4 w-4 rounded-full ${hasValidCVA ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`} />
             <span className="text-sm text-gray-400 uppercase tracking-wide font-bold">CVA</span>
           </div>
+          {/* DVA */}
           <div className="flex items-center gap-2">
             <div className={`h-4 w-4 rounded-full ${hasValidDVA ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`} />
             <span className="text-sm text-gray-400 uppercase tracking-wide font-bold">DVA</span>
           </div>
+          {/* VWAP */}
           <div className="flex items-center gap-2">
             <div className={`h-4 w-4 rounded-full ${hasVWAP ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`} />
             <span className="text-sm text-gray-400 uppercase tracking-wide font-bold">VWAP</span>
           </div>
+          {/* Hypothesis */}
           <div className="flex items-center gap-2">
             <div className={`h-4 w-4 rounded-full ${hasHypothesis ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`} />
             <span className="text-sm text-gray-400 uppercase tracking-wide font-bold">Hypothesis</span>
           </div>
+          {/* Signals */}
           <div className="flex items-center gap-2">
             <div className={`h-4 w-4 rounded-full ${hasActiveSignals ? "bg-green-500 shadow-lg shadow-green-500/50 animate-pulse" : "bg-red-600"}`} />
             <span className="text-sm text-gray-400 uppercase tracking-wide font-bold">Signals</span>
           </div>
+          {/* Auto-Trading */}
           <div className="flex items-center gap-2">
             <div className={`h-4 w-4 rounded-full ${status?.auto_trading_enabled ? "bg-green-500 shadow-lg shadow-green-500/50 animate-pulse" : "bg-gray-600"}`} />
             <span className="text-sm text-gray-400 uppercase tracking-wide font-bold">Auto-Trading</span>
@@ -271,16 +335,21 @@ export default function F1CommandCenter() {
         </div>
       </div>
 
+      {/* Main Content: Drag-and-Swap Grid - 4x3 uniform windows */}
       <div className="flex-1 relative overflow-hidden" style={{ padding: `${MARGIN}px` }}>
+        {/* Pressure Gauges */}
         <GridWindow
           windowId="pressure"
           gridPosition={windowPositions['pressure']}
           onDragStart={handleDragStart}
-          onDragStop={handleDragStop}
-          title="PRESSURE GAUGES"
+          onDragStop={handleDragStop} 
+          title="PRESSURE GAUGES" 
+          position={{ x: 0, y: 0 }}
+          height="160px"
           testId="window-pressure"
         >
           <div className="space-y-3">
+            {/* Buy Pressure */}
             <div>
               <div className="flex justify-between text-[10px] mb-1">
                 <span className="text-green-400">BUY</span>
@@ -293,6 +362,8 @@ export default function F1CommandCenter() {
                 />
               </div>
             </div>
+
+            {/* Sell Pressure */}
             <div>
               <div className="flex justify-between text-[10px] mb-1">
                 <span className="text-red-400">SELL</span>
@@ -305,6 +376,8 @@ export default function F1CommandCenter() {
                 />
               </div>
             </div>
+
+            {/* Cumulative Delta */}
             <div className="pt-2 border-t border-gray-800">
               <div className="text-[10px] text-gray-500 mb-1">CUMULATIVE DELTA</div>
               <div className={`text-2xl font-bold tabular-nums ${deltaStrength >= 0 ? "text-green-400" : "text-red-400"}`}>
@@ -312,14 +385,13 @@ export default function F1CommandCenter() {
               </div>
             </div>
           </div>
-        </GridWindow>
+        </FixedWindow>
 
-        <GridWindow
-          windowId="orderflow"
-          gridPosition={windowPositions['orderflow']}
-          onDragStart={handleDragStart}
-          onDragStop={handleDragStop}
-          title="ORDER FLOW SIGNALS"
+        {/* Row 1, Col 2: Order Flow Signals */}
+        <FixedWindow 
+          title="ORDER FLOW SIGNALS" 
+          position={{ x: 308, y: 0 }}
+          height="160px"
           testId="window-orderflow"
         >
           <div className="space-y-1.5 overflow-y-auto max-h-36">
@@ -371,14 +443,13 @@ export default function F1CommandCenter() {
               </div>
             )}
           </div>
-        </GridWindow>
+        </FixedWindow>
 
-        <GridWindow
-          windowId="setups"
-          gridPosition={windowPositions['setups']}
-          onDragStart={handleDragStart}
-          onDragStop={handleDragStop}
-          title="HIGH-PROBABILITY SETUPS"
+        {/* Row 1, Col 3: High-Probability Setups */}
+        <FixedWindow 
+          title="HIGH-PROBABILITY SETUPS" 
+          position={{ x: 616, y: 0 }}
+          height="160px"
           testId="window-setups"
         >
           <div className="space-y-1.5 overflow-y-auto max-h-36">
@@ -429,14 +500,13 @@ export default function F1CommandCenter() {
               </div>
             )}
           </div>
-        </GridWindow>
+        </FixedWindow>
 
-        <GridWindow
-          windowId="opening-drive"
-          gridPosition={windowPositions['opening-drive']}
-          onDragStart={handleDragStart}
-          onDragStop={handleDragStop}
-          title="OPENING DRIVE"
+        {/* Row 1, Col 4: Opening Drive */}
+        <FixedWindow 
+          title="OPENING DRIVE" 
+          position={{ x: 924, y: 0 }}
+          height="160px"
           testId="window-opening-drive"
         >
           {openingDrive && openingDrive.detected ? (
@@ -464,242 +534,13 @@ export default function F1CommandCenter() {
               No opening drive detected
             </div>
           )}
-        </GridWindow>
+        </FixedWindow>
 
-        <GridWindow
-          windowId="value-areas"
-          gridPosition={windowPositions['value-areas']}
-          onDragStart={handleDragStart}
-          onDragStop={handleDragStop}
-          title={volumeProfile ? "VALUE AREAS (DVA)" : "VWAP LEVELS"}
-          testId="window-value-areas"
-        >
-          <div className="space-y-1.5 text-xs">
-            <div className="flex justify-between">
-              <span className="text-gray-500">{volumeProfile ? "VAH:" : "+SD1:"}</span>
-              <span className="text-green-400 font-bold tabular-nums">
-                {volumeProfile?.vah?.toFixed(2) || vwapData?.sd1_upper?.toFixed(2) || "----"}
-              </span>
-            </div>
-            <div className="flex justify-between pl-4">
-              <span className="text-gray-500">{volumeProfile ? "POC:" : "VWAP:"}</span>
-              <span className="text-yellow-400 font-bold tabular-nums">
-                {volumeProfile?.poc?.toFixed(2) || vwapData?.vwap?.toFixed(2) || "----"}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">{volumeProfile ? "VAL:" : "-SD1:"}</span>
-              <span className="text-red-400 font-bold tabular-nums">
-                {volumeProfile?.val?.toFixed(2) || vwapData?.sd1_lower?.toFixed(2) || "----"}
-              </span>
-            </div>
-          </div>
-        </GridWindow>
-
-        <GridWindow
-          windowId="footprint"
-          gridPosition={windowPositions['footprint']}
-          onDragStart={handleDragStart}
-          onDragStop={handleDragStop}
-          title="FOOTPRINT (BID/ASK)"
-          testId="window-footprint"
-        >
-          {latestFootprint ? (
-            <div className="space-y-1.5">
-              <div className="flex justify-between text-[10px] text-gray-500">
-                <span>POC: <span className="text-yellow-400 font-bold">{latestFootprint.poc_price?.toFixed(2)}</span></span>
-                <span>Delta: <span className={`font-bold ${latestFootprint.bar_delta >= 0 ? "text-green-400" : "text-red-400"}`}>
-                  {latestFootprint.bar_delta >= 0 ? "+" : ""}{latestFootprint.bar_delta}
-                </span></span>
-              </div>
-              <div className="flex justify-between text-[10px] text-gray-500">
-                <span>Stacked Buy: <span className="text-green-400">{latestFootprint.stacked_buying || 0}</span></span>
-                <span>Stacked Sell: <span className="text-red-400">{latestFootprint.stacked_selling || 0}</span></span>
-              </div>
-              {latestFootprint.price_levels && latestFootprint.price_levels.slice(0, 5).map((level: any, i: number) => (
-                <div key={i} className="flex justify-between text-[9px] py-0.5 border-t border-gray-800/50">
-                  <span className="text-gray-600">{level.price?.toFixed(2)}</span>
-                  <span className="text-green-400">{level.bid_volume}</span>
-                  <span className="text-red-400">{level.ask_volume}</span>
-                  <span className={level.imbalance_direction === "BID" ? "text-green-500 font-bold" : level.imbalance_direction === "ASK" ? "text-red-500 font-bold" : "text-gray-600"}>
-                    {level.imbalance_ratio?.toFixed(1)}:1
-                  </span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center text-gray-600 py-4 text-[10px]">
-              Waiting for footprint data...
-            </div>
-          )}
-        </GridWindow>
-
-        <GridWindow
-          windowId="hypothesis"
-          gridPosition={windowPositions['hypothesis']}
-          onDragStart={handleDragStart}
-          onDragStop={handleDragStop}
-          title="DAILY HYPOTHESIS"
-          testId="window-hypothesis"
-        >
-          {hypothesis && hypothesis.confidence > 0 ? (
-            <div className="space-y-2 text-[10px]">
-              <div>
-                <span className="text-gray-500">CONDITION: </span>
-                <span className={`font-bold ${
-                  hypothesis.bias === "BULLISH" ? "text-green-400" : 
-                  hypothesis.bias === "BEARISH" ? "text-red-400" : "text-yellow-400"
-                }`}>
-                  {hypothesis.condition.replace(/_/g, " ")}
-                </span>
-              </div>
-              <div>
-                <span className="text-gray-500">STRATEGY: </span>
-                <span className="text-gray-300">{hypothesis.primary_strategy}</span>
-              </div>
-              <div className="flex justify-between pt-1 border-t border-gray-800">
-                <div>
-                  <span className="text-gray-600">R1:</span>
-                  <span className="text-red-400 ml-1">{hypothesis.key_levels?.resistance_1?.toFixed(2) || "N/A"}</span>
-                </div>
-                <div>
-                  <span className="text-gray-600">S1:</span>
-                  <span className="text-green-400 ml-1">{hypothesis.key_levels?.support_1?.toFixed(2) || "N/A"}</span>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="text-center text-gray-600 py-4 text-[10px]">
-              Generating hypothesis...
-            </div>
-          )}
-        </GridWindow>
-
-        <GridWindow
-          windowId="eighty-percent"
-          gridPosition={windowPositions['eighty-percent']}
-          onDragStart={handleDragStart}
-          onDragStop={handleDragStop}
-          title="80% RULE"
-          testId="window-eighty-percent"
-        >
-          {eightyPercentRule && eightyPercentRule.detected ? (
-            <div className="space-y-1.5 text-[10px]">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Status:</span>
-                <span className="text-green-400 font-bold">DETECTED</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Completion:</span>
-                <span className="text-yellow-400">{eightyPercentRule.completion_percentage}%</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Expected:</span>
-                <span className={`font-bold ${eightyPercentRule.expected_direction === "CONTINUATION" ? "text-green-400" : "text-yellow-400"}`}>
-                  {eightyPercentRule.expected_direction}
-                </span>
-              </div>
-              {eightyPercentRule.fade_entry && (
-                <div className="flex justify-between pt-1 border-t border-gray-800">
-                  <span className="text-gray-500">Fade Entry:</span>
-                  <span className="text-red-400 font-bold">{eightyPercentRule.fade_entry.toFixed(2)}</span>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="text-center text-gray-600 py-4 text-[10px]">
-              No 80% rule setup
-            </div>
-          )}
-        </GridWindow>
-
-        <GridWindow
-          windowId="cva-levels"
-          gridPosition={windowPositions['cva-levels']}
-          onDragStart={handleDragStart}
-          onDragStop={handleDragStop}
-          title="CVA/DVA LEVELS + STACKING"
-          testId="window-chart"
-        >
-          <div className="space-y-2 text-[10px]">
-            <div className="flex gap-4">
-              <div className="space-y-0.5">
-                <div className="text-cyan-400 font-bold">CVA (5-DAY)</div>
-                <div className="text-gray-500">VAH: <span className="text-cyan-400">{compositeProfile?.composite_vah?.toFixed(2) || "—"}</span></div>
-                <div className="text-gray-500 pl-3">POC: <span className="text-cyan-400">{compositeProfile?.composite_poc?.toFixed(2) || "—"}</span></div>
-                <div className="text-gray-500">VAL: <span className="text-cyan-400">{compositeProfile?.composite_val?.toFixed(2) || "—"}</span></div>
-              </div>
-              <div className="border-l border-green-900/30"></div>
-              <div className="space-y-0.5">
-                <div className="text-yellow-400 font-bold">DVA (DAILY)</div>
-                <div className="text-gray-500">VAH: <span className="text-yellow-400">{volumeProfile?.vah?.toFixed(2) || "—"}</span></div>
-                <div className="text-gray-500 pl-3">POC: <span className="text-yellow-400">{volumeProfile?.poc?.toFixed(2) || "—"}</span></div>
-                <div className="text-gray-500">VAL: <span className="text-yellow-400">{volumeProfile?.val?.toFixed(2) || "—"}</span></div>
-              </div>
-            </div>
-            {cvaStacking && cvaStacking.stacked_levels && cvaStacking.stacked_levels.length > 0 && (
-              <div className="pt-2 border-t border-gray-800">
-                <div className="text-white font-bold mb-1">STACKED CVA LEVELS</div>
-                <div className="space-y-0.5">
-                  {cvaStacking.stacked_levels.slice(0, 3).map((level: any, i: number) => (
-                    <div key={i} className="flex justify-between">
-                      <span className="text-gray-500">Level {i + 1}:</span>
-                      <span className="text-cyan-400">{level.level?.toFixed(2)} ({level.count}x)</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </GridWindow>
-
-        <GridWindow
-          windowId="value-shift"
-          gridPosition={windowPositions['value-shift']}
-          onDragStart={handleDragStart}
-          onDragStop={handleDragStop}
-          title="VALUE SHIFT SIGNALS"
-          testId="window-value-shift"
-        >
-          <div className="space-y-1.5 overflow-y-auto max-h-36">
-            {valueShiftSignals && valueShiftSignals.slice(0, 5).map((signal: any, i: number) => (
-              <div 
-                key={i}
-                className={`p-1.5 rounded border text-[10px] ${
-                  signal.bias === "BULLISH" 
-                    ? "bg-green-950/30 border-green-800" 
-                    : signal.bias === "BEARISH" 
-                    ? "bg-red-950/30 border-red-800"
-                    : "bg-yellow-950/30 border-yellow-800"
-                }`}
-                data-testid={`value-shift-${i}`}
-              >
-                <div className="flex items-center justify-between mb-0.5">
-                  <span className={`font-bold ${
-                    signal.bias === "BULLISH" ? "text-green-400" : 
-                    signal.bias === "BEARISH" ? "text-red-400" : "text-yellow-400"
-                  }`}>
-                    {signal.condition_type?.replace(/_/g, " ")}
-                  </span>
-                  <span className="text-gray-500">{signal.confidence}%</span>
-                </div>
-                <div className="text-gray-400">{signal.trade_implication}</div>
-              </div>
-            ))}
-            {(!valueShiftSignals || valueShiftSignals.length === 0) && (
-              <div className="text-center text-gray-600 py-6 text-[10px]">
-                No value shift signals
-              </div>
-            )}
-          </div>
-        </GridWindow>
-
-        <GridWindow
-          windowId="system-status"
-          gridPosition={windowPositions['system-status']}
-          onDragStart={handleDragStart}
-          onDragStop={handleDragStop}
-          title="SYSTEM STATUS"
+        {/* Row 1, Col 5: System Status */}
+        <FixedWindow 
+          title="SYSTEM STATUS" 
+          position={{ x: 1232, y: 0 }}
+          height="160px"
           testId="window-status"
         >
           <div className="space-y-2">
@@ -737,14 +578,156 @@ export default function F1CommandCenter() {
               {status?.auto_trading_enabled ? "DISABLE" : "ENABLE"}
             </Button>
           </div>
-        </GridWindow>
+        </FixedWindow>
 
-        <GridWindow
-          windowId="account"
-          gridPosition={windowPositions['account']}
-          onDragStart={handleDragStart}
-          onDragStop={handleDragStop}
-          title="ACCOUNT"
+        {/* Row 2, Col 1: Value Areas */}
+        <FixedWindow 
+          title={volumeProfile ? "VALUE AREAS (DVA)" : "VWAP LEVELS"} 
+          position={{ x: 0, y: 180 }}
+          height="160px"
+          testId="window-value-areas"
+        >
+          <div className="space-y-1.5 text-xs">
+            <div className="flex justify-between">
+              <span className="text-gray-500">{volumeProfile ? "VAH:" : "+SD1:"}</span>
+              <span className="text-green-400 font-bold tabular-nums">
+                {volumeProfile?.vah?.toFixed(2) || vwapData?.sd1_upper?.toFixed(2) || "----"}
+              </span>
+            </div>
+            <div className="flex justify-between pl-4">
+              <span className="text-gray-500">{volumeProfile ? "POC:" : "VWAP:"}</span>
+              <span className="text-yellow-400 font-bold tabular-nums">
+                {volumeProfile?.poc?.toFixed(2) || vwapData?.vwap?.toFixed(2) || "----"}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">{volumeProfile ? "VAL:" : "-SD1:"}</span>
+              <span className="text-red-400 font-bold tabular-nums">
+                {volumeProfile?.val?.toFixed(2) || vwapData?.sd1_lower?.toFixed(2) || "----"}
+              </span>
+            </div>
+          </div>
+        </FixedWindow>
+
+        {/* Row 2, Col 2: Footprint */}
+        <FixedWindow 
+          title="FOOTPRINT (BID/ASK)" 
+          position={{ x: 308, y: 180 }}
+          height="160px"
+          testId="window-footprint"
+        >
+          {latestFootprint ? (
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-[10px] text-gray-500">
+                <span>POC: <span className="text-yellow-400 font-bold">{latestFootprint.poc_price?.toFixed(2)}</span></span>
+                <span>Delta: <span className={`font-bold ${latestFootprint.bar_delta >= 0 ? "text-green-400" : "text-red-400"}`}>
+                  {latestFootprint.bar_delta >= 0 ? "+" : ""}{latestFootprint.bar_delta}
+                </span></span>
+              </div>
+              <div className="flex justify-between text-[10px] text-gray-500">
+                <span>Stacked Buy: <span className="text-green-400">{latestFootprint.stacked_buying || 0}</span></span>
+                <span>Stacked Sell: <span className="text-red-400">{latestFootprint.stacked_selling || 0}</span></span>
+              </div>
+              {latestFootprint.price_levels && latestFootprint.price_levels.slice(0, 5).map((level: any, i: number) => (
+                <div key={i} className="flex justify-between text-[9px] py-0.5 border-t border-gray-800/50">
+                  <span className="text-gray-600">{level.price?.toFixed(2)}</span>
+                  <span className="text-green-400">{level.bid_volume}</span>
+                  <span className="text-red-400">{level.ask_volume}</span>
+                  <span className={level.imbalance_direction === "BID" ? "text-green-500 font-bold" : level.imbalance_direction === "ASK" ? "text-red-500 font-bold" : "text-gray-600"}>
+                    {level.imbalance_ratio?.toFixed(1)}:1
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center text-gray-600 py-4 text-[10px]">
+              Waiting for footprint data...
+            </div>
+          )}
+        </FixedWindow>
+
+        {/* Row 2, Col 3: Daily Hypothesis */}
+        <FixedWindow 
+          title="DAILY HYPOTHESIS" 
+          position={{ x: 616, y: 180 }}
+          height="160px"
+          testId="window-hypothesis"
+        >
+          {hypothesis && hypothesis.confidence > 0 ? (
+            <div className="space-y-2 text-[10px]">
+              <div>
+                <span className="text-gray-500">CONDITION: </span>
+                <span className={`font-bold ${
+                  hypothesis.bias === "BULLISH" ? "text-green-400" : 
+                  hypothesis.bias === "BEARISH" ? "text-red-400" : "text-yellow-400"
+                }`}>
+                  {hypothesis.condition.replace(/_/g, " ")}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-500">STRATEGY: </span>
+                <span className="text-gray-300">{hypothesis.primary_strategy}</span>
+              </div>
+              <div className="flex justify-between pt-1 border-t border-gray-800">
+                <div>
+                  <span className="text-gray-600">R1:</span>
+                  <span className="text-red-400 ml-1">{hypothesis.key_levels?.resistance_1?.toFixed(2) || "N/A"}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">S1:</span>
+                  <span className="text-green-400 ml-1">{hypothesis.key_levels?.support_1?.toFixed(2) || "N/A"}</span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center text-gray-600 py-4 text-[10px]">
+              Generating hypothesis...
+            </div>
+          )}
+        </FixedWindow>
+
+        {/* Row 2, Col 4: 80% Rule */}
+        <FixedWindow 
+          title="80% RULE" 
+          position={{ x: 924, y: 180 }}
+          height="160px"
+          testId="window-eighty-percent"
+        >
+          {eightyPercentRule && eightyPercentRule.detected ? (
+            <div className="space-y-1.5 text-[10px]">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Status:</span>
+                <span className="text-green-400 font-bold">DETECTED</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Completion:</span>
+                <span className="text-yellow-400">{eightyPercentRule.completion_percentage}%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Expected:</span>
+                <span className={`font-bold ${eightyPercentRule.expected_direction === "CONTINUATION" ? "text-green-400" : "text-yellow-400"}`}>
+                  {eightyPercentRule.expected_direction}
+                </span>
+              </div>
+              {eightyPercentRule.fade_entry && (
+                <div className="flex justify-between pt-1 border-t border-gray-800">
+                  <span className="text-gray-500">Fade Entry:</span>
+                  <span className="text-red-400 font-bold">{eightyPercentRule.fade_entry.toFixed(2)}</span>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="text-center text-gray-600 py-4 text-[10px]">
+              No 80% rule setup
+            </div>
+          )}
+        </FixedWindow>
+
+        {/* Row 2, Col 5: Account */}
+        <FixedWindow 
+          title="ACCOUNT" 
+          position={{ x: 1232, y: 180 }}
+          height="160px"
           testId="window-account"
         >
           <div className="space-y-1.5 text-xs">
@@ -763,9 +746,90 @@ export default function F1CommandCenter() {
               </span>
             </div>
           </div>
-        </GridWindow>
+        </FixedWindow>
+
+        {/* Row 3, Col 1-2: CVA/DVA Chart (Double Width) */}
+        <FixedWindow 
+          title="CVA/DVA LEVELS + STACKING" 
+          position={{ x: 0, y: 360 }}
+          height="180px"
+          width="w-[596px]"
+          testId="window-chart"
+        >
+          <div className="space-y-2 text-[10px]">
+            <div className="flex gap-4">
+              <div className="space-y-0.5">
+                <div className="text-cyan-400 font-bold">CVA (5-DAY)</div>
+                <div className="text-gray-500">VAH: <span className="text-cyan-400">{compositeProfile?.composite_vah?.toFixed(2) || "—"}</span></div>
+                <div className="text-gray-500 pl-3">POC: <span className="text-cyan-400">{compositeProfile?.composite_poc?.toFixed(2) || "—"}</span></div>
+                <div className="text-gray-500">VAL: <span className="text-cyan-400">{compositeProfile?.composite_val?.toFixed(2) || "—"}</span></div>
+              </div>
+              <div className="border-l border-green-900/30"></div>
+              <div className="space-y-0.5">
+                <div className="text-yellow-400 font-bold">DVA (DAILY)</div>
+                <div className="text-gray-500">VAH: <span className="text-yellow-400">{volumeProfile?.vah?.toFixed(2) || "—"}</span></div>
+                <div className="text-gray-500 pl-3">POC: <span className="text-yellow-400">{volumeProfile?.poc?.toFixed(2) || "—"}</span></div>
+                <div className="text-gray-500">VAL: <span className="text-yellow-400">{volumeProfile?.val?.toFixed(2) || "—"}</span></div>
+              </div>
+            </div>
+            {cvaStacking && cvaStacking.stacked_levels && cvaStacking.stacked_levels.length > 0 && (
+              <div className="pt-2 border-t border-gray-800">
+                <div className="text-white font-bold mb-1">STACKED CVA LEVELS (BREAKOUT REF)</div>
+                <div className="space-y-0.5">
+                  {cvaStacking.stacked_levels.slice(0, 3).map((level: any, i: number) => (
+                    <div key={i} className="flex justify-between">
+                      <span className="text-gray-500">Level {i + 1}:</span>
+                      <span className="text-cyan-400">{level.level?.toFixed(2)} ({level.count}x)</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </FixedWindow>
+
+        {/* Row 3, Col 3: Value Shift Signals */}
+        <FixedWindow 
+          title="VALUE SHIFT SIGNALS" 
+          position={{ x: 616, y: 360 }}
+          height="180px"
+          testId="window-value-shift"
+        >
+          <div className="space-y-1.5 overflow-y-auto max-h-36">
+            {valueShiftSignals && valueShiftSignals.slice(0, 5).map((signal: any, i: number) => (
+              <div 
+                key={i}
+                className={`p-1.5 rounded border text-[10px] ${
+                  signal.bias === "BULLISH" 
+                    ? "bg-green-950/30 border-green-800" 
+                    : signal.bias === "BEARISH" 
+                    ? "bg-red-950/30 border-red-800"
+                    : "bg-yellow-950/30 border-yellow-800"
+                }`}
+                data-testid={`value-shift-${i}`}
+              >
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className={`font-bold ${
+                    signal.bias === "BULLISH" ? "text-green-400" : 
+                    signal.bias === "BEARISH" ? "text-red-400" : "text-yellow-400"
+                  }`}>
+                    {signal.condition_type?.replace(/_/g, " ")}
+                  </span>
+                  <span className="text-gray-500">{signal.confidence}%</span>
+                </div>
+                <div className="text-gray-400">{signal.trade_implication}</div>
+              </div>
+            ))}
+            {(!valueShiftSignals || valueShiftSignals.length === 0) && (
+              <div className="text-center text-gray-600 py-6 text-[10px]">
+                No value shift signals
+              </div>
+            )}
+          </div>
+        </FixedWindow>
       </div>
 
+      {/* Footer: Larger Quick Stats */}
       <div className="h-16 border-t border-green-900 flex items-center justify-around px-6 text-sm" data-testid="footer-stats">
         <div className="flex flex-col items-center">
           <span className="text-gray-500 text-xs">Volume</span>
