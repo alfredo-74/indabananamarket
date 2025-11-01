@@ -1,22 +1,25 @@
 /**
  * F1 Command Center - Professional Trading Interface
  * 
- * Inspired by Formula 1 steering wheel design:
- * - High contrast (green/red/yellow on black)
- * - Quick-glance traffic light indicators
- * - Tactical button/gauge layout
- * - Minimal charts, maximum context
+ * Complete PRO Course Implementation:
+ * - Draggable windows for custom layout
+ * - Traffic light condition indicators
+ * - Footprint display with bid/ask breakdown
+ * - CVA stacking levels
+ * - Opening drive detector
+ * - 80% rule detection
+ * - Value shift signals (7 conditions)
  * 
  * G7FX PRO Course: 90% Context, 10% Order Flow
  */
 
+import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Card } from "@/components/ui/card";
+import Draggable from "react-draggable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, TrendingDown, Minus, AlertTriangle, Zap, Target, Power } from "lucide-react";
+import { TrendingUp, TrendingDown, AlertTriangle, Zap, Target, Power, Move } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import MinimalProfileChart from "@/components/minimal-profile-chart";
 import type { 
   SystemStatus, 
   MarketData, 
@@ -28,6 +31,42 @@ import type {
   OrderFlowSignal,
   TradeRecommendation
 } from "@shared/schema";
+
+// Draggable Window Component
+function DraggableWindow({ 
+  title, 
+  children, 
+  defaultPosition = { x: 0, y: 0 },
+  className = "",
+  testId = ""
+}: { 
+  title: string; 
+  children: React.ReactNode; 
+  defaultPosition?: { x: number; y: number };
+  className?: string;
+  testId?: string;
+}) {
+  return (
+    <Draggable 
+      defaultPosition={defaultPosition}
+      handle=".drag-handle"
+      bounds="parent"
+    >
+      <div 
+        className={`absolute bg-gray-950/95 backdrop-blur-sm border border-green-900/40 rounded-sm ${className}`}
+        data-testid={testId}
+      >
+        <div className="drag-handle cursor-move px-2 py-1 bg-green-950/30 border-b border-green-900/40 flex items-center gap-2">
+          <Move className="h-3 w-3 text-green-600" />
+          <div className="text-[10px] text-green-500 uppercase tracking-wider font-bold">{title}</div>
+        </div>
+        <div className="p-2">
+          {children}
+        </div>
+      </div>
+    </Draggable>
+  );
+}
 
 export default function F1CommandCenter() {
   // Core system data
@@ -54,27 +93,27 @@ export default function F1CommandCenter() {
   // PRO system data
   const { data: compositeProfile } = useQuery<CompositeProfileData>({ 
     queryKey: ["/api/composite-profile"],
-    refetchInterval: 60000, // Update every minute
+    refetchInterval: 60000,
   });
   
   const { data: valueMigration } = useQuery<ValueMigrationData>({ 
     queryKey: ["/api/value-migration"],
-    refetchInterval: 10000, // Update every 10 seconds
+    refetchInterval: 10000,
   });
   
   const { data: hypothesis } = useQuery<DailyHypothesis>({ 
     queryKey: ["/api/daily-hypothesis"],
-    refetchInterval: 60000, // Update every minute
+    refetchInterval: 60000,
   });
   
   const { data: orderFlowSignals } = useQuery<OrderFlowSignal[]>({ 
     queryKey: ["/api/orderflow-signals"],
-    refetchInterval: 2000, // Update every 2 seconds
+    refetchInterval: 2000,
   });
 
   const { data: candles } = useQuery<any[]>({ 
     queryKey: ["/api/candles"],
-    refetchInterval: 5000, // Update every 5 seconds
+    refetchInterval: 5000,
   });
 
   const { data: vwapData } = useQuery<any>({ 
@@ -84,7 +123,33 @@ export default function F1CommandCenter() {
 
   const { data: tradeRecommendations } = useQuery<TradeRecommendation[]>({ 
     queryKey: ["/api/trade-recommendations"],
-    refetchInterval: 5000, // Update every 5 seconds
+    refetchInterval: 5000,
+  });
+
+  // New PRO Course features
+  const { data: footprintBars } = useQuery<any[]>({
+    queryKey: ["/api/footprint"],
+    refetchInterval: 5000,
+  });
+
+  const { data: cvaStacking } = useQuery<any>({
+    queryKey: ["/api/cva-stacking"],
+    refetchInterval: 60000,
+  });
+
+  const { data: openingDrive } = useQuery<any>({
+    queryKey: ["/api/opening-drive"],
+    refetchInterval: 5000,
+  });
+
+  const { data: eightyPercentRule } = useQuery<any>({
+    queryKey: ["/api/eighty-percent-rule"],
+    refetchInterval: 5000,
+  });
+
+  const { data: valueShiftSignals } = useQuery<any[]>({
+    queryKey: ["/api/value-shift"],
+    refetchInterval: 10000,
   });
 
   // Auto-trading mutation
@@ -103,7 +168,7 @@ export default function F1CommandCenter() {
     },
   });
 
-  // Derive display values from PRO data
+  // Derive display values
   const latestCandle = candles && candles.length > 0 ? candles[candles.length - 1] : null;
   const marketCondition = hypothesis?.condition || "UNKNOWN";
   const cumulativeDelta = latestCandle?.cumulative_delta || 0;
@@ -111,67 +176,107 @@ export default function F1CommandCenter() {
   const sellPressure = valueMigration ? Math.max(0, -valueMigration.migration_strength * 50) : (cumulativeDelta < 0 ? Math.min(100, Math.abs(cumulativeDelta)) : 50);
   const deltaStrength = valueMigration ? Math.round(valueMigration.migration_strength * 100) : cumulativeDelta;
 
+  // Traffic light conditions
+  const hasValidCVA = compositeProfile && compositeProfile.composite_poc > 0;
+  const hasValidDVA = volumeProfile && volumeProfile.poc > 0;
+  const hasVWAP = vwapData && vwapData.vwap > 0;
+  const hasHypothesis = hypothesis && hypothesis.confidence > 0;
+  const hasActiveSignals = (absorptionEvents && absorptionEvents.length > 0) || (orderFlowSignals && orderFlowSignals.length > 0);
+
+  const latestFootprint = footprintBars && footprintBars.length > 0 ? footprintBars[footprintBars.length - 1] : null;
+
   return (
     <div className="h-screen flex flex-col bg-black text-green-400 font-mono overflow-hidden">
-      {/* F1-Style Header: Large Regime Indicator */}
-      <div className="h-24 border-b border-green-900 flex items-center justify-center relative">
-        <div className="absolute top-4 left-6 flex gap-3">
-          <Badge variant={status?.ibkr_connected ? "default" : "secondary"} className="gap-1.5" data-testid="badge-ibkr">
-            <div className={`h-2 w-2 rounded-full ${status?.ibkr_connected ? "bg-green-500" : "bg-gray-600"}`} />
-            <span className="text-xs">IBKR</span>
+      {/* Compact Header with Traffic Lights & ES Value */}
+      <div className="h-20 border-b border-green-900 flex items-center justify-between px-6 relative">
+        {/* Left: Connection Status */}
+        <div className="flex gap-2">
+          <Badge variant={status?.ibkr_connected ? "default" : "secondary"} className="gap-1 text-[10px] h-5" data-testid="badge-ibkr">
+            <div className={`h-1.5 w-1.5 rounded-full ${status?.ibkr_connected ? "bg-green-500" : "bg-gray-600"}`} />
+            IBKR
           </Badge>
-          <Badge variant={status?.market_data_active ? "default" : "secondary"} className="gap-1.5" data-testid="badge-data">
-            <div className={`h-2 w-2 rounded-full ${status?.market_data_active ? "bg-green-500" : "bg-gray-600"}`} />
-            <span className="text-xs">DATA</span>
+          <Badge variant={status?.market_data_active ? "default" : "secondary"} className="gap-1 text-[10px] h-5" data-testid="badge-data">
+            <div className={`h-1.5 w-1.5 rounded-full ${status?.market_data_active ? "bg-green-500" : "bg-gray-600"}`} />
+            DATA
           </Badge>
         </div>
 
-        {/* Traffic Light Market Regime - HORIZONTAL */}
-        <div className="flex items-center gap-6" data-testid="regime-indicator">
-          {/* Traffic Light Visual - Horizontal */}
-          <div className="flex flex-row gap-2 p-3 bg-gray-950 rounded border border-gray-800">
-            <div className={`h-6 w-6 rounded-full ${marketCondition.includes("BULLISH") || marketCondition === "TREND_UP" ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-gray-800"}`} />
-            <div className={`h-6 w-6 rounded-full ${marketCondition === "BALANCE" || marketCondition === "BREAKOUT_PENDING" || marketCondition === "OPENING_DRIVE" ? "bg-yellow-500 shadow-lg shadow-yellow-500/50 animate-pulse" : "bg-gray-800"}`} />
-            <div className={`h-6 w-6 rounded-full ${marketCondition.includes("BEARISH") || marketCondition === "TREND_DOWN" ? "bg-red-500 shadow-lg shadow-red-500/50" : "bg-gray-800"}`} />
-          </div>
-
-          {/* Regime Label */}
-          <div className="text-center">
-            <div className={`text-4xl font-bold tracking-wider ${
-              marketCondition.includes("BULLISH") || marketCondition === "TREND_UP" ? "text-green-500" :
-              marketCondition.includes("BEARISH") || marketCondition === "TREND_DOWN" ? "text-red-500" :
-              "text-yellow-500"
-            }`}>
-              {marketCondition.replace("_", " ")}
+        {/* Center: Traffic Lights + Market Regime */}
+        <div className="flex items-center gap-6">
+          {/* Traffic Lights - Red/Green for each condition */}
+          <div className="flex flex-col gap-1" data-testid="traffic-lights">
+            <div className="flex gap-1.5">
+              {/* CVA Ready */}
+              <div 
+                className={`h-3 w-3 rounded-full ${hasValidCVA ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`}
+                title="CVA Ready"
+              />
+              {/* DVA Ready */}
+              <div 
+                className={`h-3 w-3 rounded-full ${hasValidDVA ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`}
+                title="DVA Ready"
+              />
+              {/* VWAP Ready */}
+              <div 
+                className={`h-3 w-3 rounded-full ${hasVWAP ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`}
+                title="VWAP Ready"
+              />
             </div>
-            <div className="text-sm text-gray-500 mt-1">MARKET REGIME</div>
+            <div className="flex gap-1.5">
+              {/* Hypothesis Ready */}
+              <div 
+                className={`h-3 w-3 rounded-full ${hasHypothesis ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`}
+                title="Hypothesis Ready"
+              />
+              {/* Signals Active */}
+              <div 
+                className={`h-3 w-3 rounded-full ${hasActiveSignals ? "bg-green-500 shadow-lg shadow-green-500/50 animate-pulse" : "bg-red-600"}`}
+                title="Signals Active"
+              />
+              {/* Auto-Trading */}
+              <div 
+                className={`h-3 w-3 rounded-full ${status?.auto_trading_enabled ? "bg-green-500 shadow-lg shadow-green-500/50 animate-pulse" : "bg-gray-600"}`}
+                title="Auto-Trading"
+              />
+            </div>
+          </div>
+
+          {/* Market Regime - No Text Label */}
+          <div className={`text-3xl font-bold tracking-wider ${
+            marketCondition.includes("BULLISH") || marketCondition === "TREND_UP" ? "text-green-500" :
+            marketCondition.includes("BEARISH") || marketCondition === "TREND_DOWN" ? "text-red-500" :
+            "text-yellow-500"
+          }`} data-testid="regime-indicator">
+            {marketCondition.replace("_", " ")}
           </div>
         </div>
 
-        {/* Price Display */}
-        <div className="absolute top-4 right-6 text-right">
-          <div className="text-xs text-gray-500">{marketData?.symbol || "ES"}</div>
-          <div className="text-2xl font-bold text-green-400 tabular-nums">
+        {/* Right: ES Value on Same Line */}
+        <div className="flex items-baseline gap-2" data-testid="es-price">
+          <span className="text-xs text-gray-500">{marketData?.symbol || "ES"}</span>
+          <span className="text-3xl font-bold text-green-400 tabular-nums">
             {marketData?.last_price.toFixed(2) || "----"}
-          </div>
+          </span>
         </div>
       </div>
 
-      {/* Main Content Grid */}
-      <div className="flex-1 grid grid-cols-3 gap-3 p-3 overflow-y-auto">
-        {/* LEFT: Pressure Gauges & Delta */}
-        <div className="flex flex-col gap-3">
-          {/* Buy/Sell Pressure Meters */}
-          <Card className="bg-gray-950 border-green-900 p-4 flex-1" data-testid="pressure-gauges">
-            <div className="text-xs text-green-500 mb-3 uppercase tracking-wider">Market Pressure</div>
-            
+      {/* Main Content: Draggable Windows Container */}
+      <div className="flex-1 relative overflow-hidden">
+        {/* Pressure Gauges */}
+        <DraggableWindow 
+          title="PRESSURE GAUGES" 
+          defaultPosition={{ x: 10, y: 10 }}
+          className="w-64"
+          testId="window-pressure"
+        >
+          <div className="space-y-3">
             {/* Buy Pressure */}
-            <div className="mb-4">
-              <div className="flex justify-between text-xs mb-1">
+            <div>
+              <div className="flex justify-between text-[10px] mb-1">
                 <span className="text-green-400">BUY</span>
                 <span className="text-green-400 font-bold">{buyPressure}%</span>
               </div>
-              <div className="h-3 bg-gray-900 rounded-full overflow-hidden">
+              <div className="h-2 bg-gray-900 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-gradient-to-r from-green-600 to-green-400 transition-all duration-500"
                   style={{ width: `${buyPressure}%` }}
@@ -180,12 +285,12 @@ export default function F1CommandCenter() {
             </div>
 
             {/* Sell Pressure */}
-            <div className="mb-4">
-              <div className="flex justify-between text-xs mb-1">
+            <div>
+              <div className="flex justify-between text-[10px] mb-1">
                 <span className="text-red-400">SELL</span>
                 <span className="text-red-400 font-bold">{sellPressure}%</span>
               </div>
-              <div className="h-3 bg-gray-900 rounded-full overflow-hidden">
+              <div className="h-2 bg-gray-900 rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-gradient-to-r from-red-600 to-red-400 transition-all duration-500"
                   style={{ width: `${sellPressure}%` }}
@@ -193,375 +298,478 @@ export default function F1CommandCenter() {
               </div>
             </div>
 
-            {/* Cumulative Delta Gauge */}
-            <div className="mt-6 pt-4 border-t border-gray-800">
-              <div className="text-xs text-gray-500 mb-2 uppercase">Cumulative Delta</div>
-              <div className={`text-3xl font-bold tabular-nums ${deltaStrength >= 0 ? "text-green-400" : "text-red-400"}`}>
+            {/* Cumulative Delta */}
+            <div className="pt-2 border-t border-gray-800">
+              <div className="text-[10px] text-gray-500 mb-1">CUMULATIVE DELTA</div>
+              <div className={`text-2xl font-bold tabular-nums ${deltaStrength >= 0 ? "text-green-400" : "text-red-400"}`}>
                 {deltaStrength >= 0 ? "+" : ""}{deltaStrength}
               </div>
-              <div className="flex gap-2 mt-2">
-                {deltaStrength >= 0 ? <TrendingUp className="h-4 w-4 text-green-400" /> : <TrendingDown className="h-4 w-4 text-red-400" />}
-                <span className="text-xs text-gray-500">
-                  {deltaStrength >= 0 ? "Buying pressure building" : "Selling pressure building"}
-                </span>
-              </div>
             </div>
-          </Card>
+          </div>
+        </DraggableWindow>
 
-          {/* Value Areas - with VWAP fallback */}
-          <Card className="bg-gray-950 border-green-900 p-4" data-testid="value-areas">
-            <div className="text-xs text-green-500 mb-3 uppercase tracking-wider">
-              {volumeProfile ? "Value Areas (DVA)" : "VWAP Levels"}
+        {/* Value Areas */}
+        <DraggableWindow 
+          title={volumeProfile ? "VALUE AREAS (DVA)" : "VWAP LEVELS"} 
+          defaultPosition={{ x: 10, y: 210 }}
+          className="w-52"
+          testId="window-value-areas"
+        >
+          <div className="space-y-1.5 text-xs">
+            <div className="flex justify-between">
+              <span className="text-gray-500">{volumeProfile ? "VAH:" : "+SD1:"}</span>
+              <span className="text-green-400 font-bold tabular-nums">
+                {volumeProfile?.vah?.toFixed(2) || vwapData?.sd1_upper?.toFixed(2) || "----"}
+              </span>
             </div>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-gray-500">{volumeProfile ? "VAH:" : "+SD1:"}</span>
-                <span className="text-green-400 font-bold tabular-nums">
-                  {volumeProfile?.vah?.toFixed(2) || vwapData?.sd1_upper?.toFixed(2) || "----"}
-                </span>
-              </div>
-              <div className="flex justify-between pl-6">
-                <span className="text-gray-500">{volumeProfile ? "POC:" : "VWAP:"}</span>
-                <span className="text-yellow-400 font-bold tabular-nums">
-                  {volumeProfile?.poc?.toFixed(2) || vwapData?.vwap?.toFixed(2) || "----"}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">{volumeProfile ? "VAL:" : "-SD1:"}</span>
-                <span className="text-red-400 font-bold tabular-nums">
-                  {volumeProfile?.val?.toFixed(2) || vwapData?.sd1_lower?.toFixed(2) || "----"}
-                </span>
-              </div>
+            <div className="flex justify-between pl-4">
+              <span className="text-gray-500">{volumeProfile ? "POC:" : "VWAP:"}</span>
+              <span className="text-yellow-400 font-bold tabular-nums">
+                {volumeProfile?.poc?.toFixed(2) || vwapData?.vwap?.toFixed(2) || "----"}
+              </span>
             </div>
-          </Card>
-        </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">{volumeProfile ? "VAL:" : "-SD1:"}</span>
+              <span className="text-red-400 font-bold tabular-nums">
+                {volumeProfile?.val?.toFixed(2) || vwapData?.sd1_lower?.toFixed(2) || "----"}
+              </span>
+            </div>
+          </div>
+        </DraggableWindow>
 
-        {/* CENTER: System Status + Order Flow Signals */}
-        <div className="flex flex-col gap-3">
-          {/* System Status - Moved to Center */}
-          <Card className="bg-gray-950 border-green-900 p-4" data-testid="system-status">
-            <div className="text-xs text-green-500 mb-3 uppercase tracking-wider">System Status</div>
-            <div className="space-y-3">
-              <div className="space-y-2 text-xs">
-                <div className="flex items-center gap-2">
-                  <div className={`h-2 w-2 rounded-full ${status?.auto_trading_enabled ? "bg-green-500 animate-pulse" : "bg-gray-600"}`} />
-                  <span className="text-gray-400">Auto Trading:</span>
-                  <span className={status?.auto_trading_enabled ? "text-green-400" : "text-gray-600"}>
-                    {status?.auto_trading_enabled ? "ENABLED" : "DISABLED"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-green-500" />
-                  <span className="text-gray-400">Market Data:</span>
-                  <span className="text-green-400">STREAMING</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className={`h-2 w-2 rounded-full ${status?.ibkr_connected ? "bg-green-500" : "bg-red-500"}`} />
-                  <span className="text-gray-400">IBKR Gateway:</span>
-                  <span className={status?.ibkr_connected ? "text-green-400" : "text-red-400"}>
-                    {status?.ibkr_connected ? "CONNECTED" : "DISCONNECTED"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="h-2 w-2 rounded-full bg-yellow-500" />
-                  <span className="text-gray-400">Account:</span>
-                  <span className="text-yellow-400">{status?.account_type || "PAPER"}</span>
-                </div>
-              </div>
-              
-              <Button
-                onClick={() => toggleAutoTradingMutation.mutate(!status?.auto_trading_enabled)}
-                disabled={toggleAutoTradingMutation.isPending}
-                size="sm"
-                variant={status?.auto_trading_enabled ? "destructive" : "default"}
-                className="w-full text-xs"
-                data-testid="button-toggle-autotrading"
+        {/* Order Flow Signals */}
+        <DraggableWindow 
+          title="ORDER FLOW SIGNALS" 
+          defaultPosition={{ x: 290, y: 10 }}
+          className="w-72 h-80"
+          testId="window-orderflow"
+        >
+          <div className="space-y-1.5 overflow-y-auto max-h-64">
+            {absorptionEvents && absorptionEvents.slice(0, 3).map((event, i) => (
+              <div 
+                key={`abs-${i}`} 
+                className={`p-1.5 rounded border text-[10px] ${
+                  event.side === "BUY_ABSORPTION" 
+                    ? "bg-green-950/30 border-green-800" 
+                    : "bg-red-950/30 border-red-800"
+                }`}
+                data-testid={`signal-absorption-${i}`}
               >
-                <Power className="h-3 w-3 mr-1" />
-                {status?.auto_trading_enabled ? "DISABLE AUTO-TRADING" : "ENABLE AUTO-TRADING"}
-              </Button>
-            </div>
-          </Card>
-
-          {/* Order Flow Signals */}
-          <Card className="bg-gray-950 border-green-900 p-4 flex-1 overflow-hidden" data-testid="orderflow-signals">
-            <div className="text-xs text-green-500 mb-3 uppercase tracking-wider flex items-center gap-2">
-              <Zap className="h-4 w-4" />
-              Order Flow Signals
-            </div>
-            
-            <div className="space-y-2 overflow-y-auto max-h-full">
-              {/* Absorption Events */}
-              {absorptionEvents && absorptionEvents.slice(0, 5).map((event, i) => (
-                <div 
-                  key={`abs-${i}`} 
-                  className={`p-2 rounded border ${
+                <div className="flex items-center gap-1.5">
+                  <div className={`h-1.5 w-1.5 rounded-full ${
                     event.side === "BUY_ABSORPTION" 
-                      ? "bg-green-950/30 border-green-800" 
-                      : "bg-red-950/30 border-red-800"
-                  }`}
-                  data-testid={`signal-absorption-${i}`}
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className={`h-2 w-2 rounded-full ${
-                      event.side === "BUY_ABSORPTION" 
-                        ? "bg-green-500 shadow-lg shadow-green-500/50 animate-pulse" 
-                        : "bg-red-500 shadow-lg shadow-red-500/50 animate-pulse"
-                    }`} />
-                    <span className={`text-xs font-bold ${
-                      event.side === "BUY_ABSORPTION" ? "text-green-400" : "text-red-400"
-                    }`}>
-                      ABSORPTION
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {event.ratio?.toFixed(1) || "N/A"}:1 @ {event.price?.toFixed(2) || "N/A"}
-                    </span>
-                  </div>
+                      ? "bg-green-500 animate-pulse" 
+                      : "bg-red-500 animate-pulse"
+                  }`} />
+                  <span className={`font-bold ${
+                    event.side === "BUY_ABSORPTION" ? "text-green-400" : "text-red-400"
+                  }`}>
+                    ABS {event.ratio?.toFixed(1)}:1 @ {event.price?.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            ))}
+
+            {orderFlowSignals && orderFlowSignals.slice(0, 4).map((signal, i) => (
+              <div 
+                key={`sig-${i}`} 
+                className="p-1.5 rounded border bg-yellow-950/20 border-yellow-800/50 text-[10px]"
+                data-testid={`signal-${signal.signal_type}-${i}`}
+              >
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <div className="h-1.5 w-1.5 rounded-full bg-yellow-500" />
+                  <span className="font-bold text-yellow-400">
+                    {signal.signal_type.replace(/_/g, " ")}
+                  </span>
+                </div>
+                <div className="text-gray-400 pl-3">{signal.description}</div>
+              </div>
+            ))}
+
+            {(!absorptionEvents || absorptionEvents.length === 0) && 
+             (!orderFlowSignals || orderFlowSignals.length === 0) && (
+              <div className="text-center text-gray-600 py-4 text-[10px]">
+                Waiting for signals...
+              </div>
+            )}
+          </div>
+        </DraggableWindow>
+
+        {/* Footprint Display */}
+        <DraggableWindow 
+          title="FOOTPRINT (BID/ASK)" 
+          defaultPosition={{ x: 290, y: 410 }}
+          className="w-72"
+          testId="window-footprint"
+        >
+          {latestFootprint ? (
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-[10px] text-gray-500">
+                <span>POC: <span className="text-yellow-400 font-bold">{latestFootprint.poc_price?.toFixed(2)}</span></span>
+                <span>Delta: <span className={`font-bold ${latestFootprint.bar_delta >= 0 ? "text-green-400" : "text-red-400"}`}>
+                  {latestFootprint.bar_delta >= 0 ? "+" : ""}{latestFootprint.bar_delta}
+                </span></span>
+              </div>
+              <div className="flex justify-between text-[10px] text-gray-500">
+                <span>Stacked Buy: <span className="text-green-400">{latestFootprint.stacked_buying || 0}</span></span>
+                <span>Stacked Sell: <span className="text-red-400">{latestFootprint.stacked_selling || 0}</span></span>
+              </div>
+              {latestFootprint.price_levels && latestFootprint.price_levels.slice(0, 5).map((level: any, i: number) => (
+                <div key={i} className="flex justify-between text-[9px] py-0.5 border-t border-gray-800/50">
+                  <span className="text-gray-600">{level.price?.toFixed(2)}</span>
+                  <span className="text-green-400">{level.bid_volume}</span>
+                  <span className="text-red-400">{level.ask_volume}</span>
+                  <span className={level.imbalance_direction === "BID" ? "text-green-500 font-bold" : level.imbalance_direction === "ASK" ? "text-red-500 font-bold" : "text-gray-600"}>
+                    {level.imbalance_ratio?.toFixed(1)}:1
+                  </span>
                 </div>
               ))}
+            </div>
+          ) : (
+            <div className="text-center text-gray-600 py-4 text-[10px]">
+              Waiting for footprint data...
+            </div>
+          )}
+        </DraggableWindow>
 
-              {/* Advanced Order Flow Signals */}
-              {orderFlowSignals && orderFlowSignals.slice(0, 5).map((signal, i) => {
-                // Color scheme based on signal type
-                const getSignalStyle = () => {
-                  if (signal.signal_type === "LACK_OF_PARTICIPATION") {
-                    return {
-                      bg: "bg-yellow-950/30",
-                      border: "border-yellow-800",
-                      text: "text-yellow-400",
-                      glow: "bg-yellow-500 shadow-yellow-500/50"
-                    };
-                  } else if (signal.signal_type === "STACKED_IMBALANCE") {
-                    return signal.direction === "BULLISH"
-                      ? { bg: "bg-blue-950/30", border: "border-blue-800", text: "text-blue-400", glow: "bg-blue-500 shadow-blue-500/50" }
-                      : { bg: "bg-orange-950/30", border: "border-orange-800", text: "text-orange-400", glow: "bg-orange-500 shadow-orange-500/50" };
-                  } else if (signal.signal_type === "TRAPPED_TRADERS") {
-                    return { bg: "bg-purple-950/30", border: "border-purple-800", text: "text-purple-400", glow: "bg-purple-500 shadow-purple-500/50" };
-                  } else if (signal.signal_type.includes("INITIATIVE")) {
-                    return signal.direction === "BULLISH"
-                      ? { bg: "bg-cyan-950/30", border: "border-cyan-800", text: "text-cyan-400", glow: "bg-cyan-500 shadow-cyan-500/50" }
-                      : { bg: "bg-pink-950/30", border: "border-pink-800", text: "text-pink-400", glow: "bg-pink-500 shadow-pink-500/50" };
-                  } else if (signal.signal_type.includes("EXHAUSTION")) {
-                    return { bg: "bg-red-950/30", border: "border-red-800", text: "text-red-400", glow: "bg-red-500 shadow-red-500/50" };
-                  }
-                  return { bg: "bg-gray-950/30", border: "border-gray-800", text: "text-gray-400", glow: "bg-gray-500 shadow-gray-500/50" };
-                };
-
-                const style = getSignalStyle();
-                const signalName = signal.signal_type.replace(/_/g, " ");
-
-                return (
-                  <div 
-                    key={`sig-${i}`} 
-                    className={`p-2 rounded border ${style.bg} ${style.border}`}
-                    data-testid={`signal-${signal.signal_type}-${i}`}
-                  >
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className={`h-2 w-2 rounded-full ${style.glow} ${signal.actionable ? "animate-pulse" : ""}`} />
-                      <span className={`text-xs font-bold ${style.text}`}>
-                        {signalName}
-                      </span>
-                    </div>
-                    <div className="text-xs text-gray-400">{signal.description}</div>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-gray-600">
-                        Conf: {signal.confidence}%
-                      </span>
-                      {signal.actionable && (
-                        <span className="text-xs text-green-500 font-bold">ACTIONABLE</span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* Placeholder when no signals */}
-              {(!absorptionEvents || absorptionEvents.length === 0) && 
-               (!orderFlowSignals || orderFlowSignals.length === 0) && (
-                <div className="text-center text-gray-600 py-8">
-                  <AlertTriangle className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                  <div className="text-xs">Waiting for order flow signals...</div>
+        {/* High-Probability Setups */}
+        <DraggableWindow 
+          title="HIGH-PROBABILITY SETUPS" 
+          defaultPosition={{ x: 580, y: 10 }}
+          className="w-80 h-72"
+          testId="window-setups"
+        >
+          <div className="space-y-1.5 overflow-y-auto max-h-56">
+            {tradeRecommendations && tradeRecommendations.filter(r => r.active).slice(0, 2).map((rec, i) => (
+              <div 
+                key={i}
+                className={`p-2 rounded border text-[10px] ${
+                  rec.direction === "LONG" 
+                    ? "bg-green-950/30 border-green-800" 
+                    : "bg-red-950/30 border-red-800"
+                }`}
+                data-testid={`recommendation-${i}`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className={`font-bold ${
+                    rec.direction === "LONG" ? "text-green-400" : "text-red-400"
+                  }`}>
+                    {rec.setup_type.replace(/_/g, " ")}
+                  </span>
+                  <Badge variant={rec.confidence >= 75 ? "default" : "secondary"} className="text-[9px] h-4">
+                    {rec.confidence}%
+                  </Badge>
                 </div>
-              )}
-            </div>
-          </Card>
-        </div>
-
-        {/* RIGHT: Trade Recommendations & Context */}
-        <div className="flex flex-col gap-3">
-          {/* Trade Recommendations */}
-          <Card className="bg-gray-950 border-green-900 p-4 overflow-hidden" data-testid="trade-recommendations">
-            <div className="text-xs text-green-500 mb-3 uppercase tracking-wider flex items-center gap-2">
-              <Target className="h-4 w-4" />
-              High-Probability Setups
-            </div>
-            <div className="space-y-2 max-h-64 overflow-y-auto">
-              {tradeRecommendations && tradeRecommendations.filter(r => r.active).slice(0, 3).map((rec, i) => (
-                <div 
-                  key={i}
-                  className={`p-2 rounded border ${
-                    rec.direction === "LONG" 
-                      ? "bg-green-950/30 border-green-800" 
-                      : "bg-red-950/30 border-red-800"
-                  }`}
-                  data-testid={`recommendation-${i}`}
-                >
-                  <div className="flex items-center justify-between mb-1">
-                    <span className={`text-xs font-bold ${
-                      rec.direction === "LONG" ? "text-green-400" : "text-red-400"
-                    }`}>
-                      {rec.setup_type.replace(/_/g, " ")}
-                    </span>
-                    <Badge variant={rec.confidence >= 75 ? "default" : "secondary"} className="text-xs">
-                      {rec.confidence}%
-                    </Badge>
+                <div className="text-gray-400 mb-1">{rec.context_reason}</div>
+                <div className="grid grid-cols-2 gap-x-2 gap-y-0.5">
+                  <div>
+                    <span className="text-gray-600">Entry:</span>
+                    <span className="text-white font-bold ml-1">{rec.entry_price?.toFixed(2)}</span>
                   </div>
-                  <div className="text-xs text-gray-400 mb-2">{rec.context_reason}</div>
-                  <div className="grid grid-cols-2 gap-1 text-xs">
-                    <div>
-                      <span className="text-gray-600">Entry:</span>
-                      <span className="text-white font-bold ml-1">{rec.entry_price?.toFixed(2) || "N/A"}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Stop:</span>
-                      <span className="text-red-400 ml-1">{rec.stop_loss?.toFixed(2) || "N/A"}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">Target:</span>
-                      <span className="text-green-400 ml-1">{rec.target_1?.toFixed(2) || "N/A"}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600">R:R:</span>
-                      <span className="text-yellow-400 ml-1">{rec.risk_reward_ratio?.toFixed(1) || "N/A"}:1</span>
-                    </div>
+                  <div>
+                    <span className="text-gray-600">Stop:</span>
+                    <span className="text-red-400 ml-1">{rec.stop_loss?.toFixed(2)}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Target:</span>
+                    <span className="text-green-400 ml-1">{rec.target_1?.toFixed(2)}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">R:R:</span>
+                    <span className="text-yellow-400 ml-1">{rec.risk_reward_ratio?.toFixed(1)}:1</span>
                   </div>
                 </div>
-              ))}
-              {(!tradeRecommendations || tradeRecommendations.filter(r => r.active).length === 0) && (
-                <div className="text-center text-gray-600 py-8">
-                  <Target className="h-8 w-8 mx-auto mb-2 opacity-30" />
-                  <div className="text-xs">No high-probability setups detected</div>
-                  <div className="text-xs text-gray-700 mt-1">Waiting for optimal context + order flow alignment</div>
-                </div>
-              )}
-            </div>
-          </Card>
+              </div>
+            ))}
+            {(!tradeRecommendations || tradeRecommendations.filter(r => r.active).length === 0) && (
+              <div className="text-center text-gray-600 py-6 text-[10px]">
+                No high-probability setups detected
+              </div>
+            )}
+          </div>
+        </DraggableWindow>
 
-          {/* Daily Hypothesis */}
-          <Card className="bg-gray-950 border-green-900 p-4" data-testid="daily-hypothesis">
-            <div className="text-xs text-green-500 mb-3 uppercase tracking-wider flex items-center gap-2">
-              <Target className="h-4 w-4" />
-              Daily Hypothesis
-            </div>
-            {hypothesis ? (
-              <div className="space-y-2">
-                <div className="text-xs text-gray-500 uppercase">Condition</div>
-                <div className={`text-sm font-bold ${
+        {/* Daily Hypothesis */}
+        <DraggableWindow 
+          title="DAILY HYPOTHESIS" 
+          defaultPosition={{ x: 580, y: 300 }}
+          className="w-72"
+          testId="window-hypothesis"
+        >
+          {hypothesis && hypothesis.confidence > 0 ? (
+            <div className="space-y-2 text-[10px]">
+              <div>
+                <span className="text-gray-500">CONDITION: </span>
+                <span className={`font-bold ${
                   hypothesis.bias === "BULLISH" ? "text-green-400" : 
                   hypothesis.bias === "BEARISH" ? "text-red-400" : "text-yellow-400"
                 }`}>
                   {hypothesis.condition.replace(/_/g, " ")}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-500">STRATEGY: </span>
+                <span className="text-gray-300">{hypothesis.primary_strategy}</span>
+              </div>
+              <div className="flex justify-between pt-1 border-t border-gray-800">
+                <div>
+                  <span className="text-gray-600">R1:</span>
+                  <span className="text-red-400 ml-1">{hypothesis.key_levels?.resistance_1?.toFixed(2) || "N/A"}</span>
                 </div>
-                
-                <div className="text-xs text-gray-500 uppercase mt-3">Strategy</div>
-                <div className="text-xs text-gray-300">{hypothesis.primary_strategy}</div>
-
-                <div className="text-xs text-gray-500 uppercase mt-3">Key Levels</div>
-                <div className="text-xs text-gray-300 space-y-1">
-                  <div className="flex justify-between">
-                    <span>R1:</span>
-                    <span className="text-red-400 tabular-nums">{hypothesis.key_levels?.resistance_1?.toFixed(2) || "N/A"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>S1:</span>
-                    <span className="text-green-400 tabular-nums">{hypothesis.key_levels?.support_1?.toFixed(2) || "N/A"}</span>
-                  </div>
+                <div>
+                  <span className="text-gray-600">S1:</span>
+                  <span className="text-green-400 ml-1">{hypothesis.key_levels?.support_1?.toFixed(2) || "N/A"}</span>
                 </div>
               </div>
-            ) : (
-              <div className="text-center text-gray-600 py-4">
-                <div className="text-xs">Generating hypothesis...</div>
+            </div>
+          ) : (
+            <div className="text-center text-gray-600 py-4 text-[10px]">
+              Generating hypothesis...
+            </div>
+          )}
+        </DraggableWindow>
+
+        {/* Opening Drive Status */}
+        <DraggableWindow 
+          title="OPENING DRIVE" 
+          defaultPosition={{ x: 880, y: 10 }}
+          className="w-64"
+          testId="window-opening-drive"
+        >
+          {openingDrive && openingDrive.detected ? (
+            <div className="space-y-1.5 text-[10px]">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Status:</span>
+                <span className={`font-bold ${openingDrive.direction === "BULLISH" ? "text-green-400" : "text-red-400"}`}>
+                  {openingDrive.direction} DRIVE
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Confidence:</span>
+                <span className="text-yellow-400">{openingDrive.confidence}%</span>
+              </div>
+              {openingDrive.entry_level && (
+                <div className="flex justify-between pt-1 border-t border-gray-800">
+                  <span className="text-gray-500">Entry Level:</span>
+                  <span className="text-green-400 font-bold">{openingDrive.entry_level.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="text-gray-400 mt-1">{openingDrive.description}</div>
+            </div>
+          ) : (
+            <div className="text-center text-gray-600 py-4 text-[10px]">
+              No opening drive detected
+            </div>
+          )}
+        </DraggableWindow>
+
+        {/* 80% Rule Detection */}
+        <DraggableWindow 
+          title="80% RULE" 
+          defaultPosition={{ x: 880, y: 170 }}
+          className="w-64"
+          testId="window-eighty-percent"
+        >
+          {eightyPercentRule && eightyPercentRule.detected ? (
+            <div className="space-y-1.5 text-[10px]">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Status:</span>
+                <span className="text-green-400 font-bold">DETECTED</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Completion:</span>
+                <span className="text-yellow-400">{eightyPercentRule.completion_percentage}%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Expected:</span>
+                <span className={`font-bold ${eightyPercentRule.expected_direction === "CONTINUATION" ? "text-green-400" : "text-yellow-400"}`}>
+                  {eightyPercentRule.expected_direction}
+                </span>
+              </div>
+              {eightyPercentRule.fade_entry && (
+                <div className="flex justify-between pt-1 border-t border-gray-800">
+                  <span className="text-gray-500">Fade Entry:</span>
+                  <span className="text-red-400 font-bold">{eightyPercentRule.fade_entry.toFixed(2)}</span>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="text-center text-gray-600 py-4 text-[10px]">
+              No 80% rule setup
+            </div>
+          )}
+        </DraggableWindow>
+
+        {/* Value Shift Signals */}
+        <DraggableWindow 
+          title="VALUE SHIFT SIGNALS" 
+          defaultPosition={{ x: 880, y: 340 }}
+          className="w-72 h-64"
+          testId="window-value-shift"
+        >
+          <div className="space-y-1.5 overflow-y-auto max-h-48">
+            {valueShiftSignals && valueShiftSignals.slice(0, 5).map((signal: any, i: number) => (
+              <div 
+                key={i}
+                className={`p-1.5 rounded border text-[10px] ${
+                  signal.bias === "BULLISH" 
+                    ? "bg-green-950/30 border-green-800" 
+                    : signal.bias === "BEARISH" 
+                    ? "bg-red-950/30 border-red-800"
+                    : "bg-yellow-950/30 border-yellow-800"
+                }`}
+                data-testid={`value-shift-${i}`}
+              >
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className={`font-bold ${
+                    signal.bias === "BULLISH" ? "text-green-400" : 
+                    signal.bias === "BEARISH" ? "text-red-400" : "text-yellow-400"
+                  }`}>
+                    {signal.condition_type?.replace(/_/g, " ")}
+                  </span>
+                  <span className="text-gray-500">{signal.confidence}%</span>
+                </div>
+                <div className="text-gray-400">{signal.trade_implication}</div>
+              </div>
+            ))}
+            {(!valueShiftSignals || valueShiftSignals.length === 0) && (
+              <div className="text-center text-gray-600 py-6 text-[10px]">
+                No value shift signals
               </div>
             )}
-          </Card>
+          </div>
+        </DraggableWindow>
 
-          {/* Account Info */}
-          <Card className="bg-gray-950 border-green-900 p-4" data-testid="account-info">
-            <div className="text-xs text-green-500 mb-3 uppercase tracking-wider">Account</div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Balance:</span>
-                <span className="text-green-400 font-bold tabular-nums">
-                  £{status?.capital?.toFixed(0) || "0"}
+        {/* System Status & Auto-Trading */}
+        <DraggableWindow 
+          title="SYSTEM STATUS" 
+          defaultPosition={{ x: 1170, y: 10 }}
+          className="w-56"
+          testId="window-status"
+        >
+          <div className="space-y-2">
+            <div className="space-y-1.5 text-[10px]">
+              <div className="flex items-center gap-1.5">
+                <div className={`h-1.5 w-1.5 rounded-full ${status?.auto_trading_enabled ? "bg-green-500 animate-pulse" : "bg-gray-600"}`} />
+                <span className="text-gray-400">Auto Trading:</span>
+                <span className={status?.auto_trading_enabled ? "text-green-400" : "text-gray-600"}>
+                  {status?.auto_trading_enabled ? "ON" : "OFF"}
                 </span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-500">Daily P&L:</span>
-                <span className={`font-bold tabular-nums ${
-                  (status?.daily_pnl || 0) >= 0 ? "text-green-400" : "text-red-400"
-                }`}>
-                  {(status?.daily_pnl || 0) >= 0 ? "+" : ""}£{status?.daily_pnl?.toFixed(2) || "0.00"}
+              <div className="flex items-center gap-1.5">
+                <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                <span className="text-gray-400">Market Data:</span>
+                <span className="text-green-400">STREAM</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className={`h-1.5 w-1.5 rounded-full ${status?.ibkr_connected ? "bg-green-500" : "bg-red-500"}`} />
+                <span className="text-gray-400">IBKR:</span>
+                <span className={status?.ibkr_connected ? "text-green-400" : "text-red-400"}>
+                  {status?.ibkr_connected ? "CONN" : "DISC"}
                 </span>
               </div>
             </div>
-          </Card>
-        </div>
-      </div>
-
-      {/* Tactical Price Chart - Minimal with CVA/DVA Levels */}
-      <div className="h-64 px-6 pb-4">
-        <Card className="bg-black border-green-900 p-3 h-full" data-testid="tactical-chart">
-          <div className="text-xs text-green-500 mb-2 uppercase tracking-wider flex items-center gap-2">
-            <Target className="h-4 w-4" />
-            Tactical Chart: CVA/DVA + Absorption Force Fields
+            
+            <Button
+              onClick={() => toggleAutoTradingMutation.mutate(!status?.auto_trading_enabled)}
+              disabled={toggleAutoTradingMutation.isPending}
+              size="sm"
+              variant={status?.auto_trading_enabled ? "destructive" : "default"}
+              className="w-full text-[10px] h-6"
+              data-testid="button-toggle-autotrading"
+            >
+              <Power className="h-3 w-3 mr-1" />
+              {status?.auto_trading_enabled ? "DISABLE" : "ENABLE"}
+            </Button>
           </div>
-          <div className="h-[calc(100%-2rem)] flex items-center justify-center bg-gray-950 rounded border border-green-900/20">
-            <div className="text-center space-y-4">
-              <div className="flex gap-6 text-sm">
-                <div className="space-y-1">
-                  <div className="text-cyan-400 font-bold text-xs uppercase tracking-wide">CVA (5-Day)</div>
-                  <div className="text-gray-500">VAH: <span className="text-cyan-400 font-mono">{compositeProfile?.composite_vah?.toFixed(2) || "—"}</span></div>
-                  <div className="text-gray-500 pl-4">POC: <span className="text-cyan-400 font-mono">{compositeProfile?.composite_poc?.toFixed(2) || "—"}</span></div>
-                  <div className="text-gray-500">VAL: <span className="text-cyan-400 font-mono">{compositeProfile?.composite_val?.toFixed(2) || "—"}</span></div>
-                </div>
-                <div className="border-l border-green-900/30"></div>
-                <div className="space-y-1">
-                  <div className="text-yellow-400 font-bold text-xs uppercase tracking-wide">DVA (Daily)</div>
-                  <div className="text-gray-500">VAH: <span className="text-yellow-400 font-mono">{volumeProfile?.vah?.toFixed(2) || "—"}</span></div>
-                  <div className="text-gray-500 pl-4">POC: <span className="text-yellow-400 font-mono">{volumeProfile?.poc?.toFixed(2) || "—"}</span></div>
-                  <div className="text-gray-500">VAL: <span className="text-yellow-400 font-mono">{volumeProfile?.val?.toFixed(2) || "—"}</span></div>
-                </div>
-                <div className="border-l border-green-900/30"></div>
-                <div className="space-y-1">
-                  <div className="text-white font-bold text-xs uppercase tracking-wide">VWAP</div>
-                  <div className="text-gray-500">+SD1: <span className="text-white/60 font-mono">{vwapData?.sd1_upper?.toFixed(2) || "—"}</span></div>
-                  <div className="text-gray-500 pl-4">VWAP: <span className="text-white font-mono">{vwapData?.vwap?.toFixed(2) || "—"}</span></div>
-                  <div className="text-gray-500">-SD1: <span className="text-white/60 font-mono">{vwapData?.sd1_lower?.toFixed(2) || "—"}</span></div>
-                </div>
-              </div>
-              <div className="text-xs text-gray-600">Chart visualization in development</div>
+        </DraggableWindow>
+
+        {/* Account Info */}
+        <DraggableWindow 
+          title="ACCOUNT" 
+          defaultPosition={{ x: 1170, y: 180 }}
+          className="w-56"
+          testId="window-account"
+        >
+          <div className="space-y-1.5 text-xs">
+            <div className="flex justify-between">
+              <span className="text-gray-500">Balance:</span>
+              <span className="text-green-400 font-bold tabular-nums">
+                £{status?.capital?.toFixed(0) || "0"}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Daily P&L:</span>
+              <span className={`font-bold tabular-nums ${
+                (status?.daily_pnl || 0) >= 0 ? "text-green-400" : "text-red-400"
+              }`}>
+                {(status?.daily_pnl || 0) >= 0 ? "+" : ""}£{status?.daily_pnl?.toFixed(2) || "0.00"}
+              </span>
             </div>
           </div>
-        </Card>
+        </DraggableWindow>
+
+        {/* Tactical Chart */}
+        <DraggableWindow 
+          title="CVA/DVA LEVELS + STACKING" 
+          defaultPosition={{ x: 10, y: 380 }}
+          className="w-96 h-52"
+          testId="window-chart"
+        >
+          <div className="space-y-2 text-[10px]">
+            <div className="flex gap-4">
+              <div className="space-y-0.5">
+                <div className="text-cyan-400 font-bold">CVA (5-DAY)</div>
+                <div className="text-gray-500">VAH: <span className="text-cyan-400">{compositeProfile?.composite_vah?.toFixed(2) || "—"}</span></div>
+                <div className="text-gray-500 pl-3">POC: <span className="text-cyan-400">{compositeProfile?.composite_poc?.toFixed(2) || "—"}</span></div>
+                <div className="text-gray-500">VAL: <span className="text-cyan-400">{compositeProfile?.composite_val?.toFixed(2) || "—"}</span></div>
+              </div>
+              <div className="border-l border-green-900/30"></div>
+              <div className="space-y-0.5">
+                <div className="text-yellow-400 font-bold">DVA (DAILY)</div>
+                <div className="text-gray-500">VAH: <span className="text-yellow-400">{volumeProfile?.vah?.toFixed(2) || "—"}</span></div>
+                <div className="text-gray-500 pl-3">POC: <span className="text-yellow-400">{volumeProfile?.poc?.toFixed(2) || "—"}</span></div>
+                <div className="text-gray-500">VAL: <span className="text-yellow-400">{volumeProfile?.val?.toFixed(2) || "—"}</span></div>
+              </div>
+            </div>
+            {cvaStacking && cvaStacking.stacked_levels && cvaStacking.stacked_levels.length > 0 && (
+              <div className="pt-2 border-t border-gray-800">
+                <div className="text-white font-bold mb-1">STACKED CVA LEVELS (BREAKOUT REF)</div>
+                <div className="space-y-0.5">
+                  {cvaStacking.stacked_levels.slice(0, 3).map((level: any, i: number) => (
+                    <div key={i} className="flex justify-between">
+                      <span className="text-gray-500">Level {i + 1}:</span>
+                      <span className="text-cyan-400">{level.level?.toFixed(2)} ({level.count}x)</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </DraggableWindow>
       </div>
 
-      {/* Footer: Quick Stats */}
-      <div className="h-12 border-t border-green-900 flex items-center justify-around px-6 text-xs" data-testid="footer-stats">
-        <div className="flex items-center gap-2">
-          <span className="text-gray-500">Volume:</span>
+      {/* Footer: Larger Quick Stats */}
+      <div className="h-16 border-t border-green-900 flex items-center justify-around px-6 text-sm" data-testid="footer-stats">
+        <div className="flex flex-col items-center">
+          <span className="text-gray-500 text-xs">Volume</span>
           <span className="text-green-400 font-bold tabular-nums">{volumeProfile?.total_volume.toLocaleString() || "0"}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-gray-500">Profile:</span>
-          <span className="text-yellow-400 font-bold">{volumeProfile?.profile_type || "D"}</span>
+        <div className="flex flex-col items-center">
+          <span className="text-gray-500 text-xs">Profile</span>
+          <span className="text-yellow-400 font-bold text-lg">{volumeProfile?.profile_type || "D"}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-gray-500">Signals:</span>
-          <span className="text-green-400 font-bold tabular-nums">{absorptionEvents?.length || 0}</span>
+        <div className="flex flex-col items-center">
+          <span className="text-gray-500 text-xs">Signals</span>
+          <span className="text-green-400 font-bold tabular-nums">{(absorptionEvents?.length || 0) + (orderFlowSignals?.length || 0)}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-gray-500">Last Update:</span>
-          <span className="text-gray-400 tabular-nums">
+        <div className="flex flex-col items-center">
+          <span className="text-gray-500 text-xs">CVA Days</span>
+          <span className="text-cyan-400 font-bold">{compositeProfile?.days_included || 0}/5</span>
+        </div>
+        <div className="flex flex-col items-center">
+          <span className="text-gray-500 text-xs">Last Update</span>
+          <span className="text-gray-400 tabular-nums text-xs">
             {status ? new Date(status.last_update).toLocaleTimeString() : "--:--:--"}
           </span>
         </div>
