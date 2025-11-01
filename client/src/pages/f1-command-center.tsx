@@ -39,9 +39,9 @@ function GridWindow({
   onDragStop: (id: string, col: number, row: number) => void;
   testId?: string;
 }) {
-  const containerWidth = window.innerWidth;
-  const containerHeight = window.innerHeight - 80 - 64;
-  
+  const [containerWidth, setContainerWidth] = useState(window.innerWidth);
+  const [containerHeight, setContainerHeight] = useState(window.innerHeight - 80 - 64);
+
   const margin = (MARGIN_PERCENT / 100) * containerWidth;
   const gap = (GAP_PERCENT / 100) * containerWidth;
   const winWidth = (containerWidth - margin * 2 - gap * (GRID_COLS - 1)) / GRID_COLS;
@@ -240,7 +240,9 @@ export default function F1CommandCenter() {
     <div className="h-screen w-screen bg-black text-white flex flex-col overflow-hidden">
       <div className="h-20 border-b border-green-900 flex items-center px-6 justify-between">
         <div className="flex items-center gap-4">
-          <div className="text-sm text-green-600">IBKR <span className="font-bold text-green-400">DATA</span></div>
+          <div className={`text-sm ${status?.ibkr_connected ? "text-green-500 font-bold" : "text-gray-600"}`}>
+            IBKR
+          </div>
           <div className="text-3xl font-bold text-yellow-400 tracking-wider">{marketCondition}</div>
           <div className="text-2xl text-green-400 font-bold tabular-nums">
             ES {marketData?.last_price?.toFixed(2) || "6003.30"}
