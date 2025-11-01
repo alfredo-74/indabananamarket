@@ -367,6 +367,153 @@ export class OrderFlowSignalDetector {
   }
 
   /**
+   * Integrate footprint imbalances with order flow detection
+   * 
+   * Takes footprint data (bid/ask volume breakdown) and generates
+   * order flow signals from stacked imbalances and delta patterns
+   */
+  analyzeFootprintImbalances(
+    footprintBars: Array<{
+      timestamp: number;
+      price_levels: Array<{
+        price: number;
+        bid_volume: number;
+        ask_volume: number;
+        delta: number;
+        imbalance_ratio: number;
+        imbalance_direction: "BID" | "ASK" | "NEUTRAL";
+      }>;
+      poc: number;
+      cumulative_delta: number;
+      stacked_imbalances: {
+        buy_stacks: number;
+        sell_stacks: number;
+      };
+    }>
+  ): OrderFlowSignal[] {
+    const signals: OrderFlowSignal[] = [];
+    
+    if (footprintBars.length === 0) return signals;
+    
+    // Get most recent footprint bar
+    const recentBar = footprintBars[footprintBars.length - 1];
+    
+    // 1. Detect stacked bid/ask imbalances (3+ consecutive levels)
+    if (recentBar.stacked_imbalances.buy_stacks >= 3) {
+      const signal: OrderFlowSignal = {
+        signal_type: "STACKED_IMBALANCE",
+        timestamp: recentBar.timestamp,
+        price: recentBar.poc,
+        strength: Math.min(100, recentBar.stacked_imbalances.buy_stacks * 25),
+        direction: "BULLISH",
+        description: `Stacked bid imbalances: ${recentBar.stacked_imbalances.buy_stacks} consecutive levels with aggressive buying`,
+        confidence: 80,
+        actionable: true,
+      };
+      
+      this.addSignal(signal);
+      signals.push(signal);
+    }
+    
+    if (recentBar.stacked_imbalances.sell_stacks >= 3) {
+      const signal: OrderFlowSignal = {
+        signal_type: "STACKED_IMBALANCE",
+        timestamp: recentBar.timestamp,
+        price: recentBar.poc,
+        strength: Math.min(100, recentBar.stacked_imbalances.sell_stacks * 25),
+        direction: "BEARISH",
+        description: `Stacked ask imbalances: ${recentBar.stacked_imbalances.sell_stacks} consecutive levels with aggressive selling`,
+        confidence: 80,
+        actionable: true,
+      };
+      
+      this.addSignal(signal);
+      signals.push(signal);
+    }
+    
+    // 2. Detect high-ratio imbalances at key price levels
+    for (const level of recentBar.price_levels) {
+      // Skip neutral imbalances
+      if (level.imbalance_direction === "NEUTRAL") continue;
+      
+      // High-ratio imbalance (> 3:1) indicates absorption or aggressive trading
+      if (level.imbalance_ratio >= 3.0) {
+        if (level.imbalance_direction === "BID") {
+          // Aggressive buying at this level
+          const signal: OrderFlowSignal = {
+            signal_type: "ABSORPTION_BUY",
+            timestamp: recentBar.timestamp,
+            price: level.price,
+            strength: Math.min(100, level.imbalance_ratio * 20),
+            direction: "BULLISH",
+            description: `Absorption: ${level.imbalance_ratio.toFixed(1)}:1 bid/ask ratio at ${level.price.toFixed(2)} (${level.bid_volume} bid vs ${level.ask_volume} ask)`,
+            confidence: 75,
+            actionable: level.imbalance_ratio >= 5.0, // Only actionable if very strong
+          };
+          
+          this.addSignal(signal);
+          signals.push(signal);
+        } else if (level.imbalance_direction === "ASK") {
+          // Aggressive selling at this level
+          const signal: OrderFlowSignal = {
+            signal_type: "ABSORPTION_SELL",
+            timestamp: recentBar.timestamp,
+            price: level.price,
+            strength: Math.min(100, level.imbalance_ratio * 20),
+            direction: "BEARISH",
+            description: `Absorption: ${level.imbalance_ratio.toFixed(1)}:1 ask/bid ratio at ${level.price.toFixed(2)} (${level.ask_volume} ask vs ${level.bid_volume} bid)`,
+            confidence: 75,
+            actionable: level.imbalance_ratio >= 5.0,
+          };
+          
+          this.addSignal(signal);
+          signals.push(signal);
+        }
+      }
+    }
+    
+    // 3. Compare cumulative delta across multiple footprint bars to detect divergence
+    if (footprintBars.length >= 3) {
+      const last3Bars = footprintBars.slice(-3);
+      const priceDirection = last3Bars[2].poc > last3Bars[0].poc ? "UP" : "DOWN";
+      const deltaDirection = last3Bars[2].cumulative_delta > last3Bars[0].cumulative_delta ? "UP" : "DOWN";
+      
+      // Divergence: price up but delta down (or vice versa)
+      if (priceDirection === "UP" && deltaDirection === "DOWN") {
+        const signal: OrderFlowSignal = {
+          signal_type: "LACK_OF_PARTICIPATION",
+          timestamp: recentBar.timestamp,
+          price: recentBar.poc,
+          strength: 75,
+          direction: "BEARISH",
+          description: `Footprint divergence: POC rising but cumulative delta declining (${last3Bars[2].cumulative_delta.toFixed(0)} from ${last3Bars[0].cumulative_delta.toFixed(0)})`,
+          confidence: 70,
+          actionable: true,
+        };
+        
+        this.addSignal(signal);
+        signals.push(signal);
+      } else if (priceDirection === "DOWN" && deltaDirection === "UP") {
+        const signal: OrderFlowSignal = {
+          signal_type: "LACK_OF_PARTICIPATION",
+          timestamp: recentBar.timestamp,
+          price: recentBar.poc,
+          strength: 75,
+          direction: "BULLISH",
+          description: `Footprint divergence: POC falling but cumulative delta rising (${last3Bars[2].cumulative_delta.toFixed(0)} from ${last3Bars[0].cumulative_delta.toFixed(0)})`,
+          confidence: 70,
+          actionable: true,
+        };
+        
+        this.addSignal(signal);
+        signals.push(signal);
+      }
+    }
+    
+    return signals;
+  }
+
+  /**
    * Add signal to tracking
    */
   addSignal(signal: OrderFlowSignal): void {

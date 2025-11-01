@@ -235,6 +235,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.addFootprintBar(completedFootprintBar);
           console.log(`[FOOTPRINT] Bar completed: POC=${completedFootprintBar.poc_price.toFixed(2)}, Delta=${completedFootprintBar.bar_delta.toFixed(0)}, Imbalances=${completedFootprintBar.imbalance_count}, Stacked Buy=${completedFootprintBar.stacked_buying}, Stacked Sell=${completedFootprintBar.stacked_selling}`);
           
+          // 5. Analyze footprint imbalances for order flow signals (PRO Course integration)
+          const recentFootprintBars = await storage.getFootprintBars(5); // Last 5 bars for analysis
+          const footprintSignals = orderFlowSignalDetector.analyzeFootprintImbalances(
+            recentFootprintBars.map(bar => ({
+              timestamp: bar.timestamp,
+              price_levels: bar.price_levels,
+              poc: bar.poc_price,
+              cumulative_delta: bar.bar_delta,
+              stacked_imbalances: {
+                buy_stacks: bar.stacked_buying,
+                sell_stacks: bar.stacked_selling,
+              },
+            }))
+          );
+          
+          // Log any new footprint-derived signals
+          if (footprintSignals.length > 0) {
+            console.log(`[FOOTPRINT → ORDER FLOW] Generated ${footprintSignals.length} signals from footprint analysis`);
+            for (const signal of footprintSignals) {
+              console.log(`  - ${signal.signal_type}: ${signal.description}`);
+            }
+          }
+          
           // Broadcast footprint update via WebSocket
           broadcast({
             type: "footprint_update",
