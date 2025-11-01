@@ -20,6 +20,7 @@ import { ValueMigrationDetector } from "./value_migration_detector";
 import { HypothesisGenerator } from "./hypothesis_generator";
 import { OrderFlowSignalDetector } from "./orderflow_signal_detector";
 import { HighProbabilitySetupRecognizer } from "./high_probability_setup_recognizer";
+import { FootprintAnalyzer } from "./footprint_analyzer";
 import type { OrderFlowSettings } from "./orderflow_strategy";
 import type {
   SystemStatus,
@@ -40,6 +41,7 @@ import type {
   DailyHypothesis,
   OrderFlowSignal,
   TradeRecommendation,
+  FootprintBar,
 } from "@shared/schema";
 import { spawn } from "child_process";
 import { join, dirname } from "path";
@@ -69,6 +71,7 @@ const valueMigrationDetector = new ValueMigrationDetector();
 const hypothesisGenerator = new HypothesisGenerator();
 const orderFlowSignalDetector = new OrderFlowSignalDetector();
 const setupRecognizer = new HighProbabilitySetupRecognizer(); // PRO Course trade setups
+const footprintAnalyzer = new FootprintAnalyzer(5 * 60 * 1000, 0.25, 100); // 5-min bars, ES tick size, max 100 bars
 
 // Helper function to sync completed daily profiles into composite system
 // NOTE: This builds CVA from COMPLETED daily profiles, NOT today's intraday profile
@@ -218,7 +221,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log(`[ABSORPTION] ${absorption.side} @ ${absorption.price.toFixed(2)} - Ratio: ${absorption.ratio.toFixed(2)}:1`);
         }
         
-        // 3. Process tick through candle builder
+        // 4. Process tick through footprint analyzer (PRO Course Stage 3)
+        const completedFootprintBar = footprintAnalyzer.processTick(tapeTick);
+        if (completedFootprintBar) {
+          await storage.addFootprintBar(completedFootprintBar);
+          console.log(`[FOOTPRINT] Bar completed: POC=${completedFootprintBar.poc_price.toFixed(2)}, Delta=${completedFootprintBar.bar_delta.toFixed(0)}, Imbalances=${completedFootprintBar.imbalance_count}, Stacked Buy=${completedFootprintBar.stacked_buying}, Stacked Sell=${completedFootprintBar.stacked_selling}`);
+          
+          // Broadcast footprint update via WebSocket
+          broadcast({
+            type: "footprint_update",
+            data: completedFootprintBar,
+          });
+        }
+        
+        // 5. Process tick through candle builder
         const completedCandle = candleBuilder.processTick(price, volume, isBuy, timestamp);
         
         if (completedCandle) {
@@ -593,6 +609,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     if (absorptionEvent) {
       console.log(`[ABSORPTION] ${absorptionEvent.side} @ ${absorptionEvent.price.toFixed(2)} - Ratio: ${absorptionEvent.ratio.toFixed(2)}:1`);
+    }
+    
+    // Process tick through footprint analyzer (PRO Course Stage 3)
+    const completedFootprintBar = footprintAnalyzer.processTick(tapeTick);
+    if (completedFootprintBar) {
+      await storage.addFootprintBar(completedFootprintBar);
+      console.log(`[FOOTPRINT] Bar completed: POC=${completedFootprintBar.poc_price.toFixed(2)}, Delta=${completedFootprintBar.bar_delta.toFixed(0)}, Imbalances=${completedFootprintBar.imbalance_count}`);
+      
+      broadcast({
+        type: "footprint_update",
+        data: completedFootprintBar,
+      });
     }
 
     // Save volume profile when candle completes (profile built from ticks, not candles)
@@ -1225,6 +1253,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Absorption events error:", error);
       res.status(500).json({ error: "Failed to retrieve absorption events" });
+    }
+  });
+  
+  // GET /api/footprint - Get footprint bars (PRO Course Stage 3 - Order Flow)
+  app.get("/api/footprint", async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 20;
+      const bars = await storage.getFootprintBars(limit);
+      res.json(bars);
+    } catch (error) {
+      console.error("Footprint bars error:", error);
+      res.status(500).json({ error: "Failed to retrieve footprint bars" });
     }
   });
 
