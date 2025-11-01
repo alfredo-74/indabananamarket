@@ -32,18 +32,18 @@ import type {
   TradeRecommendation
 } from "@shared/schema";
 
-// Draggable Window Component
+// Draggable Window Component with Grid Snapping
 function DraggableWindow({ 
   title, 
   children, 
   defaultPosition = { x: 0, y: 0 },
-  className = "",
+  height = "auto",
   testId = ""
 }: { 
   title: string; 
   children: React.ReactNode; 
   defaultPosition?: { x: number; y: number };
-  className?: string;
+  height?: string;
   testId?: string;
 }) {
   return (
@@ -51,9 +51,11 @@ function DraggableWindow({
       defaultPosition={defaultPosition}
       handle=".drag-handle"
       bounds="parent"
+      grid={[20, 20]}
     >
       <div 
-        className={`absolute bg-gray-950/95 backdrop-blur-sm border border-green-900/40 rounded-sm ${className}`}
+        className="absolute w-72 bg-gray-950/95 backdrop-blur-sm border border-green-900/40 rounded-sm"
+        style={{ height }}
         data-testid={testId}
       >
         <div className="drag-handle cursor-move px-2 py-1 bg-green-950/30 border-b border-green-900/40 flex items-center gap-2">
@@ -265,8 +267,7 @@ export default function F1CommandCenter() {
         {/* Pressure Gauges */}
         <DraggableWindow 
           title="PRESSURE GAUGES" 
-          defaultPosition={{ x: 10, y: 10 }}
-          className="w-64"
+          defaultPosition={{ x: 20, y: 20 }}
           testId="window-pressure"
         >
           <div className="space-y-3">
@@ -311,8 +312,7 @@ export default function F1CommandCenter() {
         {/* Value Areas */}
         <DraggableWindow 
           title={volumeProfile ? "VALUE AREAS (DVA)" : "VWAP LEVELS"} 
-          defaultPosition={{ x: 10, y: 210 }}
-          className="w-52"
+          defaultPosition={{ x: 20, y: 220 }}
           testId="window-value-areas"
         >
           <div className="space-y-1.5 text-xs">
@@ -340,8 +340,8 @@ export default function F1CommandCenter() {
         {/* Order Flow Signals */}
         <DraggableWindow 
           title="ORDER FLOW SIGNALS" 
-          defaultPosition={{ x: 290, y: 10 }}
-          className="w-72 h-80"
+          defaultPosition={{ x: 300, y: 20 }}
+          height="320px"
           testId="window-orderflow"
         >
           <div className="space-y-1.5 overflow-y-auto max-h-64">
@@ -398,8 +398,7 @@ export default function F1CommandCenter() {
         {/* Footprint Display */}
         <DraggableWindow 
           title="FOOTPRINT (BID/ASK)" 
-          defaultPosition={{ x: 290, y: 410 }}
-          className="w-72"
+          defaultPosition={{ x: 300, y: 360 }}
           testId="window-footprint"
         >
           {latestFootprint ? (
@@ -435,8 +434,8 @@ export default function F1CommandCenter() {
         {/* High-Probability Setups */}
         <DraggableWindow 
           title="HIGH-PROBABILITY SETUPS" 
-          defaultPosition={{ x: 580, y: 10 }}
-          className="w-80 h-72"
+          defaultPosition={{ x: 580, y: 20 }}
+          height="280px"
           testId="window-setups"
         >
           <div className="space-y-1.5 overflow-y-auto max-h-56">
@@ -492,8 +491,7 @@ export default function F1CommandCenter() {
         {/* Daily Hypothesis */}
         <DraggableWindow 
           title="DAILY HYPOTHESIS" 
-          defaultPosition={{ x: 580, y: 300 }}
-          className="w-72"
+          defaultPosition={{ x: 580, y: 320 }}
           testId="window-hypothesis"
         >
           {hypothesis && hypothesis.confidence > 0 ? (
@@ -532,8 +530,7 @@ export default function F1CommandCenter() {
         {/* Opening Drive Status */}
         <DraggableWindow 
           title="OPENING DRIVE" 
-          defaultPosition={{ x: 880, y: 10 }}
-          className="w-64"
+          defaultPosition={{ x: 880, y: 20 }}
           testId="window-opening-drive"
         >
           {openingDrive && openingDrive.detected ? (
@@ -566,8 +563,7 @@ export default function F1CommandCenter() {
         {/* 80% Rule Detection */}
         <DraggableWindow 
           title="80% RULE" 
-          defaultPosition={{ x: 880, y: 170 }}
-          className="w-64"
+          defaultPosition={{ x: 880, y: 180 }}
           testId="window-eighty-percent"
         >
           {eightyPercentRule && eightyPercentRule.detected ? (
@@ -604,7 +600,7 @@ export default function F1CommandCenter() {
         <DraggableWindow 
           title="VALUE SHIFT SIGNALS" 
           defaultPosition={{ x: 880, y: 340 }}
-          className="w-72 h-64"
+          height="260px"
           testId="window-value-shift"
         >
           <div className="space-y-1.5 overflow-y-auto max-h-48">
@@ -643,8 +639,7 @@ export default function F1CommandCenter() {
         {/* System Status & Auto-Trading */}
         <DraggableWindow 
           title="SYSTEM STATUS" 
-          defaultPosition={{ x: 1170, y: 10 }}
-          className="w-56"
+          defaultPosition={{ x: 1180, y: 20 }}
           testId="window-status"
         >
           <div className="space-y-2">
@@ -687,8 +682,7 @@ export default function F1CommandCenter() {
         {/* Account Info */}
         <DraggableWindow 
           title="ACCOUNT" 
-          defaultPosition={{ x: 1170, y: 180 }}
-          className="w-56"
+          defaultPosition={{ x: 1180, y: 200 }}
           testId="window-account"
         >
           <div className="space-y-1.5 text-xs">
@@ -712,8 +706,8 @@ export default function F1CommandCenter() {
         {/* Tactical Chart */}
         <DraggableWindow 
           title="CVA/DVA LEVELS + STACKING" 
-          defaultPosition={{ x: 10, y: 380 }}
-          className="w-96 h-52"
+          defaultPosition={{ x: 20, y: 420 }}
+          height="200px"
           testId="window-chart"
         >
           <div className="space-y-2 text-[10px]">
