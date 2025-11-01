@@ -366,51 +366,14 @@ export default function F1CommandCenter() {
           </div>
         </FixedWindow>
 
-        {/* Row 1, Col 4: Opening Drive */}
+        {/* Row 1, Col 3: High-Probability Setups */}
         <FixedWindow 
-          title="OPENING DRIVE" 
-          position={{ x: 924, y: 0 }}
+          title="HIGH-PROBABILITY SETUPS" 
+          position={{ x: 616, y: 0 }}
           height="160px"
-          testId="window-opening-drive"
+          testId="window-setups"
         >
-          {latestFootprint ? (
-            <div className="space-y-1.5">
-              <div className="flex justify-between text-[10px] text-gray-500">
-                <span>POC: <span className="text-yellow-400 font-bold">{latestFootprint.poc_price?.toFixed(2)}</span></span>
-                <span>Delta: <span className={`font-bold ${latestFootprint.bar_delta >= 0 ? "text-green-400" : "text-red-400"}`}>
-                  {latestFootprint.bar_delta >= 0 ? "+" : ""}{latestFootprint.bar_delta}
-                </span></span>
-              </div>
-              <div className="flex justify-between text-[10px] text-gray-500">
-                <span>Stacked Buy: <span className="text-green-400">{latestFootprint.stacked_buying || 0}</span></span>
-                <span>Stacked Sell: <span className="text-red-400">{latestFootprint.stacked_selling || 0}</span></span>
-              </div>
-              {latestFootprint.price_levels && latestFootprint.price_levels.slice(0, 5).map((level: any, i: number) => (
-                <div key={i} className="flex justify-between text-[9px] py-0.5 border-t border-gray-800/50">
-                  <span className="text-gray-600">{level.price?.toFixed(2)}</span>
-                  <span className="text-green-400">{level.bid_volume}</span>
-                  <span className="text-red-400">{level.ask_volume}</span>
-                  <span className={level.imbalance_direction === "BID" ? "text-green-500 font-bold" : level.imbalance_direction === "ASK" ? "text-red-500 font-bold" : "text-gray-600"}>
-                    {level.imbalance_ratio?.toFixed(1)}:1
-                  </span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center text-gray-600 py-4 text-[10px]">
-              Waiting for footprint data...
-            </div>
-          )}
-        </FixedWindow>
-
-        {/* Row 1, Col 5: System Status */}
-        <FixedWindow 
-          title="SYSTEM STATUS" 
-          position={{ x: 1232, y: 0 }}
-          height="160px"
-          testId="window-status"
-        >
-          <div className="space-y-1.5 overflow-y-auto max-h-56">
+          <div className="space-y-1.5 overflow-y-auto max-h-36">
             {tradeRecommendations && tradeRecommendations.filter(r => r.active).slice(0, 2).map((rec, i) => (
               <div 
                 key={i}
@@ -460,52 +423,12 @@ export default function F1CommandCenter() {
           </div>
         </FixedWindow>
 
-        {/* Row 2, Col 1: Value Areas */}
+        {/* Row 1, Col 4: Opening Drive */}
         <FixedWindow 
-          title={volumeProfile ? "VALUE AREAS (DVA)" : "VWAP LEVELS"} 
-          position={{ x: 0, y: 180 }}
+          title="OPENING DRIVE" 
+          position={{ x: 924, y: 0 }}
           height="160px"
-          testId="window-value-areas"
-        >
-          {hypothesis && hypothesis.confidence > 0 ? (
-            <div className="space-y-2 text-[10px]">
-              <div>
-                <span className="text-gray-500">CONDITION: </span>
-                <span className={`font-bold ${
-                  hypothesis.bias === "BULLISH" ? "text-green-400" : 
-                  hypothesis.bias === "BEARISH" ? "text-red-400" : "text-yellow-400"
-                }`}>
-                  {hypothesis.condition.replace(/_/g, " ")}
-                </span>
-              </div>
-              <div>
-                <span className="text-gray-500">STRATEGY: </span>
-                <span className="text-gray-300">{hypothesis.primary_strategy}</span>
-              </div>
-              <div className="flex justify-between pt-1 border-t border-gray-800">
-                <div>
-                  <span className="text-gray-600">R1:</span>
-                  <span className="text-red-400 ml-1">{hypothesis.key_levels?.resistance_1?.toFixed(2) || "N/A"}</span>
-                </div>
-                <div>
-                  <span className="text-gray-600">S1:</span>
-                  <span className="text-green-400 ml-1">{hypothesis.key_levels?.support_1?.toFixed(2) || "N/A"}</span>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="text-center text-gray-600 py-4 text-[10px]">
-              Generating hypothesis...
-            </div>
-          )}
-        </FixedWindow>
-
-        {/* Row 2, Col 2: Footprint */}
-        <FixedWindow 
-          title="FOOTPRINT (BID/ASK)" 
-          position={{ x: 308, y: 180 }}
-          height="160px"
-          testId="window-footprint"
+          testId="window-opening-drive"
         >
           {openingDrive && openingDrive.detected ? (
             <div className="space-y-1.5 text-[10px]">
@@ -534,89 +457,12 @@ export default function F1CommandCenter() {
           )}
         </FixedWindow>
 
-        {/* Row 2, Col 3: Daily Hypothesis */}
+        {/* Row 1, Col 5: System Status */}
         <FixedWindow 
-          title="DAILY HYPOTHESIS" 
-          position={{ x: 616, y: 180 }}
+          title="SYSTEM STATUS" 
+          position={{ x: 1232, y: 0 }}
           height="160px"
-          testId="window-hypothesis"
-        >
-          {eightyPercentRule && eightyPercentRule.detected ? (
-            <div className="space-y-1.5 text-[10px]">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Status:</span>
-                <span className="text-green-400 font-bold">DETECTED</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Completion:</span>
-                <span className="text-yellow-400">{eightyPercentRule.completion_percentage}%</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Expected:</span>
-                <span className={`font-bold ${eightyPercentRule.expected_direction === "CONTINUATION" ? "text-green-400" : "text-yellow-400"}`}>
-                  {eightyPercentRule.expected_direction}
-                </span>
-              </div>
-              {eightyPercentRule.fade_entry && (
-                <div className="flex justify-between pt-1 border-t border-gray-800">
-                  <span className="text-gray-500">Fade Entry:</span>
-                  <span className="text-red-400 font-bold">{eightyPercentRule.fade_entry.toFixed(2)}</span>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="text-center text-gray-600 py-4 text-[10px]">
-              No 80% rule setup
-            </div>
-          )}
-        </FixedWindow>
-
-        {/* Row 2, Col 4: 80% Rule */}
-        <FixedWindow 
-          title="80% RULE" 
-          position={{ x: 924, y: 180 }}
-          height="160px"
-          testId="window-eighty-percent"
-        >
-          <div className="space-y-1.5 overflow-y-auto max-h-48">
-            {valueShiftSignals && valueShiftSignals.slice(0, 5).map((signal: any, i: number) => (
-              <div 
-                key={i}
-                className={`p-1.5 rounded border text-[10px] ${
-                  signal.bias === "BULLISH" 
-                    ? "bg-green-950/30 border-green-800" 
-                    : signal.bias === "BEARISH" 
-                    ? "bg-red-950/30 border-red-800"
-                    : "bg-yellow-950/30 border-yellow-800"
-                }`}
-                data-testid={`value-shift-${i}`}
-              >
-                <div className="flex items-center justify-between mb-0.5">
-                  <span className={`font-bold ${
-                    signal.bias === "BULLISH" ? "text-green-400" : 
-                    signal.bias === "BEARISH" ? "text-red-400" : "text-yellow-400"
-                  }`}>
-                    {signal.condition_type?.replace(/_/g, " ")}
-                  </span>
-                  <span className="text-gray-500">{signal.confidence}%</span>
-                </div>
-                <div className="text-gray-400">{signal.trade_implication}</div>
-              </div>
-            ))}
-            {(!valueShiftSignals || valueShiftSignals.length === 0) && (
-              <div className="text-center text-gray-600 py-6 text-[10px]">
-                No value shift signals
-              </div>
-            )}
-          </div>
-        </FixedWindow>
-
-        {/* Row 2, Col 5: Account */}
-        <FixedWindow 
-          title="ACCOUNT" 
-          position={{ x: 1232, y: 180 }}
-          height="160px"
-          testId="window-account"
+          testId="window-status"
         >
           <div className="space-y-2">
             <div className="space-y-1.5 text-[10px]">
@@ -655,13 +501,155 @@ export default function F1CommandCenter() {
           </div>
         </FixedWindow>
 
-        {/* Row 3, Col 1-2: CVA/DVA Chart (Double Width) */}
+        {/* Row 2, Col 1: Value Areas */}
         <FixedWindow 
-          title="CVA/DVA LEVELS + STACKING" 
-          position={{ x: 0, y: 360 }}
-          height="180px"
-          width="w-[596px]"
-          testId="window-chart"
+          title={volumeProfile ? "VALUE AREAS (DVA)" : "VWAP LEVELS"} 
+          position={{ x: 0, y: 180 }}
+          height="160px"
+          testId="window-value-areas"
+        >
+          <div className="space-y-1.5 text-xs">
+            <div className="flex justify-between">
+              <span className="text-gray-500">{volumeProfile ? "VAH:" : "+SD1:"}</span>
+              <span className="text-green-400 font-bold tabular-nums">
+                {volumeProfile?.vah?.toFixed(2) || vwapData?.sd1_upper?.toFixed(2) || "----"}
+              </span>
+            </div>
+            <div className="flex justify-between pl-4">
+              <span className="text-gray-500">{volumeProfile ? "POC:" : "VWAP:"}</span>
+              <span className="text-yellow-400 font-bold tabular-nums">
+                {volumeProfile?.poc?.toFixed(2) || vwapData?.vwap?.toFixed(2) || "----"}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">{volumeProfile ? "VAL:" : "-SD1:"}</span>
+              <span className="text-red-400 font-bold tabular-nums">
+                {volumeProfile?.val?.toFixed(2) || vwapData?.sd1_lower?.toFixed(2) || "----"}
+              </span>
+            </div>
+          </div>
+        </FixedWindow>
+
+        {/* Row 2, Col 2: Footprint */}
+        <FixedWindow 
+          title="FOOTPRINT (BID/ASK)" 
+          position={{ x: 308, y: 180 }}
+          height="160px"
+          testId="window-footprint"
+        >
+          {latestFootprint ? (
+            <div className="space-y-1.5">
+              <div className="flex justify-between text-[10px] text-gray-500">
+                <span>POC: <span className="text-yellow-400 font-bold">{latestFootprint.poc_price?.toFixed(2)}</span></span>
+                <span>Delta: <span className={`font-bold ${latestFootprint.bar_delta >= 0 ? "text-green-400" : "text-red-400"}`}>
+                  {latestFootprint.bar_delta >= 0 ? "+" : ""}{latestFootprint.bar_delta}
+                </span></span>
+              </div>
+              <div className="flex justify-between text-[10px] text-gray-500">
+                <span>Stacked Buy: <span className="text-green-400">{latestFootprint.stacked_buying || 0}</span></span>
+                <span>Stacked Sell: <span className="text-red-400">{latestFootprint.stacked_selling || 0}</span></span>
+              </div>
+              {latestFootprint.price_levels && latestFootprint.price_levels.slice(0, 5).map((level: any, i: number) => (
+                <div key={i} className="flex justify-between text-[9px] py-0.5 border-t border-gray-800/50">
+                  <span className="text-gray-600">{level.price?.toFixed(2)}</span>
+                  <span className="text-green-400">{level.bid_volume}</span>
+                  <span className="text-red-400">{level.ask_volume}</span>
+                  <span className={level.imbalance_direction === "BID" ? "text-green-500 font-bold" : level.imbalance_direction === "ASK" ? "text-red-500 font-bold" : "text-gray-600"}>
+                    {level.imbalance_ratio?.toFixed(1)}:1
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center text-gray-600 py-4 text-[10px]">
+              Waiting for footprint data...
+            </div>
+          )}
+        </FixedWindow>
+
+        {/* Row 2, Col 3: Daily Hypothesis */}
+        <FixedWindow 
+          title="DAILY HYPOTHESIS" 
+          position={{ x: 616, y: 180 }}
+          height="160px"
+          testId="window-hypothesis"
+        >
+          {hypothesis && hypothesis.confidence > 0 ? (
+            <div className="space-y-2 text-[10px]">
+              <div>
+                <span className="text-gray-500">CONDITION: </span>
+                <span className={`font-bold ${
+                  hypothesis.bias === "BULLISH" ? "text-green-400" : 
+                  hypothesis.bias === "BEARISH" ? "text-red-400" : "text-yellow-400"
+                }`}>
+                  {hypothesis.condition.replace(/_/g, " ")}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-500">STRATEGY: </span>
+                <span className="text-gray-300">{hypothesis.primary_strategy}</span>
+              </div>
+              <div className="flex justify-between pt-1 border-t border-gray-800">
+                <div>
+                  <span className="text-gray-600">R1:</span>
+                  <span className="text-red-400 ml-1">{hypothesis.key_levels?.resistance_1?.toFixed(2) || "N/A"}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">S1:</span>
+                  <span className="text-green-400 ml-1">{hypothesis.key_levels?.support_1?.toFixed(2) || "N/A"}</span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center text-gray-600 py-4 text-[10px]">
+              Generating hypothesis...
+            </div>
+          )}
+        </FixedWindow>
+
+        {/* Row 2, Col 4: 80% Rule */}
+        <FixedWindow 
+          title="80% RULE" 
+          position={{ x: 924, y: 180 }}
+          height="160px"
+          testId="window-eighty-percent"
+        >
+          {eightyPercentRule && eightyPercentRule.detected ? (
+            <div className="space-y-1.5 text-[10px]">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Status:</span>
+                <span className="text-green-400 font-bold">DETECTED</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Completion:</span>
+                <span className="text-yellow-400">{eightyPercentRule.completion_percentage}%</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Expected:</span>
+                <span className={`font-bold ${eightyPercentRule.expected_direction === "CONTINUATION" ? "text-green-400" : "text-yellow-400"}`}>
+                  {eightyPercentRule.expected_direction}
+                </span>
+              </div>
+              {eightyPercentRule.fade_entry && (
+                <div className="flex justify-between pt-1 border-t border-gray-800">
+                  <span className="text-gray-500">Fade Entry:</span>
+                  <span className="text-red-400 font-bold">{eightyPercentRule.fade_entry.toFixed(2)}</span>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="text-center text-gray-600 py-4 text-[10px]">
+              No 80% rule setup
+            </div>
+          )}
+        </FixedWindow>
+
+        {/* Row 2, Col 5: Account */}
+        <FixedWindow 
+          title="ACCOUNT" 
+          position={{ x: 1232, y: 180 }}
+          height="160px"
+          testId="window-account"
         >
           <div className="space-y-1.5 text-xs">
             <div className="flex justify-between">
@@ -681,12 +669,13 @@ export default function F1CommandCenter() {
           </div>
         </FixedWindow>
 
-        {/* Row 3, Col 3: Value Shift Signals */}
+        {/* Row 3, Col 1-2: CVA/DVA Chart (Double Width) */}
         <FixedWindow 
-          title="VALUE SHIFT SIGNALS" 
-          position={{ x: 616, y: 360 }}
+          title="CVA/DVA LEVELS + STACKING" 
+          position={{ x: 0, y: 360 }}
           height="180px"
-          testId="window-value-shift"
+          width="w-[596px]"
+          testId="window-chart"
         >
           <div className="space-y-2 text-[10px]">
             <div className="flex gap-4">
@@ -715,6 +704,46 @@ export default function F1CommandCenter() {
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+          </div>
+        </FixedWindow>
+
+        {/* Row 3, Col 3: Value Shift Signals */}
+        <FixedWindow 
+          title="VALUE SHIFT SIGNALS" 
+          position={{ x: 616, y: 360 }}
+          height="180px"
+          testId="window-value-shift"
+        >
+          <div className="space-y-1.5 overflow-y-auto max-h-36">
+            {valueShiftSignals && valueShiftSignals.slice(0, 5).map((signal: any, i: number) => (
+              <div 
+                key={i}
+                className={`p-1.5 rounded border text-[10px] ${
+                  signal.bias === "BULLISH" 
+                    ? "bg-green-950/30 border-green-800" 
+                    : signal.bias === "BEARISH" 
+                    ? "bg-red-950/30 border-red-800"
+                    : "bg-yellow-950/30 border-yellow-800"
+                }`}
+                data-testid={`value-shift-${i}`}
+              >
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className={`font-bold ${
+                    signal.bias === "BULLISH" ? "text-green-400" : 
+                    signal.bias === "BEARISH" ? "text-red-400" : "text-yellow-400"
+                  }`}>
+                    {signal.condition_type?.replace(/_/g, " ")}
+                  </span>
+                  <span className="text-gray-500">{signal.confidence}%</span>
+                </div>
+                <div className="text-gray-400">{signal.trade_implication}</div>
+              </div>
+            ))}
+            {(!valueShiftSignals || valueShiftSignals.length === 0) && (
+              <div className="text-center text-gray-600 py-6 text-[10px]">
+                No value shift signals
               </div>
             )}
           </div>
