@@ -362,6 +362,35 @@ export const valueMigrationDataSchema = z.object({
   description: z.string(),
 });
 
+// CVA Stacking System (PRO Course - Historical CVA Reference Levels)
+
+export const cvaCharacterSchema = z.enum([
+  "BULLISH_MIGRATION",
+  "BEARISH_MIGRATION",
+  "BALANCED_ROTATION",
+  "BREAKOUT_PENDING",
+]);
+
+export const historicalCVASchema = z.object({
+  date: z.string(),
+  poc: z.number(),
+  vah: z.number(),
+  val: z.number(),
+  character: cvaCharacterSchema,
+  days_included: z.number(),
+  migration_strength: z.number(),
+});
+
+export const stackedCVALevelSchema = z.object({
+  price_level: z.number(),
+  level_type: z.enum(["POC", "VAH", "VAL"]),
+  character: cvaCharacterSchema,
+  occurrences: z.number(),
+  dates: z.array(z.string()),
+  strength: z.number(),
+  last_seen: z.string(),
+});
+
 export const marketConditionSchema = z.enum([
   "TREND_UP",
   "TREND_DOWN",
@@ -466,6 +495,9 @@ export type AbsorptionEvent = z.infer<typeof absorptionEventSchema>;
 export type DiscordLevel = z.infer<typeof discordLevelSchema>;
 export type CompositeProfileData = z.infer<typeof compositeProfileDataSchema>;
 export type ValueMigrationData = z.infer<typeof valueMigrationDataSchema>;
+export type CVACharacter = z.infer<typeof cvaCharacterSchema>;
+export type HistoricalCVA = z.infer<typeof historicalCVASchema>;
+export type StackedCVALevel = z.infer<typeof stackedCVALevelSchema>;
 export type MarketCondition = z.infer<typeof marketConditionSchema>;
 export type DailyHypothesis = z.infer<typeof dailyHypothesisSchema>;
 export type OrderFlowSignal = z.infer<typeof orderFlowSignalSchema>;

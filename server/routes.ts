@@ -21,6 +21,9 @@ import { HypothesisGenerator } from "./hypothesis_generator";
 import { OrderFlowSignalDetector } from "./orderflow_signal_detector";
 import { HighProbabilitySetupRecognizer } from "./high_probability_setup_recognizer";
 import { FootprintAnalyzer } from "./footprint_analyzer";
+import { CVAStackingManager } from "./cva_stacking_manager";
+import { OpeningDriveDetector } from "./opening_drive_detector";
+import { EightyPercentRuleDetector } from "./eighty_percent_rule_detector";
 import type { OrderFlowSettings } from "./orderflow_strategy";
 import type {
   SystemStatus,
@@ -72,6 +75,9 @@ const hypothesisGenerator = new HypothesisGenerator();
 const orderFlowSignalDetector = new OrderFlowSignalDetector();
 const setupRecognizer = new HighProbabilitySetupRecognizer(); // PRO Course trade setups
 const footprintAnalyzer = new FootprintAnalyzer(5 * 60 * 1000, 0.25, 100); // 5-min bars, ES tick size, max 100 bars
+const cvaStackingManager = new CVAStackingManager(30, 2, 0.25); // 30 days history, 2 ticks tolerance, ES tick size
+const openingDriveDetector = new OpeningDriveDetector(0.25, 60); // ES tick size, 60-min window
+const eightyPercentRuleDetector = new EightyPercentRuleDetector(60); // 60-min detection window
 
 // Helper function to sync completed daily profiles into composite system
 // NOTE: This builds CVA from COMPLETED daily profiles, NOT today's intraday profile
@@ -1459,6 +1465,93 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Trade recommendations error:", error);
       res.status(500).json({ error: "Failed to generate trade recommendations" });
+    }
+  });
+  
+  // GET /api/cva-stacking - Get stacked CVA levels (PRO Course - Historical CVA Reference Levels)
+  app.get("/api/cva-stacking", async (req, res) => {
+    try {
+      const stackedLevels = cvaStackingManager.getStackedLevels();
+      const historicalCVAs = cvaStackingManager.getHistoricalCVAs(10); // Last 10 days
+      
+      res.json({
+        stacked_levels: stackedLevels,
+        historical_cvas: historicalCVAs,
+      });
+    } catch (error) {
+      console.error("CVA stacking error:", error);
+      res.status(500).json({ error: "Failed to retrieve CVA stacking data" });
+    }
+  });
+  
+  // GET /api/opening-drive - Get opening drive detection (PRO Course Setup)
+  app.get("/api/opening-drive", async (req, res) => {
+    try {
+      const candles = await storage.getCandles();
+      const marketData = await storage.getMarketData();
+      
+      if (!marketData || candles.length === 0) {
+        return res.json({
+          detected: false,
+          direction: null,
+          strength: 0,
+          opening_price: 0,
+          current_price: marketData?.last_price || 0,
+          price_move_ticks: 0,
+          cumulative_delta: 0,
+          retracement_pct: 0,
+          time_elapsed_minutes: 0,
+          valid_for_trade: false,
+          entry_level: null,
+        });
+      }
+      
+      const openingDrive = openingDriveDetector.detectOpeningDrive(
+        candles,
+        marketData.last_price,
+        Date.now()
+      );
+      
+      res.json(openingDrive);
+    } catch (error) {
+      console.error("Opening drive error:", error);
+      res.status(500).json({ error: "Failed to detect opening drive" });
+    }
+  });
+  
+  // GET /api/eighty-percent-rule - Get 80% Rule detection (PRO Course Setup)
+  app.get("/api/eighty-percent-rule", async (req, res) => {
+    try {
+      const candles = await storage.getCandles();
+      const marketData = await storage.getMarketData();
+      
+      if (!marketData || candles.length === 0) {
+        return res.json({
+          detected: false,
+          direction: null,
+          confidence: 0,
+          opening_price: 0,
+          opening_position: null,
+          value_area_high: 0,
+          value_area_low: 0,
+          value_traveled_pct: 0,
+          time_elapsed_minutes: 0,
+          triggered_time: null,
+          valid_for_trade: false,
+          entry_level: null,
+        });
+      }
+      
+      const eightyPercentRule = eightyPercentRuleDetector.detect80PercentRule(
+        candles,
+        marketData.last_price,
+        Date.now()
+      );
+      
+      res.json(eightyPercentRule);
+    } catch (error) {
+      console.error("80% rule error:", error);
+      res.status(500).json({ error: "Failed to detect 80% rule" });
     }
   });
 
