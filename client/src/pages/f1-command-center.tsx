@@ -54,11 +54,16 @@ function DraggableWindow({
       grid={[20, 20]}
     >
       <div 
-        className="absolute w-72 bg-gray-950/95 backdrop-blur-sm border border-green-900/40 rounded-sm resize-y overflow-auto"
-        style={{ minHeight }}
+        className="absolute w-72 bg-gray-950/95 backdrop-blur-sm border border-green-900/40 rounded-sm"
+        style={{ 
+          minHeight,
+          resize: 'vertical',
+          overflow: 'auto',
+          maxHeight: '600px'
+        }}
         data-testid={testId}
       >
-        <div className="drag-handle cursor-move px-2 py-1 bg-green-950/30 border-b border-green-900/40 flex items-center gap-2">
+        <div className="drag-handle cursor-move px-2 py-1 bg-green-950/30 border-b border-green-900/40 flex items-center gap-2 sticky top-0 z-10">
           <Move className="h-3 w-3 text-green-600" />
           <div className="text-[10px] text-green-500 uppercase tracking-wider font-bold">{title}</div>
         </div>
@@ -261,13 +266,13 @@ export default function F1CommandCenter() {
         </div>
       </div>
 
-      {/* Main Content: Draggable Windows Container with Fixed Margins */}
-      <div className="flex-1 relative overflow-hidden p-8">
-        {/* Column 1, Row 1: Pressure Gauges */}
+      {/* Main Content: Draggable Windows Container - Equal 20px margins on all sides */}
+      <div className="flex-1 relative overflow-hidden p-5">
+        {/* Row 1, Col 1: Pressure Gauges */}
         <DraggableWindow 
           title="PRESSURE GAUGES" 
           defaultPosition={{ x: 0, y: 0 }}
-          minHeight="160px"
+          minHeight="140px"
           testId="window-pressure"
         >
           <div className="space-y-3">
@@ -309,11 +314,11 @@ export default function F1CommandCenter() {
           </div>
         </DraggableWindow>
 
-        {/* Column 1, Row 2: Value Areas */}
+        {/* Row 2, Col 1: Value Areas */}
         <DraggableWindow 
           title={volumeProfile ? "VALUE AREAS (DVA)" : "VWAP LEVELS"} 
-          defaultPosition={{ x: 0, y: 180 }}
-          minHeight="120px"
+          defaultPosition={{ x: 0, y: 160 }}
+          minHeight="100px"
           testId="window-value-areas"
         >
           <div className="space-y-1.5 text-xs">
@@ -338,11 +343,11 @@ export default function F1CommandCenter() {
           </div>
         </DraggableWindow>
 
-        {/* Column 2, Row 1: Order Flow Signals */}
+        {/* Row 1, Col 2: Order Flow Signals */}
         <DraggableWindow 
           title="ORDER FLOW SIGNALS" 
-          defaultPosition={{ x: 328, y: 0 }}
-          minHeight="280px"
+          defaultPosition={{ x: 308, y: 0 }}
+          minHeight="240px"
           testId="window-orderflow"
         >
           <div className="space-y-1.5 overflow-y-auto max-h-64">
@@ -396,11 +401,11 @@ export default function F1CommandCenter() {
           </div>
         </DraggableWindow>
 
-        {/* Column 2, Row 2: Footprint Display */}
+        {/* Row 2, Col 2: Footprint Display */}
         <DraggableWindow 
           title="FOOTPRINT (BID/ASK)" 
-          defaultPosition={{ x: 328, y: 300 }}
-          minHeight="200px"
+          defaultPosition={{ x: 308, y: 260 }}
+          minHeight="180px"
           testId="window-footprint"
         >
           {latestFootprint ? (
@@ -433,11 +438,11 @@ export default function F1CommandCenter() {
           )}
         </DraggableWindow>
 
-        {/* Column 3, Row 1: High-Probability Setups */}
+        {/* Row 1, Col 3: High-Probability Setups */}
         <DraggableWindow 
           title="HIGH-PROBABILITY SETUPS" 
-          defaultPosition={{ x: 656, y: 0 }}
-          minHeight="240px"
+          defaultPosition={{ x: 616, y: 0 }}
+          minHeight="200px"
           testId="window-setups"
         >
           <div className="space-y-1.5 overflow-y-auto max-h-56">
@@ -490,11 +495,11 @@ export default function F1CommandCenter() {
           </div>
         </DraggableWindow>
 
-        {/* Column 3, Row 2: Daily Hypothesis */}
+        {/* Row 2, Col 3: Daily Hypothesis */}
         <DraggableWindow 
           title="DAILY HYPOTHESIS" 
-          defaultPosition={{ x: 656, y: 260 }}
-          minHeight="180px"
+          defaultPosition={{ x: 616, y: 220 }}
+          minHeight="160px"
           testId="window-hypothesis"
         >
           {hypothesis && hypothesis.confidence > 0 ? (
@@ -530,11 +535,11 @@ export default function F1CommandCenter() {
           )}
         </DraggableWindow>
 
-        {/* Column 4, Row 1: Opening Drive Status */}
+        {/* Row 1, Col 4: Opening Drive Status */}
         <DraggableWindow 
           title="OPENING DRIVE" 
-          defaultPosition={{ x: 984, y: 0 }}
-          minHeight="140px"
+          defaultPosition={{ x: 924, y: 0 }}
+          minHeight="120px"
           testId="window-opening-drive"
         >
           {openingDrive && openingDrive.detected ? (
@@ -564,11 +569,11 @@ export default function F1CommandCenter() {
           )}
         </DraggableWindow>
 
-        {/* Column 4, Row 2: 80% Rule Detection */}
+        {/* Row 2, Col 4: 80% Rule Detection */}
         <DraggableWindow 
           title="80% RULE" 
-          defaultPosition={{ x: 984, y: 160 }}
-          minHeight="140px"
+          defaultPosition={{ x: 924, y: 140 }}
+          minHeight="120px"
           testId="window-eighty-percent"
         >
           {eightyPercentRule && eightyPercentRule.detected ? (
@@ -601,11 +606,11 @@ export default function F1CommandCenter() {
           )}
         </DraggableWindow>
 
-        {/* Column 4, Row 3: Value Shift Signals */}
+        {/* Row 3, Col 4: Value Shift Signals */}
         <DraggableWindow 
           title="VALUE SHIFT SIGNALS" 
-          defaultPosition={{ x: 984, y: 320 }}
-          minHeight="220px"
+          defaultPosition={{ x: 924, y: 280 }}
+          minHeight="200px"
           testId="window-value-shift"
         >
           <div className="space-y-1.5 overflow-y-auto max-h-48">
@@ -641,11 +646,11 @@ export default function F1CommandCenter() {
           </div>
         </DraggableWindow>
 
-        {/* Column 5, Row 1: System Status & Auto-Trading */}
+        {/* Row 1, Col 5: System Status & Auto-Trading */}
         <DraggableWindow 
           title="SYSTEM STATUS" 
-          defaultPosition={{ x: 1312, y: 0 }}
-          minHeight="160px"
+          defaultPosition={{ x: 1232, y: 0 }}
+          minHeight="140px"
           testId="window-status"
         >
           <div className="space-y-2">
@@ -685,11 +690,11 @@ export default function F1CommandCenter() {
           </div>
         </DraggableWindow>
 
-        {/* Column 5, Row 2: Account Info */}
+        {/* Row 2, Col 5: Account Info */}
         <DraggableWindow 
           title="ACCOUNT" 
-          defaultPosition={{ x: 1312, y: 180 }}
-          minHeight="120px"
+          defaultPosition={{ x: 1232, y: 160 }}
+          minHeight="100px"
           testId="window-account"
         >
           <div className="space-y-1.5 text-xs">
@@ -710,11 +715,11 @@ export default function F1CommandCenter() {
           </div>
         </DraggableWindow>
 
-        {/* Column 1-2, Bottom: Tactical Chart */}
+        {/* Row 3, Col 1-2: Tactical Chart */}
         <DraggableWindow 
           title="CVA/DVA LEVELS + STACKING" 
-          defaultPosition={{ x: 0, y: 320 }}
-          minHeight="180px"
+          defaultPosition={{ x: 0, y: 280 }}
+          minHeight="160px"
           testId="window-chart"
         >
           <div className="space-y-2 text-[10px]">
