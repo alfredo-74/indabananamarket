@@ -32,46 +32,40 @@ import type {
   TradeRecommendation
 } from "@shared/schema";
 
-// Draggable Window Component with Grid Snapping and Resizable Height
-function DraggableWindow({ 
+// Fixed Window Component with Consistent Spacing
+function FixedWindow({ 
   title, 
   children, 
-  defaultPosition = { x: 0, y: 0 },
-  minHeight = "150px",
+  position,
+  height,
+  width = "w-72",
   testId = ""
 }: { 
   title: string; 
   children: React.ReactNode; 
-  defaultPosition?: { x: number; y: number };
-  minHeight?: string;
+  position: { x: number; y: number };
+  height: string;
+  width?: string;
   testId?: string;
 }) {
   return (
-    <Draggable 
-      defaultPosition={defaultPosition}
-      handle=".drag-handle"
-      bounds="parent"
-      grid={[20, 20]}
+    <div 
+      className={`absolute ${width} bg-gray-950/95 backdrop-blur-sm border border-green-900/40 rounded-sm overflow-hidden`}
+      style={{ 
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+        height
+      }}
+      data-testid={testId}
     >
-      <div 
-        className="absolute w-72 bg-gray-950/95 backdrop-blur-sm border border-green-900/40 rounded-sm"
-        style={{ 
-          minHeight,
-          resize: 'vertical',
-          overflow: 'auto',
-          maxHeight: '600px'
-        }}
-        data-testid={testId}
-      >
-        <div className="drag-handle cursor-move px-2 py-1 bg-green-950/30 border-b border-green-900/40 flex items-center gap-2 sticky top-0 z-10">
-          <Move className="h-3 w-3 text-green-600" />
-          <div className="text-[10px] text-green-500 uppercase tracking-wider font-bold">{title}</div>
-        </div>
-        <div className="p-2">
-          {children}
-        </div>
+      <div className="px-2 py-1 bg-green-950/30 border-b border-green-900/40 flex items-center gap-2">
+        <Move className="h-3 w-3 text-green-600" />
+        <div className="text-[10px] text-green-500 uppercase tracking-wider font-bold">{title}</div>
       </div>
-    </Draggable>
+      <div className="p-2 h-full overflow-y-auto">
+        {children}
+      </div>
+    </div>
   );
 }
 
@@ -266,13 +260,13 @@ export default function F1CommandCenter() {
         </div>
       </div>
 
-      {/* Main Content: Draggable Windows Container - Equal 20px margins on all sides */}
+      {/* Main Content: Fixed Grid Layout - 20px margins */}
       <div className="flex-1 relative overflow-hidden p-5">
         {/* Row 1, Col 1: Pressure Gauges */}
-        <DraggableWindow 
+        <FixedWindow 
           title="PRESSURE GAUGES" 
-          defaultPosition={{ x: 0, y: 0 }}
-          minHeight="140px"
+          position={{ x: 0, y: 0 }}
+          height="160px"
           testId="window-pressure"
         >
           <div className="space-y-3">
@@ -312,45 +306,16 @@ export default function F1CommandCenter() {
               </div>
             </div>
           </div>
-        </DraggableWindow>
-
-        {/* Row 2, Col 1: Value Areas */}
-        <DraggableWindow 
-          title={volumeProfile ? "VALUE AREAS (DVA)" : "VWAP LEVELS"} 
-          defaultPosition={{ x: 0, y: 160 }}
-          minHeight="100px"
-          testId="window-value-areas"
-        >
-          <div className="space-y-1.5 text-xs">
-            <div className="flex justify-between">
-              <span className="text-gray-500">{volumeProfile ? "VAH:" : "+SD1:"}</span>
-              <span className="text-green-400 font-bold tabular-nums">
-                {volumeProfile?.vah?.toFixed(2) || vwapData?.sd1_upper?.toFixed(2) || "----"}
-              </span>
-            </div>
-            <div className="flex justify-between pl-4">
-              <span className="text-gray-500">{volumeProfile ? "POC:" : "VWAP:"}</span>
-              <span className="text-yellow-400 font-bold tabular-nums">
-                {volumeProfile?.poc?.toFixed(2) || vwapData?.vwap?.toFixed(2) || "----"}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">{volumeProfile ? "VAL:" : "-SD1:"}</span>
-              <span className="text-red-400 font-bold tabular-nums">
-                {volumeProfile?.val?.toFixed(2) || vwapData?.sd1_lower?.toFixed(2) || "----"}
-              </span>
-            </div>
-          </div>
-        </DraggableWindow>
+        </FixedWindow>
 
         {/* Row 1, Col 2: Order Flow Signals */}
-        <DraggableWindow 
+        <FixedWindow 
           title="ORDER FLOW SIGNALS" 
-          defaultPosition={{ x: 308, y: 0 }}
-          minHeight="240px"
+          position={{ x: 308, y: 0 }}
+          height="160px"
           testId="window-orderflow"
         >
-          <div className="space-y-1.5 overflow-y-auto max-h-64">
+          <div className="space-y-1.5 overflow-y-auto max-h-36">
             {absorptionEvents && absorptionEvents.slice(0, 3).map((event, i) => (
               <div 
                 key={`abs-${i}`} 
@@ -399,14 +364,14 @@ export default function F1CommandCenter() {
               </div>
             )}
           </div>
-        </DraggableWindow>
+        </FixedWindow>
 
-        {/* Row 2, Col 2: Footprint Display */}
-        <DraggableWindow 
-          title="FOOTPRINT (BID/ASK)" 
-          defaultPosition={{ x: 308, y: 260 }}
-          minHeight="180px"
-          testId="window-footprint"
+        {/* Row 1, Col 4: Opening Drive */}
+        <FixedWindow 
+          title="OPENING DRIVE" 
+          position={{ x: 924, y: 0 }}
+          height="160px"
+          testId="window-opening-drive"
         >
           {latestFootprint ? (
             <div className="space-y-1.5">
@@ -436,14 +401,14 @@ export default function F1CommandCenter() {
               Waiting for footprint data...
             </div>
           )}
-        </DraggableWindow>
+        </FixedWindow>
 
-        {/* Row 1, Col 3: High-Probability Setups */}
-        <DraggableWindow 
-          title="HIGH-PROBABILITY SETUPS" 
-          defaultPosition={{ x: 616, y: 0 }}
-          minHeight="200px"
-          testId="window-setups"
+        {/* Row 1, Col 5: System Status */}
+        <FixedWindow 
+          title="SYSTEM STATUS" 
+          position={{ x: 1232, y: 0 }}
+          height="160px"
+          testId="window-status"
         >
           <div className="space-y-1.5 overflow-y-auto max-h-56">
             {tradeRecommendations && tradeRecommendations.filter(r => r.active).slice(0, 2).map((rec, i) => (
@@ -493,14 +458,14 @@ export default function F1CommandCenter() {
               </div>
             )}
           </div>
-        </DraggableWindow>
+        </FixedWindow>
 
-        {/* Row 2, Col 3: Daily Hypothesis */}
-        <DraggableWindow 
-          title="DAILY HYPOTHESIS" 
-          defaultPosition={{ x: 616, y: 220 }}
-          minHeight="160px"
-          testId="window-hypothesis"
+        {/* Row 2, Col 1: Value Areas */}
+        <FixedWindow 
+          title={volumeProfile ? "VALUE AREAS (DVA)" : "VWAP LEVELS"} 
+          position={{ x: 0, y: 180 }}
+          height="160px"
+          testId="window-value-areas"
         >
           {hypothesis && hypothesis.confidence > 0 ? (
             <div className="space-y-2 text-[10px]">
@@ -533,14 +498,14 @@ export default function F1CommandCenter() {
               Generating hypothesis...
             </div>
           )}
-        </DraggableWindow>
+        </FixedWindow>
 
-        {/* Row 1, Col 4: Opening Drive Status */}
-        <DraggableWindow 
-          title="OPENING DRIVE" 
-          defaultPosition={{ x: 924, y: 0 }}
-          minHeight="120px"
-          testId="window-opening-drive"
+        {/* Row 2, Col 2: Footprint */}
+        <FixedWindow 
+          title="FOOTPRINT (BID/ASK)" 
+          position={{ x: 308, y: 180 }}
+          height="160px"
+          testId="window-footprint"
         >
           {openingDrive && openingDrive.detected ? (
             <div className="space-y-1.5 text-[10px]">
@@ -567,14 +532,14 @@ export default function F1CommandCenter() {
               No opening drive detected
             </div>
           )}
-        </DraggableWindow>
+        </FixedWindow>
 
-        {/* Row 2, Col 4: 80% Rule Detection */}
-        <DraggableWindow 
-          title="80% RULE" 
-          defaultPosition={{ x: 924, y: 140 }}
-          minHeight="120px"
-          testId="window-eighty-percent"
+        {/* Row 2, Col 3: Daily Hypothesis */}
+        <FixedWindow 
+          title="DAILY HYPOTHESIS" 
+          position={{ x: 616, y: 180 }}
+          height="160px"
+          testId="window-hypothesis"
         >
           {eightyPercentRule && eightyPercentRule.detected ? (
             <div className="space-y-1.5 text-[10px]">
@@ -604,14 +569,14 @@ export default function F1CommandCenter() {
               No 80% rule setup
             </div>
           )}
-        </DraggableWindow>
+        </FixedWindow>
 
-        {/* Row 3, Col 4: Value Shift Signals */}
-        <DraggableWindow 
-          title="VALUE SHIFT SIGNALS" 
-          defaultPosition={{ x: 924, y: 280 }}
-          minHeight="200px"
-          testId="window-value-shift"
+        {/* Row 2, Col 4: 80% Rule */}
+        <FixedWindow 
+          title="80% RULE" 
+          position={{ x: 924, y: 180 }}
+          height="160px"
+          testId="window-eighty-percent"
         >
           <div className="space-y-1.5 overflow-y-auto max-h-48">
             {valueShiftSignals && valueShiftSignals.slice(0, 5).map((signal: any, i: number) => (
@@ -644,14 +609,14 @@ export default function F1CommandCenter() {
               </div>
             )}
           </div>
-        </DraggableWindow>
+        </FixedWindow>
 
-        {/* Row 1, Col 5: System Status & Auto-Trading */}
-        <DraggableWindow 
-          title="SYSTEM STATUS" 
-          defaultPosition={{ x: 1232, y: 0 }}
-          minHeight="140px"
-          testId="window-status"
+        {/* Row 2, Col 5: Account */}
+        <FixedWindow 
+          title="ACCOUNT" 
+          position={{ x: 1232, y: 180 }}
+          height="160px"
+          testId="window-account"
         >
           <div className="space-y-2">
             <div className="space-y-1.5 text-[10px]">
@@ -688,14 +653,15 @@ export default function F1CommandCenter() {
               {status?.auto_trading_enabled ? "DISABLE" : "ENABLE"}
             </Button>
           </div>
-        </DraggableWindow>
+        </FixedWindow>
 
-        {/* Row 2, Col 5: Account Info */}
-        <DraggableWindow 
-          title="ACCOUNT" 
-          defaultPosition={{ x: 1232, y: 160 }}
-          minHeight="100px"
-          testId="window-account"
+        {/* Row 3, Col 1-2: CVA/DVA Chart (Double Width) */}
+        <FixedWindow 
+          title="CVA/DVA LEVELS + STACKING" 
+          position={{ x: 0, y: 360 }}
+          height="180px"
+          width="w-[596px]"
+          testId="window-chart"
         >
           <div className="space-y-1.5 text-xs">
             <div className="flex justify-between">
@@ -713,14 +679,14 @@ export default function F1CommandCenter() {
               </span>
             </div>
           </div>
-        </DraggableWindow>
+        </FixedWindow>
 
-        {/* Row 3, Col 1-2: Tactical Chart */}
-        <DraggableWindow 
-          title="CVA/DVA LEVELS + STACKING" 
-          defaultPosition={{ x: 0, y: 280 }}
-          minHeight="160px"
-          testId="window-chart"
+        {/* Row 3, Col 3: Value Shift Signals */}
+        <FixedWindow 
+          title="VALUE SHIFT SIGNALS" 
+          position={{ x: 616, y: 360 }}
+          height="180px"
+          testId="window-value-shift"
         >
           <div className="space-y-2 text-[10px]">
             <div className="flex gap-4">
@@ -752,7 +718,7 @@ export default function F1CommandCenter() {
               </div>
             )}
           </div>
-        </DraggableWindow>
+        </FixedWindow>
       </div>
 
       {/* Footer: Larger Quick Stats */}
