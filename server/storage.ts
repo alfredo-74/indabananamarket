@@ -13,6 +13,7 @@ import type {
   VolumeProfile,
   AbsorptionEvent,
   DiscordLevel,
+  FootprintBar,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
@@ -74,6 +75,11 @@ export interface IStorage {
   // Daily Volume Profiles (for CVA composition)
   getDailyProfiles(): Promise<Array<{ date: string; profile: VolumeProfile }>>;
   addDailyProfile(date: string, profile: VolumeProfile): Promise<void>;
+  
+  // Footprint Analysis (PRO Course Stage 3)
+  getFootprintBars(limit?: number): Promise<FootprintBar[]>;
+  addFootprintBar(bar: FootprintBar): Promise<void>;
+  getLatestFootprintBar(): Promise<FootprintBar | undefined>;
 }
 
 export class MemStorage implements IStorage {
@@ -97,6 +103,7 @@ export class MemStorage implements IStorage {
   private absorptionEvents: AbsorptionEvent[] = [];
   private discordLevels: DiscordLevel[] = [];
   private dailyProfiles: Array<{ date: string; profile: VolumeProfile }> = [];
+  private footprintBars: FootprintBar[] = [];
 
   async getCandles(): Promise<VolumetricCandle[]> {
     return this.candles;
@@ -284,6 +291,24 @@ export class MemStorage implements IStorage {
     if (this.dailyProfiles.length > 10) {
       this.dailyProfiles = this.dailyProfiles.slice(0, 10);
     }
+  }
+  
+  async getFootprintBars(limit: number = 100): Promise<FootprintBar[]> {
+    return this.footprintBars.slice(-limit);
+  }
+  
+  async addFootprintBar(bar: FootprintBar): Promise<void> {
+    this.footprintBars.push(bar);
+    // Keep only last 100 bars in memory
+    if (this.footprintBars.length > 100) {
+      this.footprintBars = this.footprintBars.slice(-100);
+    }
+  }
+  
+  async getLatestFootprintBar(): Promise<FootprintBar | undefined> {
+    return this.footprintBars.length > 0
+      ? this.footprintBars[this.footprintBars.length - 1]
+      : undefined;
   }
 }
 

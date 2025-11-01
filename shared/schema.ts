@@ -272,6 +272,44 @@ export const volumeProfileSchema = z.object({
   period_end: z.number(),
 });
 
+// Footprint Analysis Schemas (PRO Course Stage 3 - Order Flow)
+
+export const footprintPriceLevelSchema = z.object({
+  price: z.number(),
+  bid_volume: z.number(),   // Volume traded at bid (sellers)
+  ask_volume: z.number(),   // Volume traded at ask (buyers)
+  delta: z.number(),        // ask_volume - bid_volume
+  total_volume: z.number(),
+  imbalance_ratio: z.number(), // Ratio of dominant side to weaker side
+  imbalanced: z.boolean(),     // True if ratio >= 2:1
+});
+
+export const footprintBarSchema = z.object({
+  start_time: z.number(),
+  end_time: z.number(),
+  open: z.number(),
+  high: z.number(),
+  low: z.number(),
+  close: z.number(),
+  
+  // Footprint-specific data
+  price_levels: z.array(footprintPriceLevelSchema),
+  total_bid_volume: z.number(),
+  total_ask_volume: z.number(),
+  bar_delta: z.number(),  // Total ask_volume - bid_volume for entire bar
+  poc_price: z.number(),  // Point of Control - price with highest volume
+  
+  // Imbalance detection
+  stacked_buying: z.boolean(),  // 3+ consecutive levels with ask dominance
+  stacked_selling: z.boolean(), // 3+ consecutive levels with bid dominance
+  imbalance_count: z.number(),  // Number of imbalanced levels
+  
+  // Delta statistics
+  max_positive_delta: z.number(), // Strongest buying level
+  max_negative_delta: z.number(), // Strongest selling level
+  delta_at_poc: z.number(),       // Delta at POC (indicates if POC was buying or selling)
+});
+
 export const absorptionEventSchema = z.object({
   timestamp: z.number(),
   price: z.number(),
@@ -422,6 +460,8 @@ export type DomLevel = z.infer<typeof domLevelSchema>;
 export type DomSnapshot = z.infer<typeof domSnapshotSchema>;
 export type VolumeProfileLevel = z.infer<typeof volumeProfileLevelSchema>;
 export type VolumeProfile = z.infer<typeof volumeProfileSchema>;
+export type FootprintPriceLevel = z.infer<typeof footprintPriceLevelSchema>;
+export type FootprintBar = z.infer<typeof footprintBarSchema>;
 export type AbsorptionEvent = z.infer<typeof absorptionEventSchema>;
 export type DiscordLevel = z.infer<typeof discordLevelSchema>;
 export type CompositeProfileData = z.infer<typeof compositeProfileDataSchema>;
@@ -502,6 +542,10 @@ export const webSocketMessageSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("orderflow_signal"),
     data: orderFlowSignalSchema,
+  }),
+  z.object({
+    type: z.literal("footprint_update"),
+    data: footprintBarSchema,
   }),
 ]);
 
