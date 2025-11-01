@@ -24,6 +24,7 @@ import { FootprintAnalyzer } from "./footprint_analyzer";
 import { CVAStackingManager } from "./cva_stacking_manager";
 import { OpeningDriveDetector } from "./opening_drive_detector";
 import { EightyPercentRuleDetector } from "./eighty_percent_rule_detector";
+import { ValueShiftDetector } from "./value_shift_detector";
 import type { OrderFlowSettings } from "./orderflow_strategy";
 import type {
   SystemStatus,
@@ -78,6 +79,7 @@ const footprintAnalyzer = new FootprintAnalyzer(5 * 60 * 1000, 0.25, 100); // 5-
 const cvaStackingManager = new CVAStackingManager(30, 2, 0.25); // 30 days history, 2 ticks tolerance, ES tick size
 const openingDriveDetector = new OpeningDriveDetector(0.25, 60); // ES tick size, 60-min window
 const eightyPercentRuleDetector = new EightyPercentRuleDetector(60); // 60-min detection window
+const valueShiftDetector = new ValueShiftDetector(0.25); // ES tick size
 
 // Helper function to sync completed daily profiles into composite system
 // NOTE: This builds CVA from COMPLETED daily profiles, NOT today's intraday profile
@@ -1552,6 +1554,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("80% rule error:", error);
       res.status(500).json({ error: "Failed to detect 80% rule" });
+    }
+  });
+  
+  // GET /api/value-shift - Get enhanced value shift signals (PRO Course - 7 Conditions)
+  app.get("/api/value-shift", async (req, res) => {
+    try {
+      await syncCompositeProfile(storage);
+      
+      const volumeProfile = await storage.getVolumeProfile();
+      const marketData = await storage.getMarketData();
+      const candles = await storage.getCandles();
+      
+      if (!volumeProfile || !marketData || candles.length === 0) {
+        return res.json([]);
+      }
+      
+      const compositeProfile = compositeProfileSystem.getCompositeProfile();
+      
+      if (!compositeProfile) {
+        return res.json([]);
+      }
+      
+      const valueShiftSignals = valueShiftDetector.detectValueShift(
+        volumeProfile,
+        compositeProfile,
+        candles,
+        marketData.last_price
+      );
+      
+      res.json(valueShiftSignals);
+    } catch (error) {
+      console.error("Value shift error:", error);
+      res.status(500).json({ error: "Failed to detect value shift signals" });
     }
   });
 
