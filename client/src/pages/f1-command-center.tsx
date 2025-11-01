@@ -194,12 +194,12 @@ export default function F1CommandCenter() {
         {/* Left: Connection Status - Plain Text with Color */}
         <div className="flex items-center gap-4 h-full">
           <div className="flex items-center gap-1.5" data-testid="status-ibkr">
-            <span className={`text-sm font-bold ${status?.ibkr_connected ? "text-green-500" : "text-gray-600"}`}>
+            <span className={`text-3xl font-bold tracking-wider ${status?.ibkr_connected ? "text-green-500" : "text-gray-600"}`}>
               IBKR
             </span>
           </div>
           <div className="flex items-center gap-1.5" data-testid="status-data">
-            <span className={`text-sm font-bold ${status?.market_data_active ? "text-green-500" : "text-gray-600"}`}>
+            <span className={`text-3xl font-bold tracking-wider ${status?.market_data_active ? "text-green-500" : "text-gray-600"}`}>
               DATA
             </span>
           </div>
@@ -218,51 +218,51 @@ export default function F1CommandCenter() {
 
         {/* Right: ES Value */}
         <div className="flex items-center gap-2 h-full" data-testid="es-price">
-          <span className="text-sm text-gray-500">{marketData?.symbol || "ES"}</span>
-          <span className="text-3xl font-bold text-green-400 tabular-nums">
+          <span className="text-3xl font-bold text-gray-500 tracking-wider">{marketData?.symbol || "ES"}</span>
+          <span className="text-3xl font-bold text-green-400 tabular-nums tracking-wider">
             {marketData?.last_price.toFixed(2) || "----"}
           </span>
         </div>
       </div>
 
       {/* Traffic Lights Bar - Horizontal Line Below Top Band */}
-      <div className="h-10 border-b border-green-900/50 bg-gray-950/30 flex items-center justify-center px-6">
-        <div className="flex items-center gap-6" data-testid="traffic-lights">
+      <div className="h-12 border-b border-green-900/50 bg-gray-950/30 flex items-center justify-center px-6">
+        <div className="flex items-center gap-8" data-testid="traffic-lights">
           {/* CVA */}
-          <div className="flex items-center gap-1.5">
-            <div className={`h-3 w-3 rounded-full ${hasValidCVA ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`} />
-            <span className="text-[10px] text-gray-400 uppercase tracking-wide">CVA</span>
+          <div className="flex items-center gap-2">
+            <div className={`h-4 w-4 rounded-full ${hasValidCVA ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`} />
+            <span className="text-sm text-gray-400 uppercase tracking-wide font-bold">CVA</span>
           </div>
           {/* DVA */}
-          <div className="flex items-center gap-1.5">
-            <div className={`h-3 w-3 rounded-full ${hasValidDVA ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`} />
-            <span className="text-[10px] text-gray-400 uppercase tracking-wide">DVA</span>
+          <div className="flex items-center gap-2">
+            <div className={`h-4 w-4 rounded-full ${hasValidDVA ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`} />
+            <span className="text-sm text-gray-400 uppercase tracking-wide font-bold">DVA</span>
           </div>
           {/* VWAP */}
-          <div className="flex items-center gap-1.5">
-            <div className={`h-3 w-3 rounded-full ${hasVWAP ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`} />
-            <span className="text-[10px] text-gray-400 uppercase tracking-wide">VWAP</span>
+          <div className="flex items-center gap-2">
+            <div className={`h-4 w-4 rounded-full ${hasVWAP ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`} />
+            <span className="text-sm text-gray-400 uppercase tracking-wide font-bold">VWAP</span>
           </div>
           {/* Hypothesis */}
-          <div className="flex items-center gap-1.5">
-            <div className={`h-3 w-3 rounded-full ${hasHypothesis ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`} />
-            <span className="text-[10px] text-gray-400 uppercase tracking-wide">Hypothesis</span>
+          <div className="flex items-center gap-2">
+            <div className={`h-4 w-4 rounded-full ${hasHypothesis ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`} />
+            <span className="text-sm text-gray-400 uppercase tracking-wide font-bold">Hypothesis</span>
           </div>
           {/* Signals */}
-          <div className="flex items-center gap-1.5">
-            <div className={`h-3 w-3 rounded-full ${hasActiveSignals ? "bg-green-500 shadow-lg shadow-green-500/50 animate-pulse" : "bg-red-600"}`} />
-            <span className="text-[10px] text-gray-400 uppercase tracking-wide">Signals</span>
+          <div className="flex items-center gap-2">
+            <div className={`h-4 w-4 rounded-full ${hasActiveSignals ? "bg-green-500 shadow-lg shadow-green-500/50 animate-pulse" : "bg-red-600"}`} />
+            <span className="text-sm text-gray-400 uppercase tracking-wide font-bold">Signals</span>
           </div>
           {/* Auto-Trading */}
-          <div className="flex items-center gap-1.5">
-            <div className={`h-3 w-3 rounded-full ${status?.auto_trading_enabled ? "bg-green-500 shadow-lg shadow-green-500/50 animate-pulse" : "bg-gray-600"}`} />
-            <span className="text-[10px] text-gray-400 uppercase tracking-wide">Auto-Trading</span>
+          <div className="flex items-center gap-2">
+            <div className={`h-4 w-4 rounded-full ${status?.auto_trading_enabled ? "bg-green-500 shadow-lg shadow-green-500/50 animate-pulse" : "bg-gray-600"}`} />
+            <span className="text-sm text-gray-400 uppercase tracking-wide font-bold">Auto-Trading</span>
           </div>
         </div>
       </div>
 
       {/* Main Content: Draggable Windows Container with Uniform Padding */}
-      <div className="flex-1 relative overflow-hidden p-5">
+      <div className="flex-1 relative overflow-hidden p-8">
         {/* Column 1, Row 1: Pressure Gauges */}
         <DraggableWindow 
           title="PRESSURE GAUGES" 
@@ -311,7 +311,7 @@ export default function F1CommandCenter() {
         {/* Column 1, Row 2: Value Areas */}
         <DraggableWindow 
           title={volumeProfile ? "VALUE AREAS (DVA)" : "VWAP LEVELS"} 
-          defaultPosition={{ x: 0, y: 180 }}
+          defaultPosition={{ x: 0, y: 200 }}
           testId="window-value-areas"
         >
           <div className="space-y-1.5 text-xs">
@@ -339,7 +339,7 @@ export default function F1CommandCenter() {
         {/* Column 2, Row 1: Order Flow Signals */}
         <DraggableWindow 
           title="ORDER FLOW SIGNALS" 
-          defaultPosition={{ x: 308, y: 0 }}
+          defaultPosition={{ x: 328, y: 0 }}
           height="320px"
           testId="window-orderflow"
         >
@@ -397,7 +397,7 @@ export default function F1CommandCenter() {
         {/* Column 2, Row 2: Footprint Display */}
         <DraggableWindow 
           title="FOOTPRINT (BID/ASK)" 
-          defaultPosition={{ x: 308, y: 340 }}
+          defaultPosition={{ x: 328, y: 360 }}
           testId="window-footprint"
         >
           {latestFootprint ? (
@@ -433,7 +433,7 @@ export default function F1CommandCenter() {
         {/* Column 3, Row 1: High-Probability Setups */}
         <DraggableWindow 
           title="HIGH-PROBABILITY SETUPS" 
-          defaultPosition={{ x: 616, y: 0 }}
+          defaultPosition={{ x: 656, y: 0 }}
           height="280px"
           testId="window-setups"
         >
@@ -490,7 +490,7 @@ export default function F1CommandCenter() {
         {/* Column 3, Row 2: Daily Hypothesis */}
         <DraggableWindow 
           title="DAILY HYPOTHESIS" 
-          defaultPosition={{ x: 616, y: 300 }}
+          defaultPosition={{ x: 656, y: 320 }}
           testId="window-hypothesis"
         >
           {hypothesis && hypothesis.confidence > 0 ? (
@@ -529,7 +529,7 @@ export default function F1CommandCenter() {
         {/* Column 4, Row 1: Opening Drive Status */}
         <DraggableWindow 
           title="OPENING DRIVE" 
-          defaultPosition={{ x: 924, y: 0 }}
+          defaultPosition={{ x: 984, y: 0 }}
           testId="window-opening-drive"
         >
           {openingDrive && openingDrive.detected ? (
@@ -562,7 +562,7 @@ export default function F1CommandCenter() {
         {/* Column 4, Row 2: 80% Rule Detection */}
         <DraggableWindow 
           title="80% RULE" 
-          defaultPosition={{ x: 924, y: 160 }}
+          defaultPosition={{ x: 984, y: 180 }}
           testId="window-eighty-percent"
         >
           {eightyPercentRule && eightyPercentRule.detected ? (
@@ -598,7 +598,7 @@ export default function F1CommandCenter() {
         {/* Column 4, Row 3: Value Shift Signals */}
         <DraggableWindow 
           title="VALUE SHIFT SIGNALS" 
-          defaultPosition={{ x: 924, y: 320 }}
+          defaultPosition={{ x: 984, y: 360 }}
           height="260px"
           testId="window-value-shift"
         >
@@ -638,7 +638,7 @@ export default function F1CommandCenter() {
         {/* Column 5, Row 1: System Status & Auto-Trading */}
         <DraggableWindow 
           title="SYSTEM STATUS" 
-          defaultPosition={{ x: 1232, y: 0 }}
+          defaultPosition={{ x: 1312, y: 0 }}
           testId="window-status"
         >
           <div className="space-y-2">
@@ -681,7 +681,7 @@ export default function F1CommandCenter() {
         {/* Column 5, Row 2: Account Info */}
         <DraggableWindow 
           title="ACCOUNT" 
-          defaultPosition={{ x: 1232, y: 180 }}
+          defaultPosition={{ x: 1312, y: 200 }}
           testId="window-account"
         >
           <div className="space-y-1.5 text-xs">
@@ -705,7 +705,7 @@ export default function F1CommandCenter() {
         {/* Column 1-2, Bottom: Tactical Chart */}
         <DraggableWindow 
           title="CVA/DVA LEVELS + STACKING" 
-          defaultPosition={{ x: 0, y: 340 }}
+          defaultPosition={{ x: 0, y: 360 }}
           height="200px"
           testId="window-chart"
         >
