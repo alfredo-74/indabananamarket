@@ -41,19 +41,20 @@ function GridWindow({
 }) {
   const containerWidth = window.innerWidth;
   const containerHeight = window.innerHeight - 144;
-  const calcWinWidth = (containerWidth - MARGIN * 2 - GAP * (GRID_COLS - 1)) / GRID_COLS;
-  const calcWinHeight = (containerHeight - MARGIN * 2 - GAP * (GRID_ROWS - 1)) / GRID_ROWS;
+  const winWidth = (containerWidth - MARGIN * 2 - GAP * (GRID_COLS - 1)) / GRID_COLS;
+  const winHeight = (containerHeight - MARGIN * 2 - GAP * (GRID_ROWS - 1)) / GRID_ROWS;
   
-  const x = MARGIN + gridPosition.col * (calcWinWidth + GAP);
-  const y = MARGIN + gridPosition.row * (calcWinHeight + GAP);
+  const left = MARGIN + gridPosition.col * (winWidth + GAP);
+  const top = MARGIN + gridPosition.row * (winHeight + GAP);
   
   return (
     <Draggable
-      position={{ x, y }}
+      defaultPosition={{ x: left, y: top }}
+      key={`${windowId}-${gridPosition.col}-${gridPosition.row}`}
       onStart={() => onDragStart(windowId)}
       onStop={(_e, data) => {
-        const col = Math.max(0, Math.min(GRID_COLS - 1, Math.round((data.x - MARGIN) / (calcWinWidth + GAP))));
-        const row = Math.max(0, Math.min(GRID_ROWS - 1, Math.round((data.y - MARGIN) / (calcWinHeight + GAP))));
+        const col = Math.max(0, Math.min(GRID_COLS - 1, Math.round((data.x - MARGIN) / (winWidth + GAP))));
+        const row = Math.max(0, Math.min(GRID_ROWS - 1, Math.round((data.y - MARGIN) / (winHeight + GAP))));
         onDragStop(windowId, col, row);
       }}
       bounds="parent"
@@ -61,8 +62,8 @@ function GridWindow({
       <div 
         className="bg-gray-950/95 backdrop-blur-sm border-2 border-green-900/40 rounded-sm overflow-hidden cursor-move"
         style={{ 
-          width: `${calcWinWidth}px`,
-          height: `${calcWinHeight}px`
+          width: `${winWidth}px`,
+          height: `${winHeight}px`
         }}
         data-testid={testId}
       >
