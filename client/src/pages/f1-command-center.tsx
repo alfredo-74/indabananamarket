@@ -189,61 +189,24 @@ export default function F1CommandCenter() {
 
   return (
     <div className="h-screen flex flex-col bg-black text-green-400 font-mono overflow-hidden">
-      {/* Compact Header with Traffic Lights & ES Value */}
-      <div className="h-20 border-b border-green-900 flex items-center justify-between px-6 relative">
-        {/* Left: Connection Status */}
-        <div className="flex gap-2">
-          <Badge variant={status?.ibkr_connected ? "default" : "secondary"} className="gap-1 text-[10px] h-5" data-testid="badge-ibkr">
-            <div className={`h-1.5 w-1.5 rounded-full ${status?.ibkr_connected ? "bg-green-500" : "bg-gray-600"}`} />
-            IBKR
-          </Badge>
-          <Badge variant={status?.market_data_active ? "default" : "secondary"} className="gap-1 text-[10px] h-5" data-testid="badge-data">
-            <div className={`h-1.5 w-1.5 rounded-full ${status?.market_data_active ? "bg-green-500" : "bg-gray-600"}`} />
-            DATA
-          </Badge>
+      {/* Top Band: Connection Status, Market Regime, ES Price */}
+      <div className="h-16 border-b border-green-900 flex items-center justify-between px-6">
+        {/* Left: Connection Status - Plain Text with Color */}
+        <div className="flex items-center gap-4 h-full">
+          <div className="flex items-center gap-1.5" data-testid="status-ibkr">
+            <span className={`text-sm font-bold ${status?.ibkr_connected ? "text-green-500" : "text-gray-600"}`}>
+              IBKR
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5" data-testid="status-data">
+            <span className={`text-sm font-bold ${status?.market_data_active ? "text-green-500" : "text-gray-600"}`}>
+              DATA
+            </span>
+          </div>
         </div>
 
-        {/* Center: Traffic Lights + Market Regime */}
-        <div className="flex items-center gap-6">
-          {/* Traffic Lights - Red/Green for each condition */}
-          <div className="flex flex-col gap-1" data-testid="traffic-lights">
-            <div className="flex gap-1.5">
-              {/* CVA Ready */}
-              <div 
-                className={`h-3 w-3 rounded-full ${hasValidCVA ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`}
-                title="CVA Ready"
-              />
-              {/* DVA Ready */}
-              <div 
-                className={`h-3 w-3 rounded-full ${hasValidDVA ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`}
-                title="DVA Ready"
-              />
-              {/* VWAP Ready */}
-              <div 
-                className={`h-3 w-3 rounded-full ${hasVWAP ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`}
-                title="VWAP Ready"
-              />
-            </div>
-            <div className="flex gap-1.5">
-              {/* Hypothesis Ready */}
-              <div 
-                className={`h-3 w-3 rounded-full ${hasHypothesis ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`}
-                title="Hypothesis Ready"
-              />
-              {/* Signals Active */}
-              <div 
-                className={`h-3 w-3 rounded-full ${hasActiveSignals ? "bg-green-500 shadow-lg shadow-green-500/50 animate-pulse" : "bg-red-600"}`}
-                title="Signals Active"
-              />
-              {/* Auto-Trading */}
-              <div 
-                className={`h-3 w-3 rounded-full ${status?.auto_trading_enabled ? "bg-green-500 shadow-lg shadow-green-500/50 animate-pulse" : "bg-gray-600"}`}
-                title="Auto-Trading"
-              />
-            </div>
-          </div>
-
-          {/* Market Regime - No Text Label */}
+        {/* Center: Market Regime */}
+        <div className="flex items-center h-full">
           <div className={`text-3xl font-bold tracking-wider ${
             marketCondition.includes("BULLISH") || marketCondition === "TREND_UP" ? "text-green-500" :
             marketCondition.includes("BEARISH") || marketCondition === "TREND_DOWN" ? "text-red-500" :
@@ -253,21 +216,57 @@ export default function F1CommandCenter() {
           </div>
         </div>
 
-        {/* Right: ES Value on Same Line */}
-        <div className="flex items-baseline gap-2" data-testid="es-price">
-          <span className="text-xs text-gray-500">{marketData?.symbol || "ES"}</span>
+        {/* Right: ES Value */}
+        <div className="flex items-center gap-2 h-full" data-testid="es-price">
+          <span className="text-sm text-gray-500">{marketData?.symbol || "ES"}</span>
           <span className="text-3xl font-bold text-green-400 tabular-nums">
             {marketData?.last_price.toFixed(2) || "----"}
           </span>
         </div>
       </div>
 
-      {/* Main Content: Draggable Windows Container */}
-      <div className="flex-1 relative overflow-hidden">
-        {/* Pressure Gauges */}
+      {/* Traffic Lights Bar - Horizontal Line Below Top Band */}
+      <div className="h-10 border-b border-green-900/50 bg-gray-950/30 flex items-center justify-center px-6">
+        <div className="flex items-center gap-6" data-testid="traffic-lights">
+          {/* CVA */}
+          <div className="flex items-center gap-1.5">
+            <div className={`h-3 w-3 rounded-full ${hasValidCVA ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`} />
+            <span className="text-[10px] text-gray-400 uppercase tracking-wide">CVA</span>
+          </div>
+          {/* DVA */}
+          <div className="flex items-center gap-1.5">
+            <div className={`h-3 w-3 rounded-full ${hasValidDVA ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`} />
+            <span className="text-[10px] text-gray-400 uppercase tracking-wide">DVA</span>
+          </div>
+          {/* VWAP */}
+          <div className="flex items-center gap-1.5">
+            <div className={`h-3 w-3 rounded-full ${hasVWAP ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`} />
+            <span className="text-[10px] text-gray-400 uppercase tracking-wide">VWAP</span>
+          </div>
+          {/* Hypothesis */}
+          <div className="flex items-center gap-1.5">
+            <div className={`h-3 w-3 rounded-full ${hasHypothesis ? "bg-green-500 shadow-lg shadow-green-500/50" : "bg-red-600"}`} />
+            <span className="text-[10px] text-gray-400 uppercase tracking-wide">Hypothesis</span>
+          </div>
+          {/* Signals */}
+          <div className="flex items-center gap-1.5">
+            <div className={`h-3 w-3 rounded-full ${hasActiveSignals ? "bg-green-500 shadow-lg shadow-green-500/50 animate-pulse" : "bg-red-600"}`} />
+            <span className="text-[10px] text-gray-400 uppercase tracking-wide">Signals</span>
+          </div>
+          {/* Auto-Trading */}
+          <div className="flex items-center gap-1.5">
+            <div className={`h-3 w-3 rounded-full ${status?.auto_trading_enabled ? "bg-green-500 shadow-lg shadow-green-500/50 animate-pulse" : "bg-gray-600"}`} />
+            <span className="text-[10px] text-gray-400 uppercase tracking-wide">Auto-Trading</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content: Draggable Windows Container with Uniform Padding */}
+      <div className="flex-1 relative overflow-hidden p-5">
+        {/* Column 1, Row 1: Pressure Gauges */}
         <DraggableWindow 
           title="PRESSURE GAUGES" 
-          defaultPosition={{ x: 20, y: 20 }}
+          defaultPosition={{ x: 0, y: 0 }}
           testId="window-pressure"
         >
           <div className="space-y-3">
@@ -309,10 +308,10 @@ export default function F1CommandCenter() {
           </div>
         </DraggableWindow>
 
-        {/* Value Areas */}
+        {/* Column 1, Row 2: Value Areas */}
         <DraggableWindow 
           title={volumeProfile ? "VALUE AREAS (DVA)" : "VWAP LEVELS"} 
-          defaultPosition={{ x: 20, y: 220 }}
+          defaultPosition={{ x: 0, y: 180 }}
           testId="window-value-areas"
         >
           <div className="space-y-1.5 text-xs">
@@ -337,10 +336,10 @@ export default function F1CommandCenter() {
           </div>
         </DraggableWindow>
 
-        {/* Order Flow Signals */}
+        {/* Column 2, Row 1: Order Flow Signals */}
         <DraggableWindow 
           title="ORDER FLOW SIGNALS" 
-          defaultPosition={{ x: 300, y: 20 }}
+          defaultPosition={{ x: 308, y: 0 }}
           height="320px"
           testId="window-orderflow"
         >
@@ -395,10 +394,10 @@ export default function F1CommandCenter() {
           </div>
         </DraggableWindow>
 
-        {/* Footprint Display */}
+        {/* Column 2, Row 2: Footprint Display */}
         <DraggableWindow 
           title="FOOTPRINT (BID/ASK)" 
-          defaultPosition={{ x: 300, y: 360 }}
+          defaultPosition={{ x: 308, y: 340 }}
           testId="window-footprint"
         >
           {latestFootprint ? (
@@ -431,10 +430,10 @@ export default function F1CommandCenter() {
           )}
         </DraggableWindow>
 
-        {/* High-Probability Setups */}
+        {/* Column 3, Row 1: High-Probability Setups */}
         <DraggableWindow 
           title="HIGH-PROBABILITY SETUPS" 
-          defaultPosition={{ x: 580, y: 20 }}
+          defaultPosition={{ x: 616, y: 0 }}
           height="280px"
           testId="window-setups"
         >
@@ -488,10 +487,10 @@ export default function F1CommandCenter() {
           </div>
         </DraggableWindow>
 
-        {/* Daily Hypothesis */}
+        {/* Column 3, Row 2: Daily Hypothesis */}
         <DraggableWindow 
           title="DAILY HYPOTHESIS" 
-          defaultPosition={{ x: 580, y: 320 }}
+          defaultPosition={{ x: 616, y: 300 }}
           testId="window-hypothesis"
         >
           {hypothesis && hypothesis.confidence > 0 ? (
@@ -527,10 +526,10 @@ export default function F1CommandCenter() {
           )}
         </DraggableWindow>
 
-        {/* Opening Drive Status */}
+        {/* Column 4, Row 1: Opening Drive Status */}
         <DraggableWindow 
           title="OPENING DRIVE" 
-          defaultPosition={{ x: 880, y: 20 }}
+          defaultPosition={{ x: 924, y: 0 }}
           testId="window-opening-drive"
         >
           {openingDrive && openingDrive.detected ? (
@@ -560,10 +559,10 @@ export default function F1CommandCenter() {
           )}
         </DraggableWindow>
 
-        {/* 80% Rule Detection */}
+        {/* Column 4, Row 2: 80% Rule Detection */}
         <DraggableWindow 
           title="80% RULE" 
-          defaultPosition={{ x: 880, y: 180 }}
+          defaultPosition={{ x: 924, y: 160 }}
           testId="window-eighty-percent"
         >
           {eightyPercentRule && eightyPercentRule.detected ? (
@@ -596,10 +595,10 @@ export default function F1CommandCenter() {
           )}
         </DraggableWindow>
 
-        {/* Value Shift Signals */}
+        {/* Column 4, Row 3: Value Shift Signals */}
         <DraggableWindow 
           title="VALUE SHIFT SIGNALS" 
-          defaultPosition={{ x: 880, y: 340 }}
+          defaultPosition={{ x: 924, y: 320 }}
           height="260px"
           testId="window-value-shift"
         >
@@ -636,10 +635,10 @@ export default function F1CommandCenter() {
           </div>
         </DraggableWindow>
 
-        {/* System Status & Auto-Trading */}
+        {/* Column 5, Row 1: System Status & Auto-Trading */}
         <DraggableWindow 
           title="SYSTEM STATUS" 
-          defaultPosition={{ x: 1180, y: 20 }}
+          defaultPosition={{ x: 1232, y: 0 }}
           testId="window-status"
         >
           <div className="space-y-2">
@@ -679,10 +678,10 @@ export default function F1CommandCenter() {
           </div>
         </DraggableWindow>
 
-        {/* Account Info */}
+        {/* Column 5, Row 2: Account Info */}
         <DraggableWindow 
           title="ACCOUNT" 
-          defaultPosition={{ x: 1180, y: 200 }}
+          defaultPosition={{ x: 1232, y: 180 }}
           testId="window-account"
         >
           <div className="space-y-1.5 text-xs">
@@ -703,10 +702,10 @@ export default function F1CommandCenter() {
           </div>
         </DraggableWindow>
 
-        {/* Tactical Chart */}
+        {/* Column 1-2, Bottom: Tactical Chart */}
         <DraggableWindow 
           title="CVA/DVA LEVELS + STACKING" 
-          defaultPosition={{ x: 20, y: 420 }}
+          defaultPosition={{ x: 0, y: 340 }}
           height="200px"
           testId="window-chart"
         >
