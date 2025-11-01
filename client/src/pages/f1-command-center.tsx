@@ -240,10 +240,7 @@ export default function F1CommandCenter() {
     <div className="h-screen w-screen bg-black text-white flex flex-col overflow-hidden">
       <div className="h-20 border-b border-green-900 flex items-center px-6 justify-between">
         <div className="flex items-center gap-4">
-          <div className="text-sm">
-            <span className={status?.ibkr_connected ? "text-green-600" : "text-gray-600"}>IBKR </span>
-            <span className={status?.ibkr_connected ? "font-bold text-green-400" : "text-gray-500"}>DATA</span>
-          </div>
+          <div className="text-sm text-green-600">IBKR <span className="font-bold text-green-400">DATA</span></div>
           <div className="text-3xl font-bold text-yellow-400 tracking-wider">{marketCondition}</div>
           <div className="text-2xl text-green-400 font-bold tabular-nums">
             ES {marketData?.last_price?.toFixed(2) || "6003.30"}
