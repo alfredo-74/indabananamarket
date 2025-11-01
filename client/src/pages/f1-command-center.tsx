@@ -19,8 +19,8 @@ import type {
 
 const GRID_COLS = 4;
 const GRID_ROWS = 3;
-const GAP_PERCENT = 1.5; // Gap as percentage of viewport width
-const MARGIN_PERCENT = 1.5; // Margin as percentage of viewport width
+const GAP = 12;
+const MARGIN = 12;
 
 function GridWindow({ 
   title, 
@@ -39,33 +39,36 @@ function GridWindow({
   onDragStop: (id: string, col: number, row: number) => void;
   testId?: string;
 }) {
-  const containerWidth = typeof window !== 'undefined' ? window.innerWidth : 1920;
-  const containerHeight = typeof window !== 'undefined' ? window.innerHeight - 80 - 64 : 1080;
-
-  const margin = (MARGIN_PERCENT / 100) * containerWidth;
-  const gap = (GAP_PERCENT / 100) * containerWidth;
-  const winWidth = (containerWidth - margin * 2 - gap * (GRID_COLS - 1)) / GRID_COLS;
-  const winHeight = (containerHeight - margin * 2 - gap * (GRID_ROWS - 1)) / GRID_ROWS;
+  // Simple responsive calculation
+  const winWidth = `calc((100vw - ${MARGIN * 2}px - ${GAP * (GRID_COLS - 1)}px) / ${GRID_COLS})`;
+  const winHeight = `calc((100vh - 144px - ${MARGIN * 2}px - ${GAP * (GRID_ROWS - 1)}px) / ${GRID_ROWS})`;
   
-  const x = margin + gridPosition.col * (winWidth + gap);
-  const y = margin + gridPosition.row * (winHeight + gap);
+  const left = `calc(${MARGIN}px + ${gridPosition.col} * (${winWidth} + ${GAP}px))`;
+  const top = `calc(${MARGIN}px + ${gridPosition.row} * (${winHeight} + ${GAP}px))`;
   
   return (
     <Draggable
-      position={{ x, y }}
+      disabled={false}
       onStart={() => onDragStart(windowId)}
       onStop={(_e, data) => {
-        const col = Math.max(0, Math.min(GRID_COLS - 1, Math.round((data.x - margin) / (winWidth + gap))));
-        const row = Math.max(0, Math.min(GRID_ROWS - 1, Math.round((data.y - margin) / (winHeight + gap))));
+        const containerWidth = window.innerWidth;
+        const containerHeight = window.innerHeight - 144;
+        const calcWinWidth = (containerWidth - MARGIN * 2 - GAP * (GRID_COLS - 1)) / GRID_COLS;
+        const calcWinHeight = (containerHeight - MARGIN * 2 - GAP * (GRID_ROWS - 1)) / GRID_ROWS;
+        
+        const col = Math.max(0, Math.min(GRID_COLS - 1, Math.round((data.x - MARGIN) / (calcWinWidth + GAP))));
+        const row = Math.max(0, Math.min(GRID_ROWS - 1, Math.round((data.y - MARGIN) / (calcWinHeight + GAP))));
         onDragStop(windowId, col, row);
       }}
       bounds="parent"
     >
       <div 
-        className="bg-gray-950/95 backdrop-blur-sm border-2 border-green-900/40 rounded-sm overflow-hidden cursor-move"
+        className="absolute bg-gray-950/95 backdrop-blur-sm border-2 border-green-900/40 rounded-sm overflow-hidden cursor-move"
         style={{ 
-          width: `${winWidth}px`,
-          height: `${winHeight}px`
+          width: winWidth,
+          height: winHeight,
+          left: left,
+          top: top
         }}
         data-testid={testId}
       >
