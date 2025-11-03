@@ -1177,6 +1177,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
             data: completedCandle,
           });
         }
+      } else if (data.type === "portfolio") {
+        // Update position from IBKR portfolio data
+        const position = await storage.getPosition();
+        if (position && data.position !== undefined) {
+          const contractsHeld = data.position;
+          const avgCost = data.average_cost || position.entry_price;
+          const unrealizedPnl = data.unrealized_pnl || 0;
+          
+          position.contracts = contractsHeld;
+          position.side = contractsHeld > 0 ? "LONG" : contractsHeld < 0 ? "SHORT" : "FLAT";
+          position.entry_price = contractsHeld !== 0 ? avgCost : null;
+          position.unrealized_pnl = unrealizedPnl;
+          position.current_price = data.market_price || position.current_price;
+          
+          await storage.setPosition(position);
+          
+          broadcast({
+            type: "position_update",
+            data: position,
+          });
+          
+          console.log(`[PORTFOLIO] Updated position: ${position.side} ${Math.abs(position.contracts)}x @ ${position.entry_price?.toFixed(2) || "N/A"} | P&L: ${unrealizedPnl >= 0 ? '+' : ''}$${unrealizedPnl.toFixed(2)}`);
+        }
       }
       
       res.json({ success: true });

@@ -161,6 +161,11 @@ export default function F1CommandCenter() {
     refetchInterval: 10000,
   });
 
+  const { data: position } = useQuery<any>({
+    queryKey: ["/api/position"],
+    refetchInterval: 1000,
+  });
+
   const toggleAutoTradingMutation = useMutation({
     mutationFn: async (enabled: boolean) => {
       const response = await fetch("/api/auto-trading/toggle", {
@@ -775,6 +780,30 @@ export default function F1CommandCenter() {
               <span className="text-gray-500">Balance:</span>
               <span className="text-green-400 font-bold tabular-nums">
                 £{status?.capital?.toFixed(0) || "0"}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Position:</span>
+              <span className={`font-bold tabular-nums ${
+                position?.side === "LONG" ? "text-green-400" : 
+                position?.side === "SHORT" ? "text-red-400" : 
+                "text-gray-500"
+              }`}>
+                {position?.side || "FLAT"} {position?.contracts ? `${position.contracts}x` : ""}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Entry:</span>
+              <span className="text-gray-400 font-mono text-xs tabular-nums">
+                {position?.entry_price ? position.entry_price.toFixed(2) : "--"}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Unreal P&L:</span>
+              <span className={`font-bold tabular-nums ${
+                (position?.unrealized_pnl || 0) >= 0 ? "text-green-400" : "text-red-400"
+              }`}>
+                {(position?.unrealized_pnl || 0) >= 0 ? "+" : ""}${position?.unrealized_pnl?.toFixed(2) || "0.00"}
               </span>
             </div>
             <div className="flex justify-between">
