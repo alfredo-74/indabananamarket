@@ -1,0 +1,869 @@
+2025-11-03 15:59:02,308 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:02,497 - INFO - 📊 ES @ 6877.50 → Sent to Replit
+2025-11-03 15:59:02,639 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:02,781 - INFO - 📊 ES @ 6877.50 → Sent to Replit
+2025-11-03 15:59:02,924 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:03,111 - INFO - 📊 ES @ 6877.75 → Sent to Replit
+2025-11-03 15:59:03,251 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:03,391 - INFO - 📊 ES @ 6877.75 → Sent to Replit
+2025-11-03 15:59:03,537 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:03,679 - INFO - 📊 ES @ 6877.75 → Sent to Replit
+2025-11-03 15:59:03,820 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:03,962 - INFO - 📊 ES @ 6877.75 → Sent to Replit
+2025-11-03 15:59:04,106 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:04,249 - INFO - 📊 ES @ 6877.50 → Sent to Replit
+2025-11-03 15:59:04,441 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:04,651 - INFO - 📊 ES @ 6877.75 → Sent to Replit
+2025-11-03 15:59:04,795 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:04,940 - INFO - 📊 ES @ 6877.75 → Sent to Replit
+2025-11-03 15:59:05,083 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:05,223 - INFO - 📊 ES @ 6877.75 → Sent to Replit
+2025-11-03 15:59:05,364 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:05,507 - INFO - 📊 ES @ 6877.75 → Sent to Replit
+2025-11-03 15:59:05,661 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:05,806 - INFO - 📊 ES @ 6877.75 → Sent to Replit
+2025-11-03 15:59:05,976 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:06,120 - INFO - 📊 ES @ 6877.75 → Sent to Replit
+2025-11-03 15:59:06,283 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:06,495 - INFO - 📊 ES @ 6877.75 → Sent to Replit
+2025-11-03 15:59:06,635 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:06,777 - INFO - 📊 ES @ 6877.75 → Sent to Replit
+2025-11-03 15:59:06,920 - INFO - ✅ Order executed: BUY 1 MES @ 0.00
+2025-11-03 15:59:07,065 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:07,207 - INFO - 📊 ES @ 6877.75 → Sent to Replit
+2025-11-03 15:59:07,412 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:07,552 - INFO - 📊 ES @ 6877.75 → Sent to Replit
+2025-11-03 15:59:07,696 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:07,842 - INFO - 📊 ES @ 6877.50 → Sent to Replit
+2025-11-03 15:59:07,985 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:08,127 - INFO - 📊 ES @ 6877.25 → Sent to Replit
+2025-11-03 15:59:08,271 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:08,410 - INFO - 📊 ES @ 6877.25 → Sent to Replit
+2025-11-03 15:59:08,551 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:08,693 - INFO - 📊 ES @ 6877.50 → Sent to Replit
+2025-11-03 15:59:08,835 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:08,980 - INFO - 📊 ES @ 6877.00 → Sent to Replit
+2025-11-03 15:59:09,129 - INFO - 📊 DOM: 9 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:09,272 - INFO - 📊 ES @ 6877.50 → Sent to Replit
+2025-11-03 15:59:09,458 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:09,600 - INFO - 📊 ES @ 6877.25 → Sent to Replit
+2025-11-03 15:59:09,742 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:09,884 - INFO - 📊 ES @ 6877.25 → Sent to Replit
+2025-11-03 15:59:10,026 - INFO - 🔄 Executing BUY 1 MES (ID: order_1762182089935_3v95iopky)
+2025-11-03 15:59:10,026 - INFO - 📅 Calculated front month contract: ES 202512
+2025-11-03 15:59:10,175 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:10,315 - INFO - 📊 ES @ 6877.50 → Sent to Replit
+2025-11-03 15:59:10,458 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:10,600 - INFO - 📊 ES @ 6877.25 → Sent to Replit
+2025-11-03 15:59:10,742 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:10,884 - INFO - 📊 ES @ 6877.25 → Sent to Replit
+2025-11-03 15:59:10,884 - INFO - placeOrder: New order Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=382, clientId=1, action='BUY', totalQuantity=1), orderStatus=OrderStatus(orderId=382, status='PendingSubmit', filled=0.0, remaining=0.0, avgFillPrice=0.0, permId=0, parentId=0, lastFillPrice=0.0, clientId=0, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 10, 884784, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0)], advancedError='')
+2025-11-03 15:59:11,027 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:11,166 - INFO - 📊 ES @ 6877.00 → Sent to Replit
+2025-11-03 15:59:11,167 - INFO - orderStatus: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=382, clientId=1, permId=1139328132, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=382, status='Inactive', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328132, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 10, 884784, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 11, 167093, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0)], advancedError='')
+2025-11-03 15:59:11,167 - ERROR - Error 201, reqId 382: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.
+2025-11-03 15:59:11,167 - WARNING - Canceled order: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=382, clientId=1, permId=1139328132, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=382, status='Cancelled', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328132, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 10, 884784, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 11, 167093, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 11, 167093, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 382: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.', errorCode=201)], advancedError='')
+2025-11-03 15:59:11,167 - INFO - IBKR Error 201: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.
+2025-11-03 15:59:11,168 - INFO - orderStatus: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=382, clientId=1, permId=1139328132, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=382, status='Inactive', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328132, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 10, 884784, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 11, 167093, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 11, 167093, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 382: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.', errorCode=201), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 11, 167093, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0)], advancedError='')
+2025-11-03 15:59:11,311 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:11,452 - INFO - 📊 ES @ 6876.75 → Sent to Replit
+2025-11-03 15:59:11,595 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:11,737 - INFO - 📊 ES @ 6876.75 → Sent to Replit
+2025-11-03 15:59:11,878 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:12,021 - INFO - 📊 ES @ 6876.75 → Sent to Replit
+2025-11-03 15:59:12,162 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:12,305 - INFO - 📊 ES @ 6876.75 → Sent to Replit
+2025-11-03 15:59:12,451 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:12,592 - INFO - 📊 ES @ 6876.75 → Sent to Replit
+2025-11-03 15:59:12,734 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:12,874 - INFO - 📊 ES @ 6877.00 → Sent to Replit
+2025-11-03 15:59:13,015 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:13,160 - INFO - 📊 ES @ 6877.00 → Sent to Replit
+2025-11-03 15:59:13,305 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:13,448 - INFO - 📊 ES @ 6877.00 → Sent to Replit
+2025-11-03 15:59:13,615 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:13,760 - INFO - 📊 ES @ 6877.00 → Sent to Replit
+2025-11-03 15:59:13,904 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:14,047 - INFO - 📊 ES @ 6877.00 → Sent to Replit
+2025-11-03 15:59:14,192 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:14,336 - INFO - 📊 ES @ 6876.75 → Sent to Replit
+2025-11-03 15:59:14,481 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:14,624 - INFO - 📊 ES @ 6876.75 → Sent to Replit
+2025-11-03 15:59:14,769 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:14,910 - INFO - 📊 ES @ 6876.75 → Sent to Replit
+2025-11-03 15:59:15,050 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:15,193 - INFO - 📊 ES @ 6876.50 → Sent to Replit
+2025-11-03 15:59:15,338 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:15,483 - INFO - 📊 ES @ 6876.75 → Sent to Replit
+2025-11-03 15:59:15,625 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:15,768 - INFO - 📊 ES @ 6876.50 → Sent to Replit
+2025-11-03 15:59:15,914 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:16,055 - INFO - 📊 ES @ 6876.25 → Sent to Replit
+2025-11-03 15:59:16,198 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:16,339 - INFO - 📊 ES @ 6876.50 → Sent to Replit
+2025-11-03 15:59:16,486 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:16,630 - INFO - 📊 ES @ 6876.50 → Sent to Replit
+2025-11-03 15:59:16,778 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:16,922 - INFO - 📊 ES @ 6876.50 → Sent to Replit
+2025-11-03 15:59:17,159 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:17,302 - INFO - 📊 ES @ 6876.50 → Sent to Replit
+2025-11-03 15:59:17,445 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:17,589 - INFO - 📊 ES @ 6876.50 → Sent to Replit
+2025-11-03 15:59:17,731 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:17,873 - INFO - 📊 ES @ 6876.50 → Sent to Replit
+2025-11-03 15:59:18,015 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:18,159 - INFO - 📊 ES @ 6876.50 → Sent to Replit
+2025-11-03 15:59:18,302 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:18,443 - INFO - 📊 ES @ 6876.25 → Sent to Replit
+2025-11-03 15:59:18,588 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:18,731 - INFO - 📊 ES @ 6876.25 → Sent to Replit
+2025-11-03 15:59:18,875 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:19,019 - INFO - 📊 ES @ 6876.25 → Sent to Replit
+2025-11-03 15:59:19,162 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:19,303 - INFO - 📊 ES @ 6876.25 → Sent to Replit
+2025-11-03 15:59:19,445 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:19,587 - INFO - 📊 ES @ 6876.25 → Sent to Replit
+2025-11-03 15:59:19,733 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:19,876 - INFO - 📊 ES @ 6876.25 → Sent to Replit
+2025-11-03 15:59:20,020 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:20,162 - INFO - 📊 ES @ 6876.00 → Sent to Replit
+2025-11-03 15:59:20,306 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:20,449 - INFO - 📊 ES @ 6875.75 → Sent to Replit
+2025-11-03 15:59:20,593 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:20,737 - INFO - 📊 ES @ 6876.00 → Sent to Replit
+2025-11-03 15:59:20,882 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:21,026 - INFO - 📊 ES @ 6876.00 → Sent to Replit
+2025-11-03 15:59:21,167 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:21,311 - INFO - 📊 ES @ 6876.00 → Sent to Replit
+2025-11-03 15:59:21,456 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:21,598 - INFO - 📊 ES @ 6876.00 → Sent to Replit
+2025-11-03 15:59:21,745 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:21,888 - INFO - 📊 ES @ 6876.00 → Sent to Replit
+2025-11-03 15:59:22,031 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:22,174 - INFO - 📊 ES @ 6876.00 → Sent to Replit
+2025-11-03 15:59:22,359 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:22,515 - INFO - 📊 ES @ 6875.75 → Sent to Replit
+2025-11-03 15:59:22,658 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:22,872 - INFO - 📊 ES @ 6875.75 → Sent to Replit
+2025-11-03 15:59:23,015 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:23,157 - INFO - 📊 ES @ 6875.75 → Sent to Replit
+2025-11-03 15:59:23,298 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:23,440 - INFO - 📊 ES @ 6875.75 → Sent to Replit
+2025-11-03 15:59:23,582 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:23,725 - INFO - 📊 ES @ 6875.75 → Sent to Replit
+2025-11-03 15:59:23,868 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:24,010 - INFO - 📊 ES @ 6875.75 → Sent to Replit
+2025-11-03 15:59:24,157 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:24,304 - INFO - 📊 ES @ 6875.75 → Sent to Replit
+2025-11-03 15:59:24,443 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:24,584 - INFO - 📊 ES @ 6876.00 → Sent to Replit
+2025-11-03 15:59:24,726 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:24,866 - INFO - 📊 ES @ 6875.50 → Sent to Replit
+2025-11-03 15:59:25,009 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:25,151 - INFO - 📊 ES @ 6875.75 → Sent to Replit
+2025-11-03 15:59:25,296 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:25,441 - INFO - 📊 ES @ 6875.50 → Sent to Replit
+2025-11-03 15:59:25,583 - INFO - ✅ Order executed: BUY 1 MES @ 0.00
+2025-11-03 15:59:25,728 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:25,874 - INFO - 📊 ES @ 6875.75 → Sent to Replit
+2025-11-03 15:59:26,017 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:26,159 - INFO - 📊 ES @ 6875.75 → Sent to Replit
+2025-11-03 15:59:26,352 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:26,496 - INFO - 📊 ES @ 6875.50 → Sent to Replit
+2025-11-03 15:59:26,642 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:26,787 - INFO - 📊 ES @ 6875.50 → Sent to Replit
+2025-11-03 15:59:26,967 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:27,173 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 15:59:27,335 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:27,478 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 15:59:27,623 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:27,832 - INFO - 📊 ES @ 6875.50 → Sent to Replit
+2025-11-03 15:59:27,975 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:28,196 - INFO - 📊 ES @ 6875.50 → Sent to Replit
+2025-11-03 15:59:28,339 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:28,484 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 15:59:28,626 - INFO - 🔄 Executing BUY 1 MES (ID: order_1762182089935_3v95iopky)
+2025-11-03 15:59:28,626 - INFO - 📅 Calculated front month contract: ES 202512
+2025-11-03 15:59:28,772 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:28,913 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:29,056 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:29,199 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:29,345 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:29,490 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:29,491 - INFO - placeOrder: New order Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=384, clientId=1, action='BUY', totalQuantity=1), orderStatus=OrderStatus(orderId=384, status='PendingSubmit', filled=0.0, remaining=0.0, avgFillPrice=0.0, permId=0, parentId=0, lastFillPrice=0.0, clientId=0, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 29, 491031, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0)], advancedError='')
+2025-11-03 15:59:29,631 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:29,774 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:29,775 - INFO - orderStatus: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=384, clientId=1, permId=1139328133, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=384, status='Inactive', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328133, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 29, 491031, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 29, 774725, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0)], advancedError='')
+2025-11-03 15:59:29,775 - ERROR - Error 201, reqId 384: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.
+2025-11-03 15:59:29,775 - WARNING - Canceled order: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=384, clientId=1, permId=1139328133, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=384, status='Cancelled', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328133, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 29, 491031, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 29, 774725, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 29, 774725, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 384: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.', errorCode=201)], advancedError='')
+2025-11-03 15:59:29,775 - INFO - IBKR Error 201: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.
+2025-11-03 15:59:29,776 - INFO - orderStatus: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=384, clientId=1, permId=1139328133, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=384, status='Inactive', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328133, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 29, 491031, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 29, 774725, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 29, 774725, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 384: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.', errorCode=201), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 29, 774725, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0)], advancedError='')
+2025-11-03 15:59:29,917 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:30,065 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:30,251 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:30,394 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 15:59:30,536 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:30,681 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:30,837 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:30,978 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 15:59:31,166 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:31,370 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 15:59:31,510 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:31,653 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:31,796 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:31,985 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:32,190 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:32,335 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 15:59:32,478 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:32,619 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:32,765 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:32,908 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 15:59:33,065 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:33,215 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:33,359 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:33,503 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 15:59:33,653 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:33,795 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 15:59:33,939 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:34,081 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 15:59:34,240 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:34,380 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 15:59:34,524 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:34,667 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:34,810 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:34,953 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:35,095 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:35,237 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:35,379 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:35,525 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:35,671 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:35,815 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:35,959 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:36,103 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:36,244 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:36,387 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:36,529 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:36,671 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:36,816 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:36,961 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:37,106 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:37,249 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:37,392 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:37,533 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:37,678 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:37,826 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:37,970 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:38,117 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:38,262 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:38,403 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:38,546 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:38,686 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:38,830 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:39,051 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:39,193 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:39,333 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:39,474 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:39,616 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:39,777 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:39,971 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:40,110 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:40,253 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:40,394 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:40,534 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:40,674 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:40,815 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:40,956 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:41,097 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:41,238 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:41,384 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:41,526 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:41,668 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:41,806 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:42,020 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:42,162 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:42,327 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:42,474 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:42,613 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:42,753 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:42,896 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:43,039 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:43,181 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:43,332 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:43,473 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:43,617 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:43,759 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:43,900 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:44,042 - INFO - 📊 ES @ 6874.00 → Sent to Replit
+2025-11-03 15:59:44,186 - INFO - ✅ Order executed: BUY 1 MES @ 0.00
+2025-11-03 15:59:44,330 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:44,474 - INFO - 📊 ES @ 6874.00 → Sent to Replit
+2025-11-03 15:59:44,617 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:44,777 - INFO - 📊 ES @ 6873.75 → Sent to Replit
+2025-11-03 15:59:44,919 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:45,061 - INFO - 📊 ES @ 6873.75 → Sent to Replit
+2025-11-03 15:59:45,206 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:45,348 - INFO - 📊 ES @ 6873.75 → Sent to Replit
+2025-11-03 15:59:45,492 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:45,634 - INFO - 📊 ES @ 6873.75 → Sent to Replit
+2025-11-03 15:59:45,779 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:45,951 - INFO - 📊 ES @ 6873.75 → Sent to Replit
+2025-11-03 15:59:46,091 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:46,233 - INFO - 📊 ES @ 6873.75 → Sent to Replit
+2025-11-03 15:59:46,376 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:46,517 - INFO - 📊 ES @ 6873.75 → Sent to Replit
+2025-11-03 15:59:46,659 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:46,799 - INFO - 📊 ES @ 6874.00 → Sent to Replit
+2025-11-03 15:59:46,951 - INFO - 🔄 Executing BUY 1 MES (ID: order_1762182089935_3v95iopky)
+2025-11-03 15:59:46,951 - INFO - 📅 Calculated front month contract: ES 202512
+2025-11-03 15:59:47,133 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:47,275 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:47,418 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:47,564 - INFO - 📊 ES @ 6874.00 → Sent to Replit
+2025-11-03 15:59:47,704 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:47,844 - INFO - 📊 ES @ 6874.00 → Sent to Replit
+2025-11-03 15:59:47,844 - INFO - placeOrder: New order Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=386, clientId=1, action='BUY', totalQuantity=1), orderStatus=OrderStatus(orderId=386, status='PendingSubmit', filled=0.0, remaining=0.0, avgFillPrice=0.0, permId=0, parentId=0, lastFillPrice=0.0, clientId=0, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 47, 844655, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0)], advancedError='')
+2025-11-03 15:59:47,990 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:48,133 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:48,134 - INFO - orderStatus: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=386, clientId=1, permId=1139328134, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=386, status='Inactive', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328134, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 47, 844655, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 48, 133973, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0)], advancedError='')
+2025-11-03 15:59:48,134 - ERROR - Error 201, reqId 386: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.
+2025-11-03 15:59:48,134 - WARNING - Canceled order: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=386, clientId=1, permId=1139328134, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=386, status='Cancelled', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328134, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 47, 844655, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 48, 133973, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 48, 133973, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 386: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.', errorCode=201)], advancedError='')
+2025-11-03 15:59:48,135 - INFO - IBKR Error 201: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.
+2025-11-03 15:59:48,135 - INFO - orderStatus: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=386, clientId=1, permId=1139328134, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=386, status='Inactive', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328134, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 47, 844655, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 48, 133973, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 48, 133973, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 386: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.', errorCode=201), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 15, 59, 48, 133973, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0)], advancedError='')
+2025-11-03 15:59:48,277 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:48,421 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:48,564 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:48,708 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:48,851 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:48,993 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:49,186 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:49,330 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:49,473 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:49,661 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:49,804 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:49,946 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:50,085 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:50,314 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:50,457 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:50,599 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:50,740 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:50,881 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:51,021 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:51,162 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:51,304 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:51,458 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:51,599 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:51,742 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 15:59:51,886 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:52,027 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:52,169 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:52,312 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:52,777 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:52,919 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:53,062 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:53,206 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:53,358 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:53,499 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:53,642 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:53,791 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:54,000 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:54,143 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:54,306 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:54,512 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:54,655 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:54,819 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:55,024 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:55,164 - INFO - 📊 ES @ 6874.00 → Sent to Replit
+2025-11-03 15:59:55,304 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:55,536 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:55,682 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:55,824 - INFO - 📊 ES @ 6874.00 → Sent to Replit
+2025-11-03 15:59:55,968 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:56,111 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:56,257 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:56,398 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:56,541 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:56,684 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:56,825 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:56,966 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:57,174 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:57,375 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:57,588 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:57,728 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:57,870 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:58,013 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:58,198 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:58,339 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 15:59:58,483 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:58,623 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:58,768 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:58,912 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:59,054 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:59,199 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 15:59:59,427 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:59,567 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 15:59:59,709 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 15:59:59,850 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 15:59:59,994 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:00,134 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:00,348 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:00,491 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:00,632 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:00,780 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:00,923 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:01,172 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:01,311 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:01,462 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:01,661 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:01,804 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:01,947 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:02,089 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:02,230 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:02,373 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:02,518 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:02,663 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:02,908 - INFO - ✅ Order executed: BUY 1 MES @ 0.00
+2025-11-03 16:00:03,051 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:03,192 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:03,337 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:03,522 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:03,664 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:03,807 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:03,999 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:04,144 - INFO - 📊 ES @ 6875.50 → Sent to Replit
+2025-11-03 16:00:04,341 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:04,480 - INFO - 📊 ES @ 6875.50 → Sent to Replit
+2025-11-03 16:00:04,621 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:04,763 - INFO - 📊 ES @ 6875.50 → Sent to Replit
+2025-11-03 16:00:04,908 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:05,050 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:05,196 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:05,365 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:05,508 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:05,651 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:05,798 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:05,942 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:06,087 - INFO - 🔄 Executing BUY 1 MES (ID: order_1762182089935_3v95iopky)
+2025-11-03 16:00:06,087 - INFO - 📅 Calculated front month contract: ES 202512
+2025-11-03 16:00:06,229 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:06,372 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 16:00:06,516 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:06,659 - INFO - 📊 ES @ 6874.00 → Sent to Replit
+2025-11-03 16:00:06,805 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:06,947 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 16:00:06,948 - INFO - placeOrder: New order Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=388, clientId=1, action='BUY', totalQuantity=1), orderStatus=OrderStatus(orderId=388, status='PendingSubmit', filled=0.0, remaining=0.0, avgFillPrice=0.0, permId=0, parentId=0, lastFillPrice=0.0, clientId=0, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 6, 947925, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0)], advancedError='')
+2025-11-03 16:00:07,098 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:07,245 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 16:00:07,246 - INFO - orderStatus: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=388, clientId=1, permId=1139328135, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=388, status='Inactive', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328135, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 6, 947925, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 7, 245972, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0)], advancedError='')
+2025-11-03 16:00:07,246 - ERROR - Error 201, reqId 388: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.
+2025-11-03 16:00:07,247 - WARNING - Canceled order: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=388, clientId=1, permId=1139328135, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=388, status='Cancelled', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328135, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 6, 947925, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 7, 245972, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 7, 245972, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 388: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.', errorCode=201)], advancedError='')
+2025-11-03 16:00:07,247 - INFO - IBKR Error 201: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.
+2025-11-03 16:00:07,247 - INFO - orderStatus: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=388, clientId=1, permId=1139328135, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=388, status='Inactive', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328135, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 6, 947925, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 7, 245972, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 7, 245972, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 388: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.', errorCode=201), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 7, 245972, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0)], advancedError='')
+2025-11-03 16:00:07,413 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:07,555 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 16:00:07,698 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:07,841 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 16:00:08,028 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:08,171 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 16:00:08,318 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:08,461 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 16:00:08,609 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:08,749 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 16:00:08,889 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:09,030 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 16:00:09,173 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:09,317 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 16:00:09,461 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:09,603 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 16:00:09,743 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:09,886 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 16:00:10,029 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:10,170 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 16:00:10,312 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:10,458 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:10,696 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:10,840 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 16:00:10,982 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:11,124 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 16:00:11,265 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:11,567 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:11,713 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:11,854 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:11,997 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:12,191 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:12,332 - INFO - 📊 DOM: 9 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:12,533 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:12,743 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:12,948 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:13,089 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:13,246 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:13,388 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:13,540 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:13,685 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:13,826 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 16:00:13,973 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:14,171 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 16:00:14,314 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:14,457 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 16:00:14,689 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:14,828 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 16:00:14,990 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:15,134 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 16:00:15,401 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:15,545 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 16:00:15,820 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:16,015 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 16:00:16,225 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:16,367 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 16:00:16,509 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:16,651 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 16:00:16,796 - INFO - 📊 DOM: 10 bids, 9 asks → Sent to Replit
+2025-11-03 16:00:16,937 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 16:00:17,140 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:17,283 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 16:00:17,426 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:17,566 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 16:00:17,707 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:17,849 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 16:00:17,994 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:18,138 - INFO - 📊 ES @ 6874.00 → Sent to Replit
+2025-11-03 16:00:18,282 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:18,424 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 16:00:18,565 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:18,749 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 16:00:18,895 - INFO - 📊 DOM: 10 bids, 9 asks → Sent to Replit
+2025-11-03 16:00:19,039 - INFO - 📊 ES @ 6874.00 → Sent to Replit
+2025-11-03 16:00:19,188 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:19,331 - INFO - 📊 ES @ 6874.00 → Sent to Replit
+2025-11-03 16:00:19,476 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:19,618 - INFO - 📊 ES @ 6874.00 → Sent to Replit
+2025-11-03 16:00:19,760 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:19,901 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 16:00:20,044 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:20,187 - INFO - 📊 ES @ 6874.25 → Sent to Replit
+2025-11-03 16:00:20,418 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:20,560 - INFO - 📊 ES @ 6874.00 → Sent to Replit
+2025-11-03 16:00:20,730 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:20,871 - INFO - 📊 ES @ 6874.00 → Sent to Replit
+2025-11-03 16:00:21,016 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:21,158 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 16:00:21,338 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:21,481 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 16:00:21,622 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:21,762 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 16:00:21,904 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:22,047 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:22,193 - INFO - ✅ Order executed: BUY 1 MES @ 0.00
+2025-11-03 16:00:22,337 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:22,478 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:22,624 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:22,769 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 16:00:22,977 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:23,119 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:23,262 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:23,407 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:23,561 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:23,705 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:23,847 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:23,994 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:24,207 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:24,352 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:24,496 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:24,652 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:24,820 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:24,961 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:25,102 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:25,335 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:25,477 - INFO - 🔄 Executing BUY 1 MES (ID: order_1762182089935_3v95iopky)
+2025-11-03 16:00:25,477 - INFO - 📅 Calculated front month contract: ES 202512
+2025-11-03 16:00:25,619 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:25,759 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:25,904 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:26,045 - INFO - 📊 ES @ 6875.50 → Sent to Replit
+2025-11-03 16:00:26,230 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:26,370 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:26,371 - INFO - placeOrder: New order Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=390, clientId=1, action='BUY', totalQuantity=1), orderStatus=OrderStatus(orderId=390, status='PendingSubmit', filled=0.0, remaining=0.0, avgFillPrice=0.0, permId=0, parentId=0, lastFillPrice=0.0, clientId=0, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 26, 371204, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0)], advancedError='')
+2025-11-03 16:00:26,514 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:26,657 - INFO - 📊 ES @ 6875.50 → Sent to Replit
+2025-11-03 16:00:26,658 - INFO - orderStatus: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=390, clientId=1, permId=1139328136, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=390, status='Inactive', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328136, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 26, 371204, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 26, 658243, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0)], advancedError='')
+2025-11-03 16:00:26,659 - ERROR - Error 201, reqId 390: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.
+2025-11-03 16:00:26,659 - WARNING - Canceled order: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=390, clientId=1, permId=1139328136, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=390, status='Cancelled', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328136, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 26, 371204, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 26, 658243, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 26, 658243, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 390: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.', errorCode=201)], advancedError='')
+2025-11-03 16:00:26,659 - INFO - IBKR Error 201: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.
+2025-11-03 16:00:26,659 - INFO - orderStatus: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=390, clientId=1, permId=1139328136, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=390, status='Inactive', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328136, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 26, 371204, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 26, 658243, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 26, 658243, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 390: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.', errorCode=201), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 26, 658243, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0)], advancedError='')
+2025-11-03 16:00:26,801 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:26,951 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:27,095 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:27,241 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:27,483 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:27,641 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:27,786 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:27,931 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:28,080 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:28,306 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 16:00:28,447 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:28,591 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:28,732 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:28,874 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:29,015 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:29,156 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:29,325 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:29,466 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:29,640 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:29,782 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:29,939 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:30,081 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:30,227 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:30,452 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:30,592 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:30,734 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:30,964 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:31,104 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:31,246 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:31,475 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:31,616 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:31,761 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:31,903 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:32,045 - INFO - 📊 ES @ 6875.50 → Sent to Replit
+2025-11-03 16:00:32,368 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:32,509 - INFO - 📊 ES @ 6875.50 → Sent to Replit
+2025-11-03 16:00:32,653 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:32,795 - INFO - 📊 ES @ 6875.50 → Sent to Replit
+2025-11-03 16:00:33,012 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:33,217 - INFO - 📊 ES @ 6875.50 → Sent to Replit
+2025-11-03 16:00:33,365 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:33,509 - INFO - 📊 ES @ 6875.50 → Sent to Replit
+2025-11-03 16:00:33,660 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:33,803 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:34,036 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:34,179 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:34,330 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:34,479 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:34,625 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:34,765 - INFO - 📊 ES @ 6874.75 → Sent to Replit
+2025-11-03 16:00:34,957 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:35,110 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 16:00:35,261 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:35,405 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 16:00:35,559 - INFO - 📊 DOM: 10 bids, 9 asks → Sent to Replit
+2025-11-03 16:00:35,703 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 16:00:35,850 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:35,991 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 16:00:36,134 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:36,277 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 16:00:36,419 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:36,561 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:36,704 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:36,872 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:37,020 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:37,161 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:37,303 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:37,518 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:37,662 - INFO - 📊 DOM: 9 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:37,805 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:37,967 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:38,115 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:38,258 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:38,400 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:38,543 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:38,685 - INFO - 📊 ES @ 6875.00 → Sent to Replit
+2025-11-03 16:00:38,848 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:39,054 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:39,199 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:39,342 - INFO - 📊 ES @ 6875.25 → Sent to Replit
+2025-11-03 16:00:39,484 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:39,660 - INFO - 📊 ES @ 6874.50 → Sent to Replit
+2025-11-03 16:00:39,809 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:40,077 - INFO - 📊 ES @ 6874.00 → Sent to Replit
+2025-11-03 16:00:40,219 - INFO - 📊 DOM: 10 bids, 9 asks → Sent to Replit
+2025-11-03 16:00:40,372 - INFO - 📊 ES @ 6874.00 → Sent to Replit
+2025-11-03 16:00:40,515 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:40,657 - INFO - 📊 ES @ 6874.00 → Sent to Replit
+2025-11-03 16:00:40,799 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:40,942 - INFO - 📊 ES @ 6873.50 → Sent to Replit
+2025-11-03 16:00:41,089 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:41,306 - INFO - 📊 ES @ 6873.25 → Sent to Replit
+2025-11-03 16:00:41,450 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:41,591 - INFO - 📊 ES @ 6873.50 → Sent to Replit
+2025-11-03 16:00:41,734 - INFO - ✅ Order executed: BUY 1 MES @ 0.00
+2025-11-03 16:00:41,876 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:42,024 - INFO - 📊 ES @ 6873.50 → Sent to Replit
+2025-11-03 16:00:42,227 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:42,374 - INFO - 📊 ES @ 6873.25 → Sent to Replit
+2025-11-03 16:00:42,520 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:42,662 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:42,804 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:43,047 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:43,194 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:43,340 - INFO - 📊 ES @ 6872.50 → Sent to Replit
+2025-11-03 16:00:43,484 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:43,628 - INFO - 📊 ES @ 6872.25 → Sent to Replit
+2025-11-03 16:00:43,779 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:43,919 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:44,063 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:44,258 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:00:44,400 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:44,544 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:44,686 - INFO - 📊 DOM: 10 bids, 9 asks → Sent to Replit
+2025-11-03 16:00:44,829 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:00:44,972 - INFO - 🔄 Executing BUY 1 MES (ID: order_1762182089935_3v95iopky)
+2025-11-03 16:00:44,972 - INFO - 📅 Calculated front month contract: ES 202512
+2025-11-03 16:00:45,113 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:45,299 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:45,443 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:45,586 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:45,729 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:45,876 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:45,877 - INFO - placeOrder: New order Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=392, clientId=1, action='BUY', totalQuantity=1), orderStatus=OrderStatus(orderId=392, status='PendingSubmit', filled=0.0, remaining=0.0, avgFillPrice=0.0, permId=0, parentId=0, lastFillPrice=0.0, clientId=0, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 45, 877061, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0)], advancedError='')
+2025-11-03 16:00:46,019 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:46,221 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:00:46,221 - INFO - orderStatus: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=392, clientId=1, permId=1139328137, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=392, status='Inactive', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328137, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 45, 877061, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 46, 221394, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0)], advancedError='')
+2025-11-03 16:00:46,222 - ERROR - Error 201, reqId 392: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.
+2025-11-03 16:00:46,222 - WARNING - Canceled order: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=392, clientId=1, permId=1139328137, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=392, status='Cancelled', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328137, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 45, 877061, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 46, 221394, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 46, 221394, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 392: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.', errorCode=201)], advancedError='')
+2025-11-03 16:00:46,222 - INFO - IBKR Error 201: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.
+2025-11-03 16:00:46,222 - INFO - orderStatus: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=392, clientId=1, permId=1139328137, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=392, status='Inactive', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328137, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 45, 877061, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 46, 221394, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 46, 221394, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 392: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.', errorCode=201), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 0, 46, 221394, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0)], advancedError='')
+2025-11-03 16:00:46,363 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:46,527 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:00:46,671 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:46,814 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:46,960 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:47,142 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:47,348 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:47,490 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:00:47,634 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:47,781 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:47,925 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:48,067 - INFO - 📊 ES @ 6872.50 → Sent to Replit
+2025-11-03 16:00:48,211 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:48,355 - INFO - 📊 ES @ 6872.50 → Sent to Replit
+2025-11-03 16:00:48,499 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:48,660 - INFO - 📊 ES @ 6872.50 → Sent to Replit
+2025-11-03 16:00:48,804 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:48,947 - INFO - 📊 ES @ 6872.50 → Sent to Replit
+2025-11-03 16:00:49,091 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:49,236 - INFO - 📊 ES @ 6872.50 → Sent to Replit
+2025-11-03 16:00:49,382 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:49,525 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:00:49,666 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:49,811 - INFO - 📊 ES @ 6872.50 → Sent to Replit
+2025-11-03 16:00:50,010 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:50,150 - INFO - 📊 ES @ 6872.50 → Sent to Replit
+2025-11-03 16:00:50,293 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:50,521 - INFO - 📊 ES @ 6872.50 → Sent to Replit
+2025-11-03 16:00:50,664 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:50,807 - INFO - 📊 ES @ 6872.25 → Sent to Replit
+2025-11-03 16:00:50,951 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:51,095 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:51,237 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:51,442 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:00:51,585 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:51,729 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:51,871 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:52,013 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:52,158 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:52,301 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:52,444 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:52,663 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:00:52,809 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:52,984 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:53,132 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:53,273 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:00:53,421 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:53,563 - INFO - 📊 ES @ 6873.25 → Sent to Replit
+2025-11-03 16:00:53,706 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:53,858 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:00:54,005 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:54,150 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:00:54,297 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:54,438 - INFO - 📊 ES @ 6873.25 → Sent to Replit
+2025-11-03 16:00:54,581 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:54,724 - INFO - 📊 ES @ 6873.25 → Sent to Replit
+2025-11-03 16:00:54,925 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:55,066 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:55,211 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:55,437 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:00:55,583 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:55,727 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:00:55,873 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:56,017 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:00:56,158 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:56,302 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:00:56,449 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:56,594 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:56,743 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:56,885 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:57,030 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:57,173 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:57,316 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:57,483 - INFO - 📊 ES @ 6872.50 → Sent to Replit
+2025-11-03 16:00:57,661 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:57,804 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:57,948 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:58,116 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:00:58,260 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:58,509 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:00:58,668 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:58,807 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:00:58,956 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:59,096 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:00:59,242 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:59,429 - INFO - 📊 ES @ 6873.25 → Sent to Replit
+2025-11-03 16:00:59,571 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:59,714 - INFO - 📊 ES @ 6873.25 → Sent to Replit
+2025-11-03 16:00:59,854 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:00:59,998 - INFO - 📊 ES @ 6873.50 → Sent to Replit
+2025-11-03 16:01:00,143 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:00,291 - INFO - 📊 ES @ 6873.50 → Sent to Replit
+2025-11-03 16:01:00,432 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:00,581 - INFO - 📊 ES @ 6873.25 → Sent to Replit
+2025-11-03 16:01:00,726 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:00,873 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:01:01,067 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:01,211 - INFO - 📊 ES @ 6872.50 → Sent to Replit
+2025-11-03 16:01:01,372 - INFO - ✅ Order executed: BUY 1 MES @ 0.00
+2025-11-03 16:01:01,514 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:01,661 - INFO - 📊 ES @ 6872.50 → Sent to Replit
+2025-11-03 16:01:01,806 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:01,949 - INFO - 📊 ES @ 6872.50 → Sent to Replit
+2025-11-03 16:01:02,091 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:02,237 - INFO - 📊 ES @ 6872.75 → Sent to Replit
+2025-11-03 16:01:02,381 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:02,531 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:01:02,673 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:02,817 - INFO - 📊 ES @ 6873.50 → Sent to Replit
+2025-11-03 16:01:02,961 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:03,104 - INFO - 📊 ES @ 6873.50 → Sent to Replit
+2025-11-03 16:01:03,248 - INFO - 📊 DOM: 10 bids, 9 asks → Sent to Replit
+2025-11-03 16:01:03,422 - INFO - 📊 ES @ 6873.25 → Sent to Replit
+2025-11-03 16:01:03,569 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:03,716 - INFO - 📊 ES @ 6873.25 → Sent to Replit
+2025-11-03 16:01:03,879 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:04,023 - INFO - 📊 ES @ 6873.75 → Sent to Replit
+2025-11-03 16:01:04,167 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:04,344 - INFO - 📊 ES @ 6873.75 → Sent to Replit
+2025-11-03 16:01:04,549 - INFO - 🔄 Executing BUY 1 MES (ID: order_1762182089935_3v95iopky)
+2025-11-03 16:01:04,549 - INFO - 📅 Calculated front month contract: ES 202512
+2025-11-03 16:01:04,692 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:04,836 - INFO - 📊 ES @ 6873.75 → Sent to Replit
+2025-11-03 16:01:04,981 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:05,124 - INFO - 📊 ES @ 6873.50 → Sent to Replit
+2025-11-03 16:01:05,369 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:05,573 - INFO - 📊 ES @ 6873.50 → Sent to Replit
+2025-11-03 16:01:05,574 - INFO - placeOrder: New order Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=394, clientId=1, action='BUY', totalQuantity=1), orderStatus=OrderStatus(orderId=394, status='PendingSubmit', filled=0.0, remaining=0.0, avgFillPrice=0.0, permId=0, parentId=0, lastFillPrice=0.0, clientId=0, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 1, 5, 574132, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0)], advancedError='')
+2025-11-03 16:01:05,716 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:05,859 - INFO - 📊 ES @ 6873.50 → Sent to Replit
+2025-11-03 16:01:05,860 - INFO - orderStatus: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=394, clientId=1, permId=1139328138, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=394, status='Inactive', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328138, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 1, 5, 574132, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 1, 5, 860204, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0)], advancedError='')
+2025-11-03 16:01:05,860 - ERROR - Error 201, reqId 394: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.
+2025-11-03 16:01:05,861 - WARNING - Canceled order: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=394, clientId=1, permId=1139328138, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=394, status='Cancelled', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328138, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 1, 5, 574132, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 1, 5, 860204, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 1, 5, 860204, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 394: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.', errorCode=201)], advancedError='')
+2025-11-03 16:01:05,861 - INFO - IBKR Error 201: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.
+2025-11-03 16:01:05,861 - INFO - orderStatus: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=394, clientId=1, permId=1139328138, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=394, status='Inactive', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1139328138, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 1, 5, 574132, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 1, 5, 860204, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 1, 5, 860204, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 394: Order rejected - reason:YOUR COMMODITY ACCOUNT LIQUIDATION VALUE PLUS EXCESS EQUITY MUST BE AT LEAST 2000.00USD (OR EQUIVALENT IN <br>OTHER CURRENCIES) TO EXECUTE THIS ORDER. YOU CAN ONLY CLOSEOUT YOUR COMMODITY POSITIONS.', errorCode=201), TradeLogEntry(time=datetime.datetime(2025, 11, 3, 16, 1, 5, 860204, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0)], advancedError='')
+2025-11-03 16:01:06,004 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:06,187 - INFO - 📊 ES @ 6873.50 → Sent to Replit
+2025-11-03 16:01:06,498 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:06,654 - INFO - 📊 ES @ 6873.75 → Sent to Replit
+2025-11-03 16:01:06,801 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:07,007 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:01:07,152 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:07,313 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:01:07,518 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:07,660 - INFO - 📊 ES @ 6873.00 → Sent to Replit
+2025-11-03 16:01:07,825 - INFO - 📊 DOM: 10 bids, 10 asks → Sent to Replit
+2025-11-03 16:01:08,030 - INFO - 📊 ES @ 6873.25 → Sent to Replit
