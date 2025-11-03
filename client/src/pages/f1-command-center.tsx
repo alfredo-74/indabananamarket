@@ -166,6 +166,11 @@ export default function F1CommandCenter() {
     refetchInterval: 1000,
   });
 
+  const { data: trades } = useQuery<any[]>({
+    queryKey: ["/api/trades"],
+    refetchInterval: 5000,
+  });
+
   const toggleAutoTradingMutation = useMutation({
     mutationFn: async (enabled: boolean) => {
       const response = await fetch("/api/auto-trading/toggle", {
@@ -188,6 +193,24 @@ export default function F1CommandCenter() {
   const sellPressure = valueMigration ? Math.max(0, -valueMigration.migration_strength * 50) : (cumulativeDelta < 0 ? Math.min(100, Math.abs(cumulativeDelta)) : 50);
   const deltaStrength = valueMigration ? Math.round(valueMigration.migration_strength * 100) : cumulativeDelta;
   const latestFootprint = footprintBars && footprintBars.length > 0 ? footprintBars[footprintBars.length - 1] : null;
+
+  // Calculate trade statistics
+  const closedTrades = trades?.filter(t => t.status === "CLOSED") || [];
+  const winningTrades = closedTrades.filter(t => t.pnl > 0).length;
+  const losingTrades = closedTrades.filter(t => t.pnl < 0).length;
+  const totalPnl = closedTrades.reduce((sum, t) => sum + (t.pnl || 0), 0);
+  
+  // Calculate max drawdown
+  let maxDrawdown = 0;
+  let peak = 0;
+  let runningPnl = 0;
+  closedTrades.forEach(trade => {
+    runningPnl += trade.pnl || 0;
+    if (runningPnl > peak) peak = runningPnl;
+    const drawdown = peak - runningPnl;
+    if (drawdown > maxDrawdown) maxDrawdown = drawdown;
+  });
+
 
   const [windowPositions, setWindowPositions] = useState<Record<string, { col: number; row: number }>>({
     'pressure': { col: 0, row: 0 },
@@ -775,7 +798,7 @@ export default function F1CommandCenter() {
           title="ACCOUNT"
           testId="window-account"
         >
-          <div className="space-y-1.5 text-xs">
+          <div className="space-y-1 text-[10px]">
             <div className="flex justify-between">
               <span className="text-gray-500">Balance:</span>
               <span className="text-green-400 font-bold tabular-nums">
@@ -793,12 +816,6 @@ export default function F1CommandCenter() {
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Entry:</span>
-              <span className="text-gray-400 font-mono text-xs tabular-nums">
-                {position?.entry_price ? position.entry_price.toFixed(2) : "--"}
-              </span>
-            </div>
-            <div className="flex justify-between">
               <span className="text-gray-500">Unreal P&L:</span>
               <span className={`font-bold tabular-nums ${
                 (position?.unrealized_pnl || 0) >= 0 ? "text-green-400" : "text-red-400"
@@ -806,12 +823,29 @@ export default function F1CommandCenter() {
                 {(position?.unrealized_pnl || 0) >= 0 ? "+" : ""}${position?.unrealized_pnl?.toFixed(2) || "0.00"}
               </span>
             </div>
+            
+            <div className="border-t border-gray-800 pt-1 mt-1"></div>
+            
             <div className="flex justify-between">
-              <span className="text-gray-500">Daily P&L:</span>
+              <span className="text-gray-500">Total P&L:</span>
               <span className={`font-bold tabular-nums ${
-                (status?.daily_pnl || 0) >= 0 ? "text-green-400" : "text-red-400"
+                totalPnl >= 0 ? "text-green-400" : "text-red-400"
               }`}>
-                {(status?.daily_pnl || 0) >= 0 ? "+" : ""}£{status?.daily_pnl?.toFixed(2) || "0.00"}
+                {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Wins / Losses:</span>
+              <span className="font-mono tabular-nums">
+                <span className="text-green-400">{winningTrades}</span>
+                <span className="text-gray-600"> / </span>
+                <span className="text-red-400">{losingTrades}</span>
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Max DD:</span>
+              <span className="text-red-400 font-bold tabular-nums">
+                -${maxDrawdown.toFixed(2)}
               </span>
             </div>
           </div>
