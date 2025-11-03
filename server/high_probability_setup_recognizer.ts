@@ -94,14 +94,34 @@ export class HighProbabilitySetupRecognizer {
     const openingDrive = this.detectOpeningDrive(context);
     if (openingDrive) newRecommendations.push(openingDrive);
 
-    // Update active recommendations
-    this.activeRecommendations.push(...newRecommendations);
+    // Add new recommendations only if they're not duplicates
+    for (const newRec of newRecommendations) {
+      if (!this.isDuplicate(newRec)) {
+        this.activeRecommendations.push(newRec);
+      }
+    }
+    
     this.cleanOldRecommendations();
     
     // Invalidate recommendations that no longer apply
     this.validateActiveRecommendations(context);
 
     return this.activeRecommendations.filter((r) => r.active);
+  }
+
+  /**
+   * Check if a recommendation is a duplicate of an existing active recommendation
+   * Considers setup type, entry price, and direction
+   */
+  private isDuplicate(newRec: TradeRecommendation): boolean {
+    const priceThreshold = 0.25; // Consider duplicate if entry within 0.25 points
+    
+    return this.activeRecommendations.some(existing => 
+      existing.active &&
+      existing.setup_type === newRec.setup_type &&
+      existing.direction === newRec.direction &&
+      Math.abs(existing.entry_price - newRec.entry_price) < priceThreshold
+    );
   }
 
   /**

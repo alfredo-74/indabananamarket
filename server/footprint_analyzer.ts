@@ -37,8 +37,8 @@ export interface FootprintBar {
   poc_price: number;  // Point of Control - price with highest volume
   
   // Imbalance detection
-  stacked_buying: boolean;  // 3+ consecutive levels with ask dominance
-  stacked_selling: boolean; // 3+ consecutive levels with bid dominance
+  stacked_buying: number;  // Count of consecutive levels with ask dominance
+  stacked_selling: number; // Count of consecutive levels with bid dominance
   imbalance_count: number;  // Number of imbalanced levels
   
   // Delta statistics
@@ -110,8 +110,8 @@ export class FootprintAnalyzer {
       total_ask_volume: 0,
       bar_delta: 0,
       poc_price: 0,
-      stacked_buying: false,
-      stacked_selling: false,
+      stacked_buying: 0,
+      stacked_selling: 0,
       imbalance_count: 0,
       max_positive_delta: 0,
       max_negative_delta: 0,
@@ -232,6 +232,7 @@ export class FootprintAnalyzer {
   
   /**
    * Detect stacked buying or selling (3+ consecutive imbalanced levels)
+   * Tracks the MAXIMUM consecutive count, not just if it exists
    */
   private detectStackedImbalances(): void {
     if (!this.currentBar || this.currentBar.price_levels.length < this.stackedImbalanceCount) {
@@ -240,24 +241,24 @@ export class FootprintAnalyzer {
     
     let consecutiveBuying = 0;
     let consecutiveSelling = 0;
+    let maxBuyingStack = 0;
+    let maxSellingStack = 0;
     
-    for (const level of this.currentBar.price_levels) {
+    // Sort price levels by price (ascending) for proper consecutive detection
+    const sortedLevels = [...this.currentBar.price_levels].sort((a, b) => a.price - b.price);
+    
+    for (const level of sortedLevels) {
       if (level.imbalanced) {
         if (level.delta > 0) {
-          // Buying imbalance
+          // Buying imbalance (ask volume > bid volume)
           consecutiveBuying++;
           consecutiveSelling = 0;
+          maxBuyingStack = Math.max(maxBuyingStack, consecutiveBuying);
         } else {
-          // Selling imbalance
+          // Selling imbalance (bid volume > ask volume)
           consecutiveSelling++;
           consecutiveBuying = 0;
-        }
-        
-        if (consecutiveBuying >= this.stackedImbalanceCount) {
-          this.currentBar.stacked_buying = true;
-        }
-        if (consecutiveSelling >= this.stackedImbalanceCount) {
-          this.currentBar.stacked_selling = true;
+          maxSellingStack = Math.max(maxSellingStack, consecutiveSelling);
         }
       } else {
         // Reset counters if not imbalanced
@@ -265,6 +266,10 @@ export class FootprintAnalyzer {
         consecutiveSelling = 0;
       }
     }
+    
+    // Store the maximum consecutive counts (only if >= threshold)
+    this.currentBar.stacked_buying = maxBuyingStack >= this.stackedImbalanceCount ? maxBuyingStack : 0;
+    this.currentBar.stacked_selling = maxSellingStack >= this.stackedImbalanceCount ? maxSellingStack : 0;
   }
   
   /**
