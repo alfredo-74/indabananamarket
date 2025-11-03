@@ -189,9 +189,16 @@ export default function F1CommandCenter() {
   const latestCandle = candles && candles.length > 0 ? candles[candles.length - 1] : null;
   const marketCondition = hypothesis?.condition || "UNKNOWN";
   const cumulativeDelta = latestCandle?.cumulative_delta || 0;
-  const buyPressure = valueMigration ? Math.max(0, valueMigration.migration_strength * 50) : (cumulativeDelta > 0 ? Math.min(100, cumulativeDelta) : 50);
-  const sellPressure = valueMigration ? Math.max(0, -valueMigration.migration_strength * 50) : (cumulativeDelta < 0 ? Math.min(100, Math.abs(cumulativeDelta)) : 50);
-  const deltaStrength = valueMigration ? Math.round(valueMigration.migration_strength * 100) : cumulativeDelta;
+  
+  // Normalize cumulative delta to 0-100% range for pressure gauges
+  // Use buy/sell volume ratio to calculate pressure
+  const buyVolume = latestCandle?.buy_volume || 0;
+  const sellVolume = latestCandle?.sell_volume || 0;
+  const totalVolume = buyVolume + sellVolume;
+  const buyPressure = totalVolume > 0 ? Math.round((buyVolume / totalVolume) * 100) : 50;
+  const sellPressure = totalVolume > 0 ? Math.round((sellVolume / totalVolume) * 100) : 50;
+  const deltaStrength = cumulativeDelta;
+  
   const latestFootprint = footprintBars && footprintBars.length > 0 ? footprintBars[footprintBars.length - 1] : null;
 
   // Calculate trade statistics
