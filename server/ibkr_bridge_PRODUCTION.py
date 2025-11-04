@@ -37,6 +37,13 @@ class IBKRBridge:
         self.unrealized_pnl = 0.0
         self.realized_pnl = 0.0
         
+        # Account data
+        self.account_balance = 0.0
+        self.net_liquidation = 0.0
+        self.available_funds = 0.0
+        self.daily_pnl = 0.0
+        self.last_account_update = 0
+        
         # Level II DOM data
         self.dom_bids = []
         self.dom_asks = []
@@ -170,6 +177,58 @@ class IBKRBridge:
         except Exception as e:
             print(f"Error in order status handler: {e}", file=sys.stderr)
     
+    async def _fetch_account_data(self):
+        """Fetch comprehensive account data from IBKR"""
+        try:
+            account_summary = self.ib.accountSummary()
+            
+            for item in account_summary:
+                if item.tag == 'NetLiquidation':
+                    self.net_liquidation = float(item.value)
+                elif item.tag == 'TotalCashValue':
+                    self.account_balance = float(item.value)
+                elif item.tag == 'AvailableFunds':
+                    self.available_funds = float(item.value)
+                elif item.tag == 'UnrealizedPnL':
+                    self.unrealized_pnl = float(item.value)
+                elif item.tag == 'RealizedPnL':
+                    self.realized_pnl = float(item.value)
+                elif item.tag == 'DailyPnL':
+                    self.daily_pnl = float(item.value)
+            
+            print(f"💰 Account: Balance=${self.account_balance:.2f}, NetLiq=${self.net_liquidation:.2f}, DailyPnL=${self.daily_pnl:.2f}", file=sys.stderr)
+            
+        except Exception as e:
+            print(f"Error fetching account data: {e}", file=sys.stderr)
+    
+    async def _forward_account_data(self):
+        """Forward account data to Replit backend"""
+        try:
+            data = {
+                "type": "account_data",
+                "account_balance": self.account_balance,
+                "net_liquidation": self.net_liquidation,
+                "available_funds": self.available_funds,
+                "unrealized_pnl": self.unrealized_pnl,
+                "realized_pnl": self.realized_pnl,
+                "daily_pnl": self.daily_pnl,
+                "timestamp": int(datetime.now().timestamp() * 1000)
+            }
+            
+            response = requests.post(
+                f"{self.replit_url}/api/bridge/data",
+                json=data,
+                timeout=2
+            )
+            
+            if response.status_code == 200:
+                print(f"📤 Account data sent: Balance=${self.account_balance:.2f}, Daily PnL=${self.daily_pnl:.2f}", file=sys.stderr)
+            else:
+                print(f"⚠️ Account data update failed: {response.status_code}", file=sys.stderr)
+                
+        except Exception as e:
+            print(f"Error forwarding account data: {e}", file=sys.stderr)
+    
     async def _forward_portfolio_update(self):
         """Forward portfolio updates to Replit backend"""
         try:
@@ -177,11 +236,10 @@ class IBKRBridge:
             market_price = self.last_price if self.last_price > 0 else (self.entry_price or 0)
             
             data = {
-                "type": "portfolio",
-                "position": self.current_position,
-                "average_cost": self.entry_price if self.entry_price else 0,
+                "type": "portfolio_update",
+                "contracts": self.current_position,
+                "entry_price": self.entry_price if self.entry_price else 0,
                 "unrealized_pnl": self.unrealized_pnl,
-                "realized_pnl": self.realized_pnl,
                 "market_price": market_price
             }
             
@@ -280,8 +338,20 @@ class IBKRBridge:
         """Stream real-time market data and DOM to Replit"""
         print("🚀 Starting real-time data stream...", file=sys.stderr)
         
+        # Fetch account data immediately on startup
+        await self._fetch_account_data()
+        await self._forward_account_data()
+        
         while self.connected:
             try:
+                current_time = datetime.now().timestamp()
+                
+                # Fetch account data every 30 seconds
+                if current_time - self.last_account_update >= 30:
+                    await self._fetch_account_data()
+                    await self._forward_account_data()
+                    self.last_account_update = current_time
+                
                 ticker = self.ib.ticker(self.display_contract)
                 
                 # Update local values
