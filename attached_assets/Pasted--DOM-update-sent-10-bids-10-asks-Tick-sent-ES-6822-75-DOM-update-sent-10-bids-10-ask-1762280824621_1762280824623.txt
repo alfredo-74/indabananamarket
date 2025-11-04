@@ -1,0 +1,536 @@
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6819.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6820.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6822.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6821.50
+📤 DOM update sent (10 bids, 10 asks)
+⚠️ Error in data stream: HTTPSConnectionPool(host='bananamarket.replit.app', port=443): Read timed out. (read timeout=1)
+Traceback (most recent call last):
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 534, in _make_request
+    response = conn.getresponse()
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/urllib3/connection.py", line 565, in getresponse
+    httplib_response = super().getresponse()
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/http/client.py", line 1374, in getresponse
+    response.begin()
+  File "/usr/lib/python3.11/http/client.py", line 318, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/http/client.py", line 279, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/socket.py", line 706, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/ssl.py", line 1311, in recv_into
+    return self.read(nbytes, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/ssl.py", line 1167, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TimeoutError: The read operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/requests/adapters.py", line 644, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/urllib3/util/retry.py", line 474, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/urllib3/util/util.py", line 39, in reraise
+    raise value
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 536, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/urllib3/connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='bananamarket.replit.app', port=443): Read timed out. (read timeout=1)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/alfredo/ibkr_bridge_PRODUCTION.py", line 308, in stream_market_data
+    response = requests.post(
+               ^^^^^^^^^^^^^^
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/ibkr_env/lib/python3.11/site-packages/requests/adapters.py", line 690, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='bananamarket.replit.app', port=443): Read timed out. (read timeout=1)
