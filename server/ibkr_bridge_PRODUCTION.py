@@ -305,11 +305,12 @@ class IBKRBridge:
                     "timestamp": int(datetime.now().timestamp() * 1000)
                 }
                 
-                requests.post(
+                response = requests.post(
                     f"{self.replit_url}/api/bridge/data",
                     json=market_data,
                     timeout=1
                 )
+                print(f"📤 Tick sent: ES @ {self.last_price:.2f}", file=sys.stderr)
                 
                 # Send DOM data
                 if self.dom_bids or self.dom_asks:
@@ -325,12 +326,14 @@ class IBKRBridge:
                         json=dom_data,
                         timeout=1
                     )
+                    print(f"📤 DOM update sent ({len(self.dom_bids)} bids, {len(self.dom_asks)} asks)", file=sys.stderr)
                 
                 await asyncio.sleep(0.5)  # 500ms updates
                 
             except Exception as e:
-                if "Connection" in str(e):
-                    print(f"⚠️ Connection error (Replit may be restarting): {e}", file=sys.stderr)
+                print(f"⚠️ Error in data stream: {e}", file=sys.stderr)
+                import traceback
+                traceback.print_exc(file=sys.stderr)
                 await asyncio.sleep(1)
     
     async def place_order(self, action: str, quantity: int):

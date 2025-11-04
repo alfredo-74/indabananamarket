@@ -301,6 +301,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         res.json({ type: 'ack' });
       }
+      else if (message.type === 'historical_bars') {
+        // Handle historical data for CVA calculation
+        bridgeLastHeartbeat = Date.now();
+        const { date, bars } = message;
+        
+        if (!date || !bars || bars.length === 0) {
+          console.log(`[CVA] Skipping invalid day: ${date}`);
+          return res.json({ type: 'ack' });
+        }
+        
+        console.log(`[CVA] Processing ${date}: ${bars.length} bars`);
+        
+        // Build volume profile from 5-minute bars for this day
+        const dailyProfileCalc = new VolumeProfileCalculator(0.25);
+        
+        for (const bar of bars) {
+          // Estimate buy/sell volume from bar data
+          const totalVol = bar.volume;
+          const isGreen = bar.close > bar.open;
+          const buyVolume = isGreen ? totalVol * 0.6 : totalVol * 0.4;
+          const sellVolume = totalVol - buyVolume;
+          
+          // Add each price level to the profile
+          dailyProfileCalc.addTransaction(bar.close, buyVolume, 'BUY');
+          dailyProfileCalc.addTransaction(bar.close, sellVolume, 'SELL');
+        }
+        
+        const dailyProfile = dailyProfileCalc.getProfile();
+        if (dailyProfile) {
+          // Add this day's profile to the composite
+          compositeProfileSystem.addDayProfile(new Date(date), dailyProfile);
+          console.log(`[CVA] Added ${date} to composite - POC: ${dailyProfile.poc.toFixed(2)}, VAH: ${dailyProfile.vah.toFixed(2)}, VAL: ${dailyProfile.val.toFixed(2)}`);
+          
+          // Update CVA stacking with the new composite
+          const cva = compositeProfileSystem.getCompositeProfile();
+          if (cva) {
+            cvaStackingManager.addCVA(
+              new Date(date),
+              { vah: cva.composite_vah, val: cva.composite_val, poc: cva.composite_poc }
+            );
+          }
+        }
+        
+        res.json({ type: 'ack' });
+      }
       else {
         res.json({ type: 'ack' });
       }
