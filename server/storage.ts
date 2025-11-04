@@ -298,9 +298,9 @@ export class MemStorage implements IStorage {
       val: profile.val,
       total_volume: profile.total_volume,
       profile_type: profile.profile_type,
-      hvn_levels: profile.hvn_levels,
-      lvn_levels: profile.lvn_levels,
-      profile_data: profile,
+      hvn_levels: [...profile.hvn_levels] as number[],
+      lvn_levels: [...profile.lvn_levels] as number[],
+      profile_data: profile as any,
     };
     
     try {
