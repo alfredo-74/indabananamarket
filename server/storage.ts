@@ -14,8 +14,14 @@ import type {
   AbsorptionEvent,
   DiscordLevel,
   FootprintBar,
+  InsertDailyProfile,
+  InsertCompositeProfile,
+  InsertHistoricalCVA,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
+import { db } from "./db";
+import { dailyProfiles, compositeProfiles, historicalCVAs } from "@shared/schema";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
   getCandles(): Promise<VolumetricCandle[]>;
@@ -272,11 +278,53 @@ export class MemStorage implements IStorage {
   }
   
   async getDailyProfiles(): Promise<Array<{ date: string; profile: VolumeProfile }>> {
-    return this.dailyProfiles;
+    try {
+      const dbProfiles = await db.select().from(dailyProfiles).orderBy(desc(dailyProfiles.date)).limit(10);
+      return dbProfiles.map(p => ({
+        date: p.date,
+        profile: p.profile_data
+      }));
+    } catch (error) {
+      console.error("[DB] Failed to load daily profiles, using memory:", error);
+      return this.dailyProfiles;
+    }
   }
   
   async addDailyProfile(date: string, profile: VolumeProfile): Promise<void> {
-    // Check if this date already exists
+    const insertData: InsertDailyProfile = {
+      date,
+      poc: profile.poc,
+      vah: profile.vah,
+      val: profile.val,
+      total_volume: profile.total_volume,
+      profile_type: profile.profile_type,
+      hvn_levels: profile.hvn_levels,
+      lvn_levels: profile.lvn_levels,
+      profile_data: profile,
+    };
+    
+    try {
+      await db.insert(dailyProfiles)
+        .values(insertData)
+        .onConflictDoUpdate({
+          target: dailyProfiles.date,
+          set: {
+            poc: insertData.poc,
+            vah: insertData.vah,
+            val: insertData.val,
+            total_volume: insertData.total_volume,
+            profile_type: insertData.profile_type,
+            hvn_levels: insertData.hvn_levels,
+            lvn_levels: insertData.lvn_levels,
+            profile_data: insertData.profile_data,
+          },
+        });
+      console.log(`[DB] ✅ Persisted daily profile for ${date}`);
+    } catch (error) {
+      console.error(`[DB] ⚠️  Failed to persist daily profile for ${date}:`, error);
+    }
+    
+    // Also update memory cache
     const existingIndex = this.dailyProfiles.findIndex(d => d.date === date);
     if (existingIndex !== -1) {
       this.dailyProfiles[existingIndex] = { date, profile };

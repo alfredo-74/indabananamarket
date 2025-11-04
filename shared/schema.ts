@@ -582,3 +582,57 @@ export const webSocketMessageSchema = z.discriminatedUnion("type", [
 ]);
 
 export type WebSocketMessage = z.infer<typeof webSocketMessageSchema>;
+
+// Database Tables for Persistence
+import { pgTable, serial, varchar, real, integer, timestamp, jsonb, boolean } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+
+export const dailyProfiles = pgTable("daily_profiles", {
+  id: serial("id").primaryKey(),
+  date: varchar("date").notNull().unique(),
+  poc: real("poc").notNull(),
+  vah: real("vah").notNull(),
+  val: real("val").notNull(),
+  total_volume: real("total_volume").notNull(),
+  profile_type: varchar("profile_type"),
+  hvn_levels: jsonb("hvn_levels").$type<number[]>().notNull(),
+  lvn_levels: jsonb("lvn_levels").$type<number[]>().notNull(),
+  profile_data: jsonb("profile_data").$type<VolumeProfile>().notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const compositeProfiles = pgTable("composite_profiles", {
+  id: serial("id").primaryKey(),
+  composite_vah: real("composite_vah").notNull(),
+  composite_val: real("composite_val").notNull(),
+  composite_poc: real("composite_poc").notNull(),
+  total_volume: real("total_volume").notNull(),
+  days_included: integer("days_included").notNull(),
+  oldest_day: timestamp("oldest_day").notNull(),
+  newest_day: timestamp("newest_day").notNull(),
+  profile_shape: varchar("profile_shape"),
+  updated_at: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const historicalCVAs = pgTable("historical_cvas", {
+  id: serial("id").primaryKey(),
+  date: varchar("date").notNull().unique(),
+  poc: real("poc").notNull(),
+  vah: real("vah").notNull(),
+  val: real("val").notNull(),
+  character: varchar("character").notNull(),
+  days_included: integer("days_included").notNull(),
+  migration_strength: real("migration_strength").notNull(),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const insertDailyProfileSchema = createInsertSchema(dailyProfiles).omit({ id: true, created_at: true });
+export const insertCompositeProfileSchema = createInsertSchema(compositeProfiles).omit({ id: true, updated_at: true });
+export const insertHistoricalCVASchema = createInsertSchema(historicalCVAs).omit({ id: true, created_at: true });
+
+export type DailyProfileDB = typeof dailyProfiles.$inferSelect;
+export type InsertDailyProfile = z.infer<typeof insertDailyProfileSchema>;
+export type CompositeProfileDB = typeof compositeProfiles.$inferSelect;
+export type InsertCompositeProfile = z.infer<typeof insertCompositeProfileSchema>;
+export type HistoricalCVADB = typeof historicalCVAs.$inferSelect;
+export type InsertHistoricalCVA = z.infer<typeof insertHistoricalCVASchema>;
