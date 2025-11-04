@@ -186,6 +186,25 @@ export default function F1CommandCenter() {
     },
   });
 
+  const closePositionMutation = useMutation({
+    mutationFn: async () => {
+      if (!position || position.contracts === 0) {
+        throw new Error("No position to close");
+      }
+      
+      const action = position.contracts > 0 ? "SELL" : "BUY";
+      const quantity = Math.abs(position.contracts);
+      
+      return await apiRequest("/api/execute-order", {
+        method: "POST",
+        body: JSON.stringify({ action, quantity }),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/position"] });
+    },
+  });
+
   const latestCandle = candles && candles.length > 0 ? candles[candles.length - 1] : null;
   const marketCondition = hypothesis?.condition || "UNKNOWN";
   const cumulativeDelta = latestCandle?.cumulative_delta || 0;
@@ -830,6 +849,20 @@ export default function F1CommandCenter() {
                 {(position?.unrealized_pnl || 0) >= 0 ? "+" : ""}${position?.unrealized_pnl?.toFixed(2) || "0.00"}
               </span>
             </div>
+            
+            {position && position.contracts !== 0 && (
+              <Button
+                onClick={() => closePositionMutation.mutate()}
+                disabled={closePositionMutation.isPending}
+                size="sm"
+                variant="destructive"
+                className="w-full text-[10px] h-6 mt-1"
+                data-testid="button-close-position"
+              >
+                <AlertTriangle className="h-3 w-3 mr-1" />
+                CLOSE POSITION
+              </Button>
+            )}
             
             <div className="border-t border-gray-800 pt-1 mt-1"></div>
             
