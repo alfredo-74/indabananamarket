@@ -337,10 +337,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Update CVA stacking with the new composite
           const cva = compositeProfileSystem.getCompositeProfile();
           if (cva) {
-            cvaStackingManager.addCVA(
-              new Date(date),
-              { vah: cva.composite_vah, val: cva.composite_val, poc: cva.composite_poc }
-            );
+            cvaStackingManager.addHistoricalCVA(date, cva, null);
           }
         }
         
