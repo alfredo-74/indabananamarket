@@ -59,7 +59,7 @@ class IBKRBridge:
                 self.display_contract = sorted(display_contracts, key=lambda c: c.lastTradeDateOrContractMonth)[0]
                 print(f"✅ ES display contract: {self.display_contract.lastTradeDateOrContractMonth}", file=sys.stderr)
             else:
-                self.display_contract = Future('ES', '202503', 'CME')
+                self.display_contract = Future('ES', '202512', 'CME')
                 await self.ib.qualifyContractsAsync(self.display_contract)
             
             # Set up MES futures contract for TRADING
@@ -70,7 +70,7 @@ class IBKRBridge:
                 self.trade_contract = sorted(trade_contracts, key=lambda c: c.lastTradeDateOrContractMonth)[0]
                 print(f"✅ MES trading contract: {self.trade_contract.lastTradeDateOrContractMonth}", file=sys.stderr)
             else:
-                self.trade_contract = Future('MES', '202503', 'CME')
+                self.trade_contract = Future('MES', '202512', 'CME')
                 await self.ib.qualifyContractsAsync(self.trade_contract)
             
             # Request REAL-TIME Level II market data
