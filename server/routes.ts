@@ -1146,12 +1146,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (position) {
       position.current_price = mockPrice;
       
-      if (position.entry_price !== null && position.contracts !== 0) {
-        const priceDiff = position.side === "LONG" 
-          ? mockPrice - position.entry_price 
-          : position.entry_price - mockPrice;
-        position.unrealized_pnl = priceDiff * position.contracts * 5; // MES multiplier
-      }
+      // DO NOT recalculate unrealized_pnl here - only use value from IBKR bridge
+      // The bridge sends accurate P&L directly from IBKR which knows the correct contract multiplier
       
       await storage.setPosition(position);
       broadcast({
