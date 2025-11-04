@@ -331,7 +331,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const dailyProfile = dailyProfileCalc.getProfile();
         if (dailyProfile) {
           // Add this day's profile to the composite
-          compositeProfileSystem.addDayProfile(new Date(date), dailyProfile);
+          compositeProfileSystem.addDailyProfile(date, dailyProfile);
           console.log(`[CVA] Added ${date} to composite - POC: ${dailyProfile.poc.toFixed(2)}, VAH: ${dailyProfile.vah.toFixed(2)}, VAL: ${dailyProfile.val.toFixed(2)}`);
           
           // Update CVA stacking with the new composite
