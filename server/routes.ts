@@ -346,6 +346,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         res.json({ type: 'ack' });
       }
+      else if (message.type === 'portfolio_update') {
+        // Handle portfolio/position updates from IBKR
+        bridgeLastHeartbeat = Date.now();
+        
+        const { contracts, entry_price, unrealized_pnl } = message;
+        const currentPosition = await storage.getPosition();
+        const status = await storage.getSystemStatus();
+        
+        // Check if a trade just closed (position went from non-zero to zero)
+        if (currentPosition && currentPosition.contracts !== 0 && contracts === 0) {
+          // Trade closed! Record it
+          const realized_pnl = unrealized_pnl || 0; // The final P&L when trade closed
+          const trade_side = currentPosition.side;
+          
+          // Create trade record
+          const trade = {
+            entry_time: currentPosition.entry_time || Date.now() - 60000, // Fallback to 1 min ago if no entry time
+            exit_time: Date.now(),
+            entry_price: currentPosition.entry_price || 0,
+            exit_price: mockPrice,
+            quantity: Math.abs(currentPosition.contracts),
+            side: trade_side,
+            pnl: realized_pnl,
+            commission: 2.50, // MES commission per contract (estimate)
+            regime: "UNKNOWN", // Will be set by trading logic
+            setup_type: "MANUAL_CLOSE", // Manual close via button or bridge
+            session: "RTH", // Assume RTH for now
+          };
+          
+          await storage.addTrade(trade);
+          console.log(`[PORTFOLIO] Trade closed: ${trade_side} ${Math.abs(currentPosition.contracts)}x @ ${trade.entry_price.toFixed(2)} → ${trade.exit_price.toFixed(2)}, P&L: ${realized_pnl >= 0 ? '+' : ''}$${realized_pnl.toFixed(2)}`);
+          
+          // Update daily P&L
+          if (status) {
+            status.daily_pnl = (status.daily_pnl || 0) + realized_pnl;
+            await storage.setSystemStatus(status);
+          }
+        }
+        
+        // Update position
+        await storage.setPosition({
+          contracts,
+          entry_price: contracts !== 0 ? entry_price : null,
+          current_price: mockPrice,
+          unrealized_pnl: contracts !== 0 ? unrealized_pnl : 0,
+          realized_pnl: 0, // Reset after recording trade
+          side: contracts > 0 ? "LONG" : contracts < 0 ? "SHORT" : "FLAT",
+          entry_time: contracts !== 0 && currentPosition?.contracts === 0 ? Date.now() : currentPosition?.entry_time,
+        });
+        
+        console.log(`[PORTFOLIO] Position update: ${contracts} contracts, uPnL: ${unrealized_pnl?.toFixed(2) || 0}`);
+        res.json({ type: 'ack' });
+      }
       else {
         res.json({ type: 'ack' });
       }
