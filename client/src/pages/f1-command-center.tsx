@@ -828,7 +828,7 @@ export default function F1CommandCenter() {
             <div className="flex justify-between">
               <span className="text-gray-500">Balance:</span>
               <span className="text-green-400 font-bold tabular-nums">
-                ${status?.capital?.toFixed(0) || "0"}
+                £{status?.account_balance?.toFixed(0) || status?.capital?.toFixed(0) || "0"}
               </span>
             </div>
             <div className="flex justify-between">
@@ -846,7 +846,7 @@ export default function F1CommandCenter() {
               <span className={`font-bold tabular-nums ${
                 (position?.unrealized_pnl || 0) >= 0 ? "text-green-400" : "text-red-400"
               }`}>
-                {(position?.unrealized_pnl || 0) >= 0 ? "+" : ""}${position?.unrealized_pnl?.toFixed(2) || "0.00"}
+                {(position?.unrealized_pnl || 0) >= 0 ? "+" : ""}£{position?.unrealized_pnl?.toFixed(2) || "0.00"}
               </span>
             </div>
             
@@ -871,7 +871,7 @@ export default function F1CommandCenter() {
               <span className={`font-bold tabular-nums ${
                 totalPnl >= 0 ? "text-green-400" : "text-red-400"
               }`}>
-                {totalPnl >= 0 ? "+" : ""}${totalPnl.toFixed(2)}
+                {totalPnl >= 0 ? "+" : ""}£{totalPnl.toFixed(2)}
               </span>
             </div>
             <div className="flex justify-between">
@@ -885,7 +885,7 @@ export default function F1CommandCenter() {
             <div className="flex justify-between">
               <span className="text-gray-500">Max DD:</span>
               <span className="text-red-400 font-bold tabular-nums">
-                -${maxDrawdown.toFixed(2)}
+                -£{maxDrawdown.toFixed(2)}
               </span>
             </div>
           </div>
