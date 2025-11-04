@@ -207,17 +207,17 @@ export function BacktestPanel() {
                     />
                     <MetricCard
                       label="Gross P&L"
-                      value={`£${(results.metrics.gross_pnl * 0.79).toFixed(2)}`}
+                      value={`$${results.metrics.gross_pnl.toFixed(2)}`}
                       positive={results.metrics.gross_pnl > 0}
                     />
                     <MetricCard
                       label="Commissions"
-                      value={`£${(results.metrics.total_commissions * 0.79).toFixed(2)}`}
+                      value={`$${results.metrics.total_commissions.toFixed(2)}`}
                       icon={<TrendingDown className="w-4 h-4" />}
                     />
                     <MetricCard
                       label="Net P&L"
-                      value={`£${(results.metrics.total_pnl * 0.79).toFixed(2)}`}
+                      value={`$${results.metrics.total_pnl.toFixed(2)}`}
                       positive={results.metrics.total_pnl > 0}
                     />
                     <MetricCard
@@ -242,11 +242,11 @@ export function BacktestPanel() {
                     />
                     <MetricCard
                       label="Avg Win"
-                      value={`£${(results.metrics.avg_win * 0.79).toFixed(2)}`}
+                      value={`$${results.metrics.avg_win.toFixed(2)}`}
                     />
                     <MetricCard
                       label="Avg Loss"
-                      value={`£${(results.metrics.avg_loss * 0.79).toFixed(2)}`}
+                      value={`$${results.metrics.avg_loss.toFixed(2)}`}
                     />
                   </div>
                 </CardContent>
@@ -316,7 +316,7 @@ export function BacktestPanel() {
                             <td className="p-2 font-mono">
                               {trade.pnl !== null ? (
                                 <span className={trade.pnl >= 0 ? "text-green-500" : "text-red-500"}>
-                                  £{(trade.pnl * 0.79).toFixed(2)}
+                                  ${trade.pnl.toFixed(2)}
                                 </span>
                               ) : (
                                 "-"

@@ -828,7 +828,7 @@ export default function F1CommandCenter() {
             <div className="flex justify-between">
               <span className="text-gray-500">Balance:</span>
               <span className="text-green-400 font-bold tabular-nums">
-                £{status?.capital?.toFixed(0) || "0"}
+                ${status?.capital?.toFixed(0) || "0"}
               </span>
             </div>
             <div className="flex justify-between">

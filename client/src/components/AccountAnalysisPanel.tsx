@@ -99,13 +99,11 @@ export function AccountAnalysisPanel() {
   }
 
   const formatCurrency = (value: number) => {
-    // Convert USD to GBP (assuming 0.79 rate)
-    const gbpValue = value * 0.79;
-    return new Intl.NumberFormat("en-GB", {
+    return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "GBP",
+      currency: "USD",
       minimumFractionDigits: 2,
-    }).format(gbpValue);
+    }).format(value);
   };
 
   const formatPercent = (value: number) => {
