@@ -359,20 +359,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Trade closed! Record it
           const realized_pnl = unrealized_pnl || 0; // The final P&L when trade closed
           const trade_side = currentPosition.side;
+          const exit_time = Date.now();
           
-          // Create trade record
+          // Create trade record matching schema
           const trade = {
-            entry_time: currentPosition.entry_time || Date.now() - 60000, // Fallback to 1 min ago if no entry time
-            exit_time: Date.now(),
+            timestamp: exit_time - 60000, // Entry time estimate (1 min ago)
+            type: trade_side === "LONG" ? "BUY" : "SELL" as "BUY" | "SELL",
             entry_price: currentPosition.entry_price || 0,
             exit_price: mockPrice,
-            quantity: Math.abs(currentPosition.contracts),
-            side: trade_side,
+            contracts: Math.abs(currentPosition.contracts),
             pnl: realized_pnl,
-            commission: 2.50, // MES commission per contract (estimate)
-            regime: "UNKNOWN", // Will be set by trading logic
-            setup_type: "MANUAL_CLOSE", // Manual close via button or bridge
-            session: "RTH", // Assume RTH for now
+            duration_ms: 60000, // Estimate
+            regime: "UNKNOWN",
+            cumulative_delta: 0,
+            status: "CLOSED" as "CLOSED",
+            orderflow_signal: "Manual close via bridge",
           };
           
           await storage.addTrade(trade);
@@ -391,9 +392,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           entry_price: contracts !== 0 ? entry_price : null,
           current_price: mockPrice,
           unrealized_pnl: contracts !== 0 ? unrealized_pnl : 0,
-          realized_pnl: 0, // Reset after recording trade
+          realized_pnl: 0,
           side: contracts > 0 ? "LONG" : contracts < 0 ? "SHORT" : "FLAT",
-          entry_time: contracts !== 0 && currentPosition?.contracts === 0 ? Date.now() : currentPosition?.entry_time,
         });
         
         console.log(`[PORTFOLIO] Position update: ${contracts} contracts, uPnL: ${unrealized_pnl?.toFixed(2) || 0}`);
