@@ -1,0 +1,431 @@
+alfredo@penguin:~$ python3 server/ibkr_bridge_v2.py
+python3: can't open file '/home/alfredo/server/ibkr_bridge_v2.py': [Errno 2] No such file or directory
+alfredo@penguin:~$ python server/ibkr_bridge_v2.py
+-bash: python: command not found
+alfredo@penguin:~$ find ~ -name "ibkr_bridge_v2.py" 2>/dev/null
+/home/alfredo/ibkr_bridge_v2.py
+alfredo@penguin:~$ python3 /home/alfredo/ibkr_bridge_v2.py
+======================================================================
+🏎️  IBKR BRIDGE V2 WITH REAL ACCOUNT DATA
+======================================================================
+🔗 Production URL: https://bananamarket.replit.app
+======================================================================
+🚀 Bridge V2 initialized - Will forward data to: https://bananamarket.replit.app
+Connecting to IB Gateway on port 4002...
+✅ Connected to IBKR Paper Trading
+Ambiguous contract: Future(symbol='ES', exchange='CME'), possibles are [Contract(secType='FUT', conId=495512563, symbol='ES', lastTradeDateOrContractMonth='20251219', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ5', tradingClass='ES'), Contract(secType='FUT', conId=515416632, symbol='ES', lastTradeDateOrContractMonth='20261218', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ6', tradingClass='ES'), Contract(secType='FUT', conId=586139767, symbol='ES', lastTradeDateOrContractMonth='20271217', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ7', tradingClass='ES'), Contract(secType='FUT', conId=649180661, symbol='ES', lastTradeDateOrContractMonth='20270617', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM7', tradingClass='ES'), Contract(secType='FUT', conId=649180666, symbol='ES', lastTradeDateOrContractMonth='20280317', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH8', tradingClass='ES'), Contract(secType='FUT', conId=649180671, symbol='ES', lastTradeDateOrContractMonth='20260918', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU6', tradingClass='ES'), Contract(secType='FUT', conId=649180675, symbol='ES', lastTradeDateOrContractMonth='20280915', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU8', tradingClass='ES'), Contract(secType='FUT', conId=649180678, symbol='ES', lastTradeDateOrContractMonth='20260618', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM6', tradingClass='ES'), Contract(secType='FUT', conId=649180681, symbol='ES', lastTradeDateOrContractMonth='20270917', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU7', tradingClass='ES'), Contract(secType='FUT', conId=649180684, symbol='ES', lastTradeDateOrContractMonth='20270319', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH7', tradingClass='ES'), Contract(secType='FUT', conId=649180690, symbol='ES', lastTradeDateOrContractMonth='20280616', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM8', tradingClass='ES'), Contract(secType='FUT', conId=649180695, symbol='ES', lastTradeDateOrContractMonth='20260320', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH6', tradingClass='ES'), Contract(secType='FUT', conId=654503299, symbol='ES', lastTradeDateOrContractMonth='20281215', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ8', tradingClass='ES'), Contract(secType='FUT', conId=672387437, symbol='ES', lastTradeDateOrContractMonth='20290316', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH9', tradingClass='ES'), Contract(secType='FUT', conId=691171642, symbol='ES', lastTradeDateOrContractMonth='20290615', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM9', tradingClass='ES'), Contract(secType='FUT', conId=711280049, symbol='ES', lastTradeDateOrContractMonth='20290921', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU9', tradingClass='ES'), Contract(secType='FUT', conId=730283071, symbol='ES', lastTradeDateOrContractMonth='20291221', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ9', tradingClass='ES'), Contract(secType='FUT', conId=750150169, symbol='ES', lastTradeDateOrContractMonth='20300315', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH0', tradingClass='ES'), Contract(secType='FUT', conId=770561177, symbol='ES', lastTradeDateOrContractMonth='20300621', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM0', tradingClass='ES'), Contract(secType='FUT', conId=793356200, symbol='ES', lastTradeDateOrContractMonth='20300920', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU0', tradingClass='ES'), Contract(secType='FUT', conId=815824241, symbol='ES', lastTradeDateOrContractMonth='20301220', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ0', tradingClass='ES')]
+Ambiguous contract: Future(symbol='MES', exchange='CME'), possibles are [Contract(secType='FUT', conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), Contract(secType='FUT', conId=750150186, symbol='MES', lastTradeDateOrContractMonth='20260320', multiplier='5', exchange='CME', currency='USD', localSymbol='MESH6', tradingClass='MES'), Contract(secType='FUT', conId=770561194, symbol='MES', lastTradeDateOrContractMonth='20260618', multiplier='5', exchange='CME', currency='USD', localSymbol='MESM6', tradingClass='MES'), Contract(secType='FUT', conId=793356217, symbol='MES', lastTradeDateOrContractMonth='20260918', multiplier='5', exchange='CME', currency='USD', localSymbol='MESU6', tradingClass='MES'), Contract(secType='FUT', conId=815824257, symbol='MES', lastTradeDateOrContractMonth='20261218', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ6', tradingClass='MES')]
+Current positions: 1
+  - MES: 1.0 @ 34368.12
+📤 Portfolio update sent: POS=1, uPnL=$0.00
+📤 Portfolio update sent: POS=1, uPnL=$-257.07
+📊 Fetching 5 days of historical data...
+✅ Received 422 bars
+✅ Sent 2025-10-29: 90 bars
+✅ Sent 2025-10-30: 90 bars
+✅ Sent 2025-10-31: 90 bars
+✅ Sent 2025-11-03: 90 bars
+✅ Sent 2025-11-04: 62 bars
+🎉 Historical data upload complete - 5 days sent
+🚀 Starting real-time data stream...
+💰 Account: Balance=$1742.93, NetLiq=$1936.71, DailyPnL=$0.00
+📤 Account data sent: Balance=$1742.93, Daily PnL=$0.00
+💰 Account: Balance=$1742.93, NetLiq=$1936.71, DailyPnL=$0.00
+📤 Account data sent: Balance=$1742.93, Daily PnL=$0.00
+📤 Tick sent: ES @ 6804.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6805.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6805.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1742.93, NetLiq=$1936.71, DailyPnL=$0.00
+📤 Account data sent: Balance=$1742.93, Daily PnL=$0.00
+📤 Tick sent: ES @ 6804.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1742.93, NetLiq=$1936.71, DailyPnL=$0.00
+📤 Account data sent: Balance=$1742.93, Daily PnL=$0.00
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1742.93, NetLiq=$1936.71, DailyPnL=$0.00
+📤 Account data sent: Balance=$1742.93, Daily PnL=$0.00
+📤 Tick sent: ES @ 6804.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6804.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6803.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6802.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6802.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6802.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6802.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6802.50
+📤 DOM update sent (10 bids, 10 asks)
+⚠️ Error in data stream: HTTPSConnectionPool(host='bananamarket.replit.app', port=443): Read timed out. (read timeout=1)
+Traceback (most recent call last):
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 534, in _make_request
+    response = conn.getresponse()
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connection.py", line 565, in getresponse
+    httplib_response = super().getresponse()
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/http/client.py", line 1374, in getresponse
+    response.begin()
+  File "/usr/lib/python3.11/http/client.py", line 318, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/http/client.py", line 279, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/socket.py", line 706, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/ssl.py", line 1311, in recv_into
+    return self.read(nbytes, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/ssl.py", line 1167, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TimeoutError: The read operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/alfredo/.local/lib/python3.11/site-packages/requests/adapters.py", line 644, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/util/retry.py", line 474, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/util/util.py", line 39, in reraise
+    raise value
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 536, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='bananamarket.replit.app', port=443): Read timed out. (read timeout=1)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/alfredo/ibkr_bridge_v2.py", line 378, in stream_market_data
+    response = requests.post(
+               ^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/requests/adapters.py", line 690, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='bananamarket.replit.app', port=443): Read timed out. (read timeout=1)
+📤 Tick sent: ES @ 6801.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6801.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6801.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6801.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6801.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6801.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6801.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6801.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6801.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6801.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6801.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6801.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6800.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6800.50
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1742.93, NetLiq=$1936.71, DailyPnL=$0.00
+📤 Account data sent: Balance=$1742.93, Daily PnL=$0.00
+📤 Tick sent: ES @ 6800.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6799.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.50
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1713.10, NetLiq=$1906.88, DailyPnL=$0.00
+📤 Account data sent: Balance=$1713.10, Daily PnL=$0.00
+📤 Tick sent: ES @ 6798.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6798.50
+📤 DOM update sent (10 bids, 10 asks)
