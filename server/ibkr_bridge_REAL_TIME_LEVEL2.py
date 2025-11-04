@@ -4,6 +4,18 @@ IBKR Real-Time Level II Bridge - Forwards IBKR data to Replit backend
 Connects to Interactive Brokers and streams market data, DOM, and portfolio updates via HTTP POST
 """
 
+# ============================================================================
+# CONFIGURATION - Change MODE to switch between dev and production
+# ============================================================================
+MODE = "dev"  # Options: "dev" or "production"
+
+# Backend URLs for each mode
+BACKEND_URLS = {
+    "dev": "http://localhost:5000",
+    "production": "https://YOUR-PUBLISHED-APP.replit.app"  # Replace with your actual published URL
+}
+# ============================================================================
+
 import asyncio
 import json
 import sys
@@ -350,13 +362,24 @@ class IBKRBridge:
 
 async def main():
     """Main entry point"""
-    if len(sys.argv) < 2:
-        print("Usage: python3 ibkr_bridge_REAL_TIME_LEVEL2.py <REPLIT_URL>", file=sys.stderr)
-        print("Example: python3 ibkr_bridge_REAL_TIME_LEVEL2.py https://your-repl.replit.dev", file=sys.stderr)
-        sys.exit(1)
-    
-    replit_url = sys.argv[1]
-    print(f"🔗 Replit URL: {replit_url}", file=sys.stderr)
+    # Use MODE configuration or command-line argument
+    if len(sys.argv) >= 2:
+        replit_url = sys.argv[1]
+        print(f"🔗 Using command-line URL: {replit_url}", file=sys.stderr)
+    else:
+        # Auto-select URL based on MODE
+        if MODE not in BACKEND_URLS:
+            print(f"❌ Invalid MODE: '{MODE}'. Must be 'dev' or 'production'", file=sys.stderr)
+            sys.exit(1)
+        
+        replit_url = BACKEND_URLS[MODE]
+        print(f"🔗 Running in {MODE.upper()} mode", file=sys.stderr)
+        print(f"🔗 Backend URL: {replit_url}", file=sys.stderr)
+        
+        if MODE == "production" and "YOUR-PUBLISHED-APP" in replit_url:
+            print("⚠️  WARNING: Production mode selected but URL not configured!", file=sys.stderr)
+            print("⚠️  Please edit the script and replace 'YOUR-PUBLISHED-APP' with your actual URL", file=sys.stderr)
+            sys.exit(1)
     
     bridge = IBKRBridge(replit_url)
     
