@@ -924,9 +924,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
               },
             };
             
-            // Generate recommendations and evaluate with 75% minimum confidence
+            // Generate recommendations and evaluate with 70% minimum confidence (lowered for paper trading)
             const recommendations = setupRecognizer.generateRecommendations(context);
-            signal = autoTrader.evaluateRecommendations(recommendations, position, 75);
+            signal = autoTrader.evaluateRecommendations(recommendations, position, 70);
           } else {
             signal = {
               action: "NONE",
