@@ -97,3 +97,117 @@ After running the updated bridge:
 
 **Pressure gauges show 0%?**
 - Frontend code has been updated - Replit workflow will restart automatically
+
+---
+
+# 🚀 **Publishing to Production**
+
+## Why Publish?
+
+Publishing your app gives you:
+- ✅ **Stable URL** - No more changing dev URLs
+- ✅ **Better Performance** - Optimized production build
+- ✅ **Auto-Scaling** - Handles traffic spikes automatically
+- ✅ **Always Available** - Runs 24/7, even when you close Replit
+
+## 📋 **Publishing Checklist**
+
+### **Step 1: Publish Your Replit App**
+
+1. **Click the "Publish" button** in your Replit workspace header
+2. **Choose "Autoscale Deployment"** (best for web apps with WebSocket)
+3. **Click "Publish"** and wait ~2-3 minutes
+4. **Copy your published URL** - looks like: `https://your-app-name.replit.app`
+
+### **Step 2: Configure Your Local Bridge**
+
+1. **Download the latest bridge file** from Replit:
+   - Open: `server/ibkr_bridge_REAL_TIME_LEVEL2.py`
+   - Download to your local machine
+
+2. **Edit the bridge configuration** at the top of the file:
+   ```python
+   # ============================================================================
+   # CONFIGURATION - Change MODE to switch between dev and production
+   # ============================================================================
+   MODE = "production"  # Change from "dev" to "production"
+   
+   # Backend URLs for each mode
+   BACKEND_URLS = {
+       "dev": "http://localhost:5000",
+       "production": "https://your-app-name.replit.app"  # Replace with YOUR published URL
+   }
+   # ============================================================================
+   ```
+
+3. **Replace the placeholder:**
+   - Change `https://YOUR-PUBLISHED-APP.replit.app` 
+   - To your actual published URL from Step 1
+
+### **Step 3: Run the Bridge**
+
+Simply double-click or run:
+```bash
+python3 ibkr_bridge_REAL_TIME_LEVEL2.py
+```
+
+The bridge will automatically use the production URL based on the MODE setting!
+
+### **Step 4: Access Your Live App**
+
+Open your published URL in a browser:
+```
+https://your-app-name.replit.app
+```
+
+You'll see the F1 Command Center running with real-time IBKR data! 🏎️
+
+## 🔄 **Switching Between Dev and Production**
+
+To switch modes, just edit **one line** in the bridge file:
+
+**For Development:**
+```python
+MODE = "dev"  # Uses http://localhost:5000
+```
+
+**For Production:**
+```python
+MODE = "production"  # Uses your published URL
+```
+
+## ⚙️ **Auto-Trading Configuration**
+
+The auto-trader is **already configured** and will work immediately after publishing!
+
+- ✅ **RTH-Only Trading** - Only trades 9:30 AM - 4:00 PM ET
+- ✅ **High-Probability Setups** - Based on G7FX PRO methodology
+- ✅ **MES Contracts** - Micro futures for lower risk
+- ✅ **Paper Trading** - Safe testing environment
+
+## 📊 **Monitoring Your Live System**
+
+After publishing, you can:
+
+1. **Open the published URL** - See F1 Command Center
+2. **Watch auto-trade signals** - HIGH-PROB SETUPS window
+3. **Monitor positions** - ACCOUNT & P&L window
+4. **Track order flow** - Real-time absorption events
+
+## ⚠️ **Important Notes**
+
+- ✅ Bridge runs **locally** (connects to local IBKR Gateway)
+- ✅ Backend runs **in the cloud** (on Replit)
+- ✅ You can access the UI from **anywhere** (phone, tablet, etc.)
+- ✅ IBKR Gateway must be **running on your local machine**
+- ✅ Auto-trading only happens during **RTH (9:30 AM - 4:00 PM ET)**
+
+## 🎯 **Ready for Tomorrow's Market Open?**
+
+1. ✅ Publish your app
+2. ✅ Update bridge MODE to "production"
+3. ✅ Add your published URL
+4. ✅ Start IBKR Gateway (paper trading)
+5. ✅ Run the bridge script
+6. ✅ Open your published URL
+7. ✅ Wait for 9:30 AM ET market open! 🔔
