@@ -399,6 +399,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log(`[PORTFOLIO] Position update: ${contracts} contracts, uPnL: ${unrealized_pnl?.toFixed(2) || 0}`);
         res.json({ type: 'ack' });
       }
+      else if (message.type === 'account_data') {
+        // Handle account data from IBKR
+        bridgeLastHeartbeat = Date.now();
+        
+        const { account_balance, net_liquidation, available_funds, unrealized_pnl, realized_pnl, daily_pnl } = message;
+        const status = await storage.getSystemStatus();
+        
+        if (status) {
+          // Update system status with IBKR account data
+          status.account_balance = account_balance || 0;
+          status.daily_pnl = daily_pnl || 0;
+          
+          await storage.setSystemStatus(status);
+          
+          console.log(`[ACCOUNT] Balance: $${account_balance?.toFixed(2)}, NetLiq: $${net_liquidation?.toFixed(2)}, Daily P&L: ${daily_pnl >= 0 ? '+' : ''}$${daily_pnl?.toFixed(2)}`);
+        }
+        
+        res.json({ type: 'ack' });
+      }
       else {
         res.json({ type: 'ack' });
       }
