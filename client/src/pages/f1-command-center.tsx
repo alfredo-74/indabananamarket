@@ -688,7 +688,7 @@ export default function F1CommandCenter() {
           title="CVA (5-DAY) + DVA COMPARISON"
           testId="window-chart"
         >
-          <div className="flex flex-col items-center justify-center h-full space-y-3 text-[10px]">
+          <div className="flex flex-col items-center overflow-y-auto h-full space-y-3 text-[10px] p-2">
             <div className="flex gap-6">
               <div className="text-center space-y-1">
                 <div className="text-cyan-400 font-bold text-xs mb-2">CVA (5-DAY)</div>
