@@ -1,0 +1,284 @@
+alfredo@penguin:~$ python3 ibkr_bridge_v2.py
+======================================================================
+🏎️  IBKR BRIDGE V2 WITH REAL ACCOUNT DATA
+======================================================================
+🔗 Production URL: https://bananamarket.replit.app
+======================================================================
+🚀 Bridge V2 initialized - Will forward data to: https://bananamarket.replit.app
+Connecting to IB Gateway on port 4002...
+✅ Connected to IBKR Paper Trading
+Ambiguous contract: Future(symbol='ES', exchange='CME'), possibles are [Contract(secType='FUT', conId=495512563, symbol='ES', lastTradeDateOrContractMonth='20251219', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ5', tradingClass='ES'), Contract(secType='FUT', conId=515416632, symbol='ES', lastTradeDateOrContractMonth='20261218', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ6', tradingClass='ES'), Contract(secType='FUT', conId=586139767, symbol='ES', lastTradeDateOrContractMonth='20271217', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ7', tradingClass='ES'), Contract(secType='FUT', conId=649180661, symbol='ES', lastTradeDateOrContractMonth='20270617', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM7', tradingClass='ES'), Contract(secType='FUT', conId=649180666, symbol='ES', lastTradeDateOrContractMonth='20280317', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH8', tradingClass='ES'), Contract(secType='FUT', conId=649180671, symbol='ES', lastTradeDateOrContractMonth='20260918', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU6', tradingClass='ES'), Contract(secType='FUT', conId=649180675, symbol='ES', lastTradeDateOrContractMonth='20280915', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU8', tradingClass='ES'), Contract(secType='FUT', conId=649180678, symbol='ES', lastTradeDateOrContractMonth='20260618', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM6', tradingClass='ES'), Contract(secType='FUT', conId=649180681, symbol='ES', lastTradeDateOrContractMonth='20270917', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU7', tradingClass='ES'), Contract(secType='FUT', conId=649180684, symbol='ES', lastTradeDateOrContractMonth='20270319', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH7', tradingClass='ES'), Contract(secType='FUT', conId=649180690, symbol='ES', lastTradeDateOrContractMonth='20280616', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM8', tradingClass='ES'), Contract(secType='FUT', conId=649180695, symbol='ES', lastTradeDateOrContractMonth='20260320', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH6', tradingClass='ES'), Contract(secType='FUT', conId=654503299, symbol='ES', lastTradeDateOrContractMonth='20281215', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ8', tradingClass='ES'), Contract(secType='FUT', conId=672387437, symbol='ES', lastTradeDateOrContractMonth='20290316', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH9', tradingClass='ES'), Contract(secType='FUT', conId=691171642, symbol='ES', lastTradeDateOrContractMonth='20290615', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM9', tradingClass='ES'), Contract(secType='FUT', conId=711280049, symbol='ES', lastTradeDateOrContractMonth='20290921', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU9', tradingClass='ES'), Contract(secType='FUT', conId=730283071, symbol='ES', lastTradeDateOrContractMonth='20291221', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ9', tradingClass='ES'), Contract(secType='FUT', conId=750150169, symbol='ES', lastTradeDateOrContractMonth='20300315', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH0', tradingClass='ES'), Contract(secType='FUT', conId=770561177, symbol='ES', lastTradeDateOrContractMonth='20300621', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM0', tradingClass='ES'), Contract(secType='FUT', conId=793356200, symbol='ES', lastTradeDateOrContractMonth='20300920', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU0', tradingClass='ES'), Contract(secType='FUT', conId=815824241, symbol='ES', lastTradeDateOrContractMonth='20301220', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ0', tradingClass='ES')]
+Ambiguous contract: Future(symbol='MES', exchange='CME'), possibles are [Contract(secType='FUT', conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), Contract(secType='FUT', conId=750150186, symbol='MES', lastTradeDateOrContractMonth='20260320', multiplier='5', exchange='CME', currency='USD', localSymbol='MESH6', tradingClass='MES'), Contract(secType='FUT', conId=770561194, symbol='MES', lastTradeDateOrContractMonth='20260618', multiplier='5', exchange='CME', currency='USD', localSymbol='MESM6', tradingClass='MES'), Contract(secType='FUT', conId=793356217, symbol='MES', lastTradeDateOrContractMonth='20260918', multiplier='5', exchange='CME', currency='USD', localSymbol='MESU6', tradingClass='MES'), Contract(secType='FUT', conId=815824257, symbol='MES', lastTradeDateOrContractMonth='20261218', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ6', tradingClass='MES')]
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📊 Fetching 5 days of historical data...
+✅ Received 396 bars
+✅ Sent 2025-10-30: 90 bars
+✅ Sent 2025-10-31: 90 bars
+✅ Sent 2025-11-03: 90 bars
+✅ Sent 2025-11-04: 90 bars
+✅ Sent 2025-11-05: 36 bars
+🎉 Historical data upload complete - 5 days sent
+🚀 Starting real-time data stream...
+💰 Account: Balance=$1945.40, NetLiq=$2139.17, DailyPnL=$0.00
+📤 Account data sent: Balance=$1945.40, Daily PnL=$0.00
+💰 Account: Balance=$1945.40, NetLiq=$2139.17, DailyPnL=$0.00
+📤 Account data sent: Balance=$1945.40, Daily PnL=$0.00
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+🔔 Executing pending order: SELL 1 MES (ID: order_1762363034949_62ueny5m1)
+📝 New order: 69 - SELL 1
+📝 Order placed: SELL 1 MES
+✅ Order order_1762363034949_62ueny5m1 executed successfully
+🔔 Executing pending order: SELL 1 MES (ID: order_1762363036365_bzi7mir3x)
+📝 New order: 70 - SELL 1
+📝 Order placed: SELL 1 MES
+✅ Order order_1762363036365_bzi7mir3x executed successfully
+📤 Tick sent: ES @ 6846.00
+📤 DOM update sent (10 bids, 10 asks)
+📋 Order 69 status: PreSubmitted
+📊 Position update: MES -1 @ 34228.75
+📋 Order 69 status: Filled
+✅ Order filled: SELL 1.0 @ 6845.75
+📊 Position update: MES -1 @ 34228.13
+📋 Order 70 status: Inactive
+Error 201, reqId 70: Order rejected - reason:The Available Funds in your Commodities segment are insufficient to cover the change in the margin <br>requirements in your Commodities segment should this order execute. In order to obtain the desired position, <br>your Commodities Net Liquidation Value [1941.02 GBP]  must exceed the new total initial Margin of [2364.83 <br>GBP].
+Canceled order: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=70, clientId=1, permId=1049917341, action='SELL', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=70, status='Cancelled', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1049917341, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 5, 17, 25, 27, 746739, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 5, 17, 25, 28, 461924, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 5, 17, 25, 28, 461924, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 70: Order rejected - reason:The Available Funds in your Commodities segment are insufficient to cover the change in the margin <br>requirements in your Commodities segment should this order execute. In order to obtain the desired position, <br>your Commodities Net Liquidation Value [1941.02 GBP]  must exceed the new total initial Margin of [2364.83 <br>GBP].', errorCode=201)], advancedError='')
+📋 Order 70 status: Cancelled
+📋 Order 70 status: Inactive
+📤 Portfolio update sent: POS=-1, uPnL=$0.00
+📤 Portfolio update sent: POS=-1, uPnL=$0.00
+📤 Tick sent: ES @ 6845.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6847.25
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: -1.0 @ 34228.13
+📤 Portfolio update sent: POS=-1, uPnL=$-1.32
+✅ MES/ES position: -1 @ 34228.13
+📤 Tick sent: ES @ 6847.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6847.00
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: -1.0 @ 34228.13
+📤 Portfolio update sent: POS=-1, uPnL=$-1.32
+✅ MES/ES position: -1 @ 34228.13
+📤 Tick sent: ES @ 6847.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6847.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6847.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1944.06, NetLiq=$2137.84, DailyPnL=$0.00
+📤 Account data sent: Balance=$1944.06, Daily PnL=$0.00
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: -1.0 @ 34228.13
+📤 Portfolio update sent: POS=-1, uPnL=$-1.32
+✅ MES/ES position: -1 @ 34228.13
+📤 Tick sent: ES @ 6846.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6847.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: -1.0 @ 34228.13
+📤 Portfolio update sent: POS=-1, uPnL=$-1.32
+✅ MES/ES position: -1 @ 34228.13
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6847.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6847.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6847.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6847.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: -1.0 @ 34228.13
+📤 Portfolio update sent: POS=-1, uPnL=$-1.32
+✅ MES/ES position: -1 @ 34228.13
+📤 Tick sent: ES @ 6847.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.50
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1944.06, NetLiq=$2137.84, DailyPnL=$0.00
+📤 Account data sent: Balance=$1944.06, Daily PnL=$0.00
+📤 Tick sent: ES @ 6846.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: -1.0 @ 34228.13
+📤 Portfolio update sent: POS=-1, uPnL=$-1.32
+✅ MES/ES position: -1 @ 34228.13
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+🔔 Executing pending order: SELL 1 MES (ID: order_1762363592527_4t0aeodis)
+📝 New order: 71 - SELL 1
+📝 Order placed: SELL 1 MES
+✅ Order order_1762363592527_4t0aeodis executed successfully
+⚠️ Error in data stream: HTTPSConnectionPool(host='bananamarket.replit.app', port=443): Read timed out. (read timeout=1)
+Traceback (most recent call last):
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 534, in _make_request
+    response = conn.getresponse()
+               ^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connection.py", line 565, in getresponse
+    httplib_response = super().getresponse()
+                       ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/http/client.py", line 1374, in getresponse
+    response.begin()
+  File "/usr/lib/python3.11/http/client.py", line 318, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/http/client.py", line 279, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/socket.py", line 706, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/ssl.py", line 1311, in recv_into
+    return self.read(nbytes, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/ssl.py", line 1167, in read
+    return self._sslobj.read(len, buffer)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TimeoutError: The read operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/alfredo/.local/lib/python3.11/site-packages/requests/adapters.py", line 644, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/util/retry.py", line 474, in increment
+    raise reraise(type(error), error, _stacktrace)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/util/util.py", line 39, in reraise
+    raise value
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 536, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=read_timeout)
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 367, in _raise_timeout
+    raise ReadTimeoutError(
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='bananamarket.replit.app', port=443): Read timed out. (read timeout=1)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/alfredo/ibkr_bridge_v2.py", line 405, in stream_market_data
+    response = requests.post(
+               ^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/requests/adapters.py", line 690, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='bananamarket.replit.app', port=443): Read timed out. (read timeout=1)
+📋 Order 71 status: Inactive
+Error 201, reqId 71: Order rejected - reason:The Available Funds in your Commodities segment are insufficient to cover the change in the margin <br>requirements in your Commodities segment should this order execute. In order to obtain the desired position, <br>your Commodities Net Liquidation Value [1938.76 GBP]  must exceed the new total initial Margin of [2364.83 <br>GBP].
+Canceled order: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=71, clientId=1, permId=1049917342, action='SELL', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=71, status='Cancelled', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=1049917342, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 5, 17, 26, 32, 729418, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 5, 17, 26, 34, 120660, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 5, 17, 26, 34, 120660, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 71: Order rejected - reason:The Available Funds in your Commodities segment are insufficient to cover the change in the margin <br>requirements in your Commodities segment should this order execute. In order to obtain the desired position, <br>your Commodities Net Liquidation Value [1938.76 GBP]  must exceed the new total initial Margin of [2364.83 <br>GBP].', errorCode=201)], advancedError='')
+📋 Order 71 status: Cancelled
+📋 Order 71 status: Inactive
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: -1.0 @ 34228.13
+📤 Portfolio update sent: POS=-1, uPnL=$-3.85
+✅ MES/ES position: -1 @ 34228.13
+📤 Tick sent: ES @ 6846.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6846.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6847.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6847.00
+📤 DOM update sent (10 bids, 10 asks)
