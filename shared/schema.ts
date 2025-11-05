@@ -102,6 +102,7 @@ export const systemStatusSchema = z.object({
   last_update: z.number(),
   capital: z.number(),
   daily_pnl: z.number(),
+  account_balance: z.number().optional(), // Account balance from IBKR
   account_currency: z.string(), // Account base currency (GBP, USD, etc.)
   usd_to_account_rate: z.number(), // Exchange rate for USD to account currency
   account_type: z.enum(["PAPER", "LIVE"]).nullable(), // Account type

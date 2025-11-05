@@ -195,10 +195,7 @@ export default function F1CommandCenter() {
       const action = position.contracts > 0 ? "SELL" : "BUY";
       const quantity = Math.abs(position.contracts);
       
-      return await apiRequest("/api/execute-order", {
-        method: "POST",
-        body: JSON.stringify({ action, quantity }),
-      });
+      return await apiRequest("POST", "/api/execute-order", { action, quantity });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/position"] });
@@ -207,9 +204,7 @@ export default function F1CommandCenter() {
 
   const forceSyncMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest("/api/position/force-sync", {
-        method: "POST",
-      });
+      return await apiRequest("POST", "/api/position/force-sync");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/position"] });
