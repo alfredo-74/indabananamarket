@@ -248,10 +248,20 @@ class IBKRBridgeV2:
             # Calculate market price for unrealized P&L
             market_price = self.last_price if self.last_price > 0 else (self.entry_price or 0)
             
+            # CRITICAL SANITY CHECK: Reject obviously corrupt entry prices
+            # ES/MES typically trade 4000-8000, so entry price should be within 3x of market price
+            validated_entry_price = self.entry_price
+            if self.entry_price and market_price > 0:
+                price_ratio = abs(self.entry_price / market_price)
+                if price_ratio > 3.0 or price_ratio < 0.33:
+                    print(f"⚠️ CORRUPT ENTRY PRICE DETECTED: {self.entry_price} vs market {market_price} (ratio: {price_ratio:.2f}x)", file=sys.stderr)
+                    print(f"⚠️ REJECTING corrupt data - using market price instead", file=sys.stderr)
+                    validated_entry_price = market_price  # Use current market price instead of corrupt data
+            
             data = {
                 "type": "portfolio_update",
                 "contracts": self.current_position,
-                "entry_price": self.entry_price if self.entry_price else 0,
+                "entry_price": validated_entry_price if validated_entry_price else 0,
                 "unrealized_pnl": self.unrealized_pnl,
                 "market_price": market_price
             }
