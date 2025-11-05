@@ -841,6 +841,14 @@ export default function F1CommandCenter() {
                 {position?.side || "FLAT"} {position?.contracts ? `${position.contracts}x` : ""}
               </span>
             </div>
+            {position && position.entry_price !== null && position.contracts !== 0 && (
+              <div className="flex justify-between">
+                <span className="text-gray-500">Entry:</span>
+                <span className="text-cyan-400 font-bold tabular-nums">
+                  {position.entry_price.toFixed(2)}
+                </span>
+              </div>
+            )}
             <div className="flex justify-between">
               <span className="text-gray-500">Unreal P&L:</span>
               <span className={`font-bold tabular-nums ${
