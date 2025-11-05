@@ -42,7 +42,13 @@ The backend is a Node.js Express.js server written in TypeScript, offering RESTf
 
 **Supporting Modules**: VolumetricCandleBuilder, VWAPCalculator, RegimeDetector, SessionDetector, KeyLevelsDetector, PerformanceAnalyzer.
 
-**Data Storage**: Currently uses in-memory storage, with future plans for PostgreSQL integration via Drizzle ORM.
+**Data Storage**: Uses PostgreSQL database (Neon Serverless) via Drizzle ORM for persistent storage of critical trading data:
+- **Positions Table**: Current position state (contracts, entry price, P&L, side)
+- **Trades Table**: Complete trade history with order flow signals
+- **System Status Table**: Account balance, connection status, trading state
+- **Market Data Table**: Latest market prices and volume
+- **Daily/Composite Profiles**: 5-day CVA and historical value areas
+- **Force Sync API**: `/api/position/force-sync` endpoint to manually reset phantom positions from database
 
 **Trading Strategies**: Implemented for ROTATIONAL (mean reversion), DIRECTIONAL_BULLISH, and DIRECTIONAL_BEARISH market regimes.
 
