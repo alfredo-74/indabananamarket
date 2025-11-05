@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import Draggable from "react-draggable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, TrendingDown, AlertTriangle, Zap, Target, Power, Move } from "lucide-react";
+import { TrendingUp, TrendingDown, AlertTriangle, Zap, Target, Power, Move, RefreshCw } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { 
   SystemStatus, 
@@ -202,6 +202,18 @@ export default function F1CommandCenter() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/position"] });
+    },
+  });
+
+  const forceSyncMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest("/api/position/force-sync", {
+        method: "POST",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/position"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/trades"] });
     },
   });
 
@@ -871,6 +883,18 @@ export default function F1CommandCenter() {
                 CLOSE POSITION
               </Button>
             )}
+            
+            <Button
+              onClick={() => forceSyncMutation.mutate()}
+              disabled={forceSyncMutation.isPending}
+              size="sm"
+              variant="outline"
+              className="w-full text-[10px] h-6 mt-1"
+              data-testid="button-force-sync"
+            >
+              <RefreshCw className={`h-3 w-3 mr-1 ${forceSyncMutation.isPending ? 'animate-spin' : ''}`} />
+              {forceSyncMutation.isPending ? "SYNCING..." : "FORCE SYNC"}
+            </Button>
             
             <div className="border-t border-gray-800 pt-1 mt-1"></div>
             

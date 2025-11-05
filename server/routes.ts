@@ -1230,6 +1230,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // POST /api/position/force-sync - Force sync position from IBKR (clears phantom positions)
+  app.post("/api/position/force-sync", async (req, res) => {
+    try {
+      // Reset position to FLAT in database
+      await storage.setPosition({
+        contracts: 0,
+        entry_price: null,
+        current_price: mockPrice,
+        unrealized_pnl: 0,
+        realized_pnl: 0,
+        side: "FLAT",
+      });
+      
+      // Broadcast updated position
+      broadcast({
+        type: "position_update",
+        data: {
+          contracts: 0,
+          entry_price: null,
+          current_price: mockPrice,
+          unrealized_pnl: 0,
+          realized_pnl: 0,
+          side: "FLAT",
+        },
+      });
+      
+      res.json({ 
+        success: true, 
+        message: "Position reset to FLAT. Awaiting next update from IBKR bridge." 
+      });
+    } catch (error) {
+      console.error("Force sync error:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to sync position" 
+      });
+    }
+  });
+
   // GET /api/trades - Trade history
   app.get("/api/trades", async (req, res) => {
     const trades = await storage.getTrades();
