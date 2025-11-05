@@ -1392,13 +1392,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json(trades);
   });
 
-  // POST /api/ibkr-bridge - Receive data from local IBKR bridge
+  // DISABLED OLD ENDPOINT - Use /api/bridge/data instead
+  // This old endpoint was causing price blinking by writing market data without heartbeat checks
   app.post("/api/ibkr-bridge", async (req, res) => {
+    try {
+      // Reject all requests - bridge should use /api/bridge/data endpoint
+      console.log('[DEPRECATED] /api/ibkr-bridge endpoint called - redirecting to /api/bridge/data');
+      res.status(410).json({ 
+        error: 'This endpoint is deprecated. Use /api/bridge/data instead.',
+        message: 'Please update your bridge to use the new endpoint'
+      });
+    } catch (error) {
+      console.error("IBKR bridge error:", error);
+      res.status(500).json({ error: "Failed to process bridge data" });
+    }
+  });
+
+  // OLD CODE KEPT FOR REFERENCE (completely disabled):
+  /*
+  app.post("/api/ibkr-bridge-OLD", async (req, res) => {
     try {
       const data = req.body;
       
       if (data.type === "connection") {
-        // Update connection status and account balance
         const status = await storage.getSystemStatus();
         if (status) {
           status.ibkr_connected = data.connected;
@@ -1414,7 +1430,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         }
       } else if (data.type === "market_data") {
-        // Store and broadcast real market data from IB Gateway
         const marketData: MarketData = {
           symbol: data.symbol,
           last_price: data.last_price,
@@ -1424,59 +1439,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           timestamp: data.timestamp,
         };
         
-        await storage.setMarketData(marketData);
-        broadcast({
-          type: "market_data",
-          data: marketData,
-        });
-        
-        // Process through candle builder
-        const isBuy = Math.random() > 0.5; // We don't have tick direction from delayed data
-        const completedCandle = candleBuilder.processTick(
-          data.last_price,
-          1,
-          isBuy,
-          data.timestamp
-        );
-        
-        if (completedCandle) {
-          await storage.addCandle(completedCandle);
-          broadcast({
-            type: "candle_update",
-            data: completedCandle,
-          });
-        }
-      } else if (data.type === "portfolio") {
-        // Update position from IBKR portfolio data
-        const position = await storage.getPosition();
-        if (position && data.position !== undefined) {
-          const contractsHeld = data.position;
-          const avgCost = data.average_cost || position.entry_price;
-          const unrealizedPnl = data.unrealized_pnl || 0;
-          
-          position.contracts = contractsHeld;
-          position.side = contractsHeld > 0 ? "LONG" : contractsHeld < 0 ? "SHORT" : "FLAT";
-          position.entry_price = contractsHeld !== 0 ? avgCost : null;
-          position.unrealized_pnl = unrealizedPnl;
-          position.current_price = data.market_price || position.current_price;
-          
-          await storage.setPosition(position);
-          
-          broadcast({
-            type: "position_update",
-            data: position,
-          });
-          
-          console.log(`[PORTFOLIO] Updated position: ${position.side} ${Math.abs(position.contracts)}x @ ${position.entry_price?.toFixed(2) || "N/A"} | P&L: ${unrealizedPnl >= 0 ? '+' : ''}$${unrealizedPnl.toFixed(2)}`);
-        }
+        // [DISABLED - CODE REMOVED]
       }
-      
-      res.json({ success: true });
+      res.json({ success: true - DISABLED });
     } catch (error) {
       console.error("IBKR bridge error:", error);
       res.status(500).json({ error: "Failed to process bridge data" });
     }
   });
+  */
 
   // POST /api/ibkr-historical - Receive historical data from IBKR bridge
   app.post("/api/ibkr-historical", async (req, res) => {
