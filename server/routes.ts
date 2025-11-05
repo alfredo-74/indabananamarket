@@ -177,7 +177,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // HTTP endpoint for IBKR bridge (more reliable than WebSocket for external connections)
   let bridgeLastHeartbeat = 0;
   let lastStatusUpdate = 0; // Throttle database status updates
-  const BRIDGE_TIMEOUT_MS = 10000; // 10 seconds without data = disconnected
+  const BRIDGE_TIMEOUT_MS = 2000; // 2 seconds without data = disconnected (fast detection for real trading)
 
   app.post('/api/bridge/data', async (req, res) => {
     try {
@@ -445,27 +445,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Check for bridge timeout every 5 seconds
+  // Check for bridge timeout every 2 seconds (fast detection for real trading)
   setInterval(async () => {
-    if (ibkrConnected && Date.now() - bridgeLastHeartbeat > BRIDGE_TIMEOUT_MS) {
-      console.log('✗ IBKR Bridge timeout - no data received');
-      ibkrConnected = false;
-      
-      // CRITICAL FIX: Clear all pending orders when bridge disconnects
-      const clearedCount = pendingOrders.size;
-      pendingOrders.clear();
-      if (clearedCount > 0) {
-        console.log(`[PHANTOM FIX] Cleared ${clearedCount} pending orders due to bridge disconnect`);
-      }
-      
-      const status = await storage.getSystemStatus();
-      if (status) {
+    const status = await storage.getSystemStatus();
+    if (!status) return;
+    
+    const timeSinceLastData = Date.now() - bridgeLastHeartbeat;
+    const bridgeActive = timeSinceLastData < BRIDGE_TIMEOUT_MS;
+    
+    // Update connection status if it changed
+    if (bridgeActive !== status.ibkr_connected || bridgeActive !== status.market_data_active) {
+      if (bridgeActive) {
+        console.log('✓ IBKR Bridge connected - real data flowing');
+        status.ibkr_connected = true;
+        status.market_data_active = true;
+        status.data_delay_seconds = 0;
+      } else {
+        console.log(`✗ IBKR Bridge disconnected - no data for ${Math.round(timeSinceLastData / 1000)}s`);
         status.ibkr_connected = false;
         status.market_data_active = false;
-        await storage.setSystemStatus(status);
+        
+        // CRITICAL: Clear all pending orders when bridge disconnects
+        const clearedCount = pendingOrders.size;
+        pendingOrders.clear();
+        if (clearedCount > 0) {
+          console.log(`[SAFETY] Cleared ${clearedCount} pending orders due to bridge disconnect`);
+        }
       }
+      
+      await storage.setSystemStatus(status);
+      ibkrConnected = bridgeActive;
     }
-  }, 5000);
+  }, 2000); // Check every 2 seconds for immediate feedback
 
   console.log('✓ Bridge HTTP endpoint initialized at /api/bridge/data');
 
@@ -735,13 +746,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Simulate market data updates (500ms interval)
   setInterval(async () => {
-    // If bridge is connected, mockPrice is already being updated by real data
-    // Otherwise, generate mock tick data for development
-    if (!ibkrConnected) {
-      const volatility = 0.25;
-      const tickChange = (Math.random() - 0.5) * volatility;
-      mockPrice += tickChange;
+    // CRITICAL: Skip ALL mock data processing when real bridge is connected
+    // Check if bridge sent data in last 3 seconds (actively connected)
+    const bridgeActivelyConnected = (Date.now() - bridgeLastHeartbeat) < 3000;
+    
+    if (bridgeActivelyConnected) {
+      // Real bridge data is flowing - skip mock data completely
+      return;
     }
+    
+    // Bridge disconnected - generate mock tick data for development/testing
+    const volatility = 0.25;
+    const tickChange = (Math.random() - 0.5) * volatility;
+    mockPrice += tickChange;
     
     mockTick++;
 
