@@ -1055,6 +1055,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         // Execute trade if signal is not NONE
         if (signal.action !== "NONE" && signal.action !== "CLOSE") {
+          // CRITICAL SAFETY CHECK: Verify bridge is actively connected before creating trade
+          const bridgeActivelyConnected = (Date.now() - bridgeLastHeartbeat) < 5000;
+          if (!bridgeActivelyConnected) {
+            console.log(`[AUTO-TRADE] ⚠️ BLOCKED trade - Bridge not actively connected (last data: ${Math.round((Date.now() - bridgeLastHeartbeat) / 1000)}s ago)`);
+            console.log(`[AUTO-TRADE] Trade NOT created in database or sent to IBKR - preventing phantom position`);
+            return; // Exit early - don't create trade or update position
+          }
+          
           // Open new position
           const trade = await storage.addTrade({
             timestamp,
@@ -1087,8 +1095,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
           console.log(`[AUTO-TRADE] ✅ ${signal.action} ${signal.quantity} @ ${signal.entry_price.toFixed(2)} - ${signal.reason}`);
           
-          // SEND REAL ORDER TO IBKR
-          if (ibkrConnected) {
+          // SEND REAL ORDER TO IBKR - Bridge already verified as active above
+          if (bridgeActivelyConnected) {
             const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
             const order: PendingOrder = {
               id: orderId,
@@ -1098,9 +1106,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
               status: 'PENDING',
             };
             pendingOrders.set(orderId, order);
-            console.log(`[IBKR ORDER] Queued ${signal.action} ${signal.quantity} MES (ID: ${orderId})`);
+            console.log(`[IBKR ORDER] ✅ Queued ${signal.action} ${signal.quantity} MES (ID: ${orderId}) - Bridge verified active`);
           } else {
-            console.log(`[IBKR ORDER] ⚠ Bridge not connected - trade logged but not sent to IBKR`);
+            console.log(`[IBKR ORDER] ⚠️ Bridge NOT actively sending data - trade logged but NOT sent to IBKR`);
+            console.log(`[IBKR ORDER] Last heartbeat: ${Math.round((Date.now() - bridgeLastHeartbeat) / 1000)}s ago`);
           }
           
           broadcast({
@@ -1108,6 +1117,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
             data: trade,
           });
         } else if (signal.action === "CLOSE" && position.contracts !== 0) {
+          // CRITICAL SAFETY CHECK: Verify bridge is actively connected before closing position
+          const bridgeActivelyConnected = (Date.now() - bridgeLastHeartbeat) < 5000;
+          if (!bridgeActivelyConnected) {
+            console.log(`[AUTO-TRADE] ⚠️ BLOCKED close - Bridge not actively connected (last data: ${Math.round((Date.now() - bridgeLastHeartbeat) / 1000)}s ago)`);
+            console.log(`[AUTO-TRADE] Close order NOT sent to IBKR - preventing desync`);
+            return; // Exit early
+          }
+          
           // Close existing position
           const exitPrice = marketData.last_price;
           const priceDiff = position.side === "LONG"
