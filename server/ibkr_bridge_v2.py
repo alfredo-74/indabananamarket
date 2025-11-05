@@ -248,15 +248,23 @@ class IBKRBridgeV2:
             # Calculate market price for unrealized P&L
             market_price = self.last_price if self.last_price > 0 else (self.entry_price or 0)
             
-            # CRITICAL SANITY CHECK: Reject obviously corrupt entry prices
-            # ES/MES typically trade 4000-8000, so entry price should be within 3x of market price
+            # CRITICAL SANITY CHECK #1: Absolute range check for ES/MES
+            # ES/MES trade between 1000-15000 under normal conditions
+            # Anything outside this range is corrupt data from IBKR
             validated_entry_price = self.entry_price
-            if self.entry_price and market_price > 0:
-                price_ratio = abs(self.entry_price / market_price)
-                if price_ratio > 3.0 or price_ratio < 0.33:
-                    print(f"⚠️ CORRUPT ENTRY PRICE DETECTED: {self.entry_price} vs market {market_price} (ratio: {price_ratio:.2f}x)", file=sys.stderr)
-                    print(f"⚠️ REJECTING corrupt data - using market price instead", file=sys.stderr)
-                    validated_entry_price = market_price  # Use current market price instead of corrupt data
+            if self.entry_price:
+                if self.entry_price < 1000 or self.entry_price > 15000:
+                    print(f"⚠️ CORRUPT ENTRY PRICE DETECTED: {self.entry_price} (outside valid range 1000-15000)", file=sys.stderr)
+                    print(f"⚠️ REJECTING corrupt data - BLOCKING position update until valid data received", file=sys.stderr)
+                    return  # Don't send this update at all - wait for valid data
+                
+                # CRITICAL SANITY CHECK #2: Relative check against market price (if available)
+                if market_price > 0:
+                    price_ratio = abs(self.entry_price / market_price)
+                    if price_ratio > 3.0 or price_ratio < 0.33:
+                        print(f"⚠️ CORRUPT ENTRY PRICE DETECTED: {self.entry_price} vs market {market_price} (ratio: {price_ratio:.2f}x)", file=sys.stderr)
+                        print(f"⚠️ REJECTING corrupt data - BLOCKING position update", file=sys.stderr)
+                        return  # Don't send this update at all
             
             data = {
                 "type": "portfolio_update",
