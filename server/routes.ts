@@ -176,6 +176,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // HTTP endpoint for IBKR bridge (more reliable than WebSocket for external connections)
   let bridgeLastHeartbeat = 0;
+  let lastStatusUpdate = 0; // Throttle database status updates
   const BRIDGE_TIMEOUT_MS = 10000; // 10 seconds without data = disconnected
 
   app.post('/api/bridge/data', async (req, res) => {
@@ -198,9 +199,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       else if (message.type === 'market_data') {
         mockPrice = message.last_price;
         bridgeLastHeartbeat = Date.now();
-        if (!ibkrConnected) {
-          console.log('✓ IBKR Bridge reconnected via HTTP');
+        
+        // Update connection status in database (throttled to once per 5 seconds)
+        const timeSinceLastStatusUpdate = Date.now() - (lastStatusUpdate || 0);
+        if (!ibkrConnected || timeSinceLastStatusUpdate > 5000) {
+          if (!ibkrConnected) {
+            console.log('✓ IBKR Bridge reconnected via HTTP');
+          }
           ibkrConnected = true;
+          lastStatusUpdate = Date.now();
+          
           const status = await storage.getSystemStatus();
           if (status) {
             status.ibkr_connected = true;
@@ -432,6 +440,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     if (ibkrConnected && Date.now() - bridgeLastHeartbeat > BRIDGE_TIMEOUT_MS) {
       console.log('✗ IBKR Bridge timeout - no data received');
       ibkrConnected = false;
+      
+      // CRITICAL FIX: Clear all pending orders when bridge disconnects
+      const clearedCount = pendingOrders.size;
+      pendingOrders.clear();
+      if (clearedCount > 0) {
+        console.log(`[PHANTOM FIX] Cleared ${clearedCount} pending orders due to bridge disconnect`);
+      }
+      
       const status = await storage.getSystemStatus();
       if (status) {
         status.ibkr_connected = false;
@@ -545,7 +561,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // GET /api/pending-orders - Bridge polls for orders to execute
   app.get('/api/pending-orders', (req, res) => {
-    const pending = Array.from(pendingOrders.values()).filter(o => o.status === 'PENDING');
+    const now = Date.now();
+    const MAX_ORDER_AGE_MS = 30000; // 30 seconds - prevent phantom positions from old orders
+    
+    // Filter for PENDING orders that are less than 30 seconds old
+    const pending = Array.from(pendingOrders.values()).filter(o => {
+      if (o.status !== 'PENDING') return false;
+      
+      const age = now - o.timestamp;
+      if (age > MAX_ORDER_AGE_MS) {
+        // Order expired - mark as EXPIRED and remove from queue
+        console.log(`[PHANTOM FIX] Order ${o.id} expired (age: ${Math.round(age / 1000)}s) - ${o.action} ${o.quantity}`);
+        pendingOrders.delete(o.id);
+        return false;
+      }
+      
+      return true;
+    });
+    
     res.json(pending);
   });
 
