@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-IBKR Production Bridge - Production-Ready for https://bananamarket.replit.app
+IBKR Production Bridge - Production-Ready for https://inthabananamarket.replit.app
 Connects to Interactive Brokers and streams market data, DOM, and portfolio updates
 """
 
@@ -16,7 +16,7 @@ import nest_asyncio
 nest_asyncio.apply()
 
 # Production backend URL - hardcoded for simplicity
-PRODUCTION_URL = "https://bananamarket.replit.app"
+PRODUCTION_URL = "https://inthabananamarket.replit.app"
 
 class IBKRBridge:
     def __init__(self, replit_url: str):

@@ -16,7 +16,7 @@ import nest_asyncio
 nest_asyncio.apply()
 
 # Production backend URL
-PRODUCTION_URL = "https://bananamarket.replit.app"
+PRODUCTION_URL = "https://inthabananamarket.replit.app"
 
 class IBKRBridgeV2:
     def __init__(self, replit_url: str):

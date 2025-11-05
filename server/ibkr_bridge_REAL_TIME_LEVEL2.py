@@ -12,7 +12,7 @@ MODE = "production"  # Options: "dev" or "production"
 # Backend URLs for each mode
 BACKEND_URLS = {
     "dev": "http://localhost:5000",
-    "production": "https://bananamarket.replit.app"
+    "production": "https://inthabananamarket.replit.app"
 }
 # ============================================================================
 
