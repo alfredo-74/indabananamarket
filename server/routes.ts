@@ -446,16 +446,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Initialize bridge status as disconnected on startup (prevents stale "connected" status from previous session)
-  (async () => {
+  const initBridgeStatus = async () => {
     const status = await storage.getSystemStatus();
-    if (status && status.ibkr_connected) {
-      console.log('[INIT] Resetting bridge status to disconnected on startup');
-      status.ibkr_connected = false;
-      status.market_data_active = false;
-      await storage.setSystemStatus(status);
-      ibkrConnected = false;
+    if (status) {
+      if (status.ibkr_connected || status.market_data_active) {
+        console.log('[INIT] Resetting bridge status to disconnected on startup');
+        status.ibkr_connected = false;
+        status.market_data_active = false;
+        await storage.setSystemStatus(status);
+      }
     }
-  })();
+    ibkrConnected = false;
+  };
+  
+  // Run initialization immediately (await ensures it completes before routes handle requests)
+  await initBridgeStatus();
 
   // Check for bridge timeout every 2 seconds (fast detection for real trading)
   setInterval(async () => {
