@@ -359,6 +359,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         bridgeLastHeartbeat = Date.now();
         
         const { contracts, entry_price, unrealized_pnl } = message;
+        
+        // CRITICAL SERVER-SIDE SANITY CHECK: Reject corrupt entry prices
+        // ES/MES trade between 1000-15000. Anything else is corrupt data.
+        if (entry_price && (entry_price < 1000 || entry_price > 15000)) {
+          console.log(`[CORRUPT DATA] BLOCKING portfolio update - entry price ${entry_price} outside valid range (1000-15000)`);
+          console.log(`[CORRUPT DATA] This corrupt data from IBKR will NOT update the database`);
+          res.json({ type: 'ack', message: 'Rejected - corrupt entry price' });
+          return;
+        }
+        
         const currentPosition = await storage.getPosition();
         const status = await storage.getSystemStatus();
         
