@@ -20,7 +20,15 @@ import type {
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { db } from "./db";
-import { dailyProfiles, compositeProfiles, historicalCVAs } from "@shared/schema";
+import { 
+  dailyProfiles, 
+  compositeProfiles, 
+  historicalCVAs,
+  positions,
+  trades,
+  systemStatus,
+  marketData,
+} from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
@@ -360,4 +368,199 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Database-backed storage for critical persistent data
+export class PgStorage extends MemStorage {
+  async getPosition(): Promise<Position | undefined> {
+    const result = await db.select().from(positions).limit(1);
+    if (result.length === 0) return undefined;
+    
+    const row = result[0];
+    return {
+      contracts: row.contracts,
+      entry_price: row.entry_price,
+      current_price: row.current_price,
+      unrealized_pnl: row.unrealized_pnl,
+      realized_pnl: row.realized_pnl,
+      side: row.side as "LONG" | "SHORT" | "FLAT",
+    };
+  }
+
+  async setPosition(position: Position): Promise<void> {
+    const existing = await db.select().from(positions).limit(1);
+    
+    if (existing.length === 0) {
+      await db.insert(positions).values({
+        contracts: position.contracts,
+        entry_price: position.entry_price,
+        current_price: position.current_price,
+        unrealized_pnl: position.unrealized_pnl,
+        realized_pnl: position.realized_pnl,
+        side: position.side,
+      });
+    } else {
+      await db.update(positions)
+        .set({
+          contracts: position.contracts,
+          entry_price: position.entry_price,
+          current_price: position.current_price,
+          unrealized_pnl: position.unrealized_pnl,
+          realized_pnl: position.realized_pnl,
+          side: position.side,
+          updated_at: new Date(),
+        })
+        .where(eq(positions.id, existing[0].id));
+    }
+  }
+
+  async getTrades(): Promise<Trade[]> {
+    const result = await db.select().from(trades).orderBy(desc(trades.timestamp)).limit(100);
+    return result.map(row => ({
+      id: row.id,
+      timestamp: row.timestamp.getTime(),
+      type: row.type as "BUY" | "SELL",
+      entry_price: row.entry_price,
+      exit_price: row.exit_price,
+      contracts: row.contracts,
+      pnl: row.pnl,
+      duration_ms: row.duration_ms,
+      regime: row.regime,
+      cumulative_delta: row.cumulative_delta,
+      status: row.status as "OPEN" | "CLOSED",
+      orderflow_signal: row.orderflow_signal || undefined,
+      confidence: row.confidence || undefined,
+      absorption_event: row.absorption_event || undefined,
+      dom_signal: row.dom_signal || undefined,
+      tape_signal: row.tape_signal || undefined,
+      profile_context: row.profile_context || undefined,
+    }));
+  }
+
+  async addTrade(trade: Omit<Trade, "id">): Promise<Trade> {
+    const id = randomUUID();
+    const newTrade: Trade = { ...trade, id };
+    
+    await db.insert(trades).values({
+      id,
+      timestamp: new Date(trade.timestamp),
+      type: trade.type,
+      entry_price: trade.entry_price,
+      exit_price: trade.exit_price,
+      contracts: trade.contracts,
+      pnl: trade.pnl,
+      duration_ms: trade.duration_ms,
+      regime: trade.regime,
+      cumulative_delta: trade.cumulative_delta,
+      status: trade.status,
+      orderflow_signal: trade.orderflow_signal,
+      confidence: trade.confidence,
+      absorption_event: trade.absorption_event,
+      dom_signal: trade.dom_signal,
+      tape_signal: trade.tape_signal,
+      profile_context: trade.profile_context,
+    });
+    
+    return newTrade;
+  }
+
+  async getSystemStatus(): Promise<SystemStatus | undefined> {
+    const result = await db.select().from(systemStatus).limit(1);
+    if (result.length === 0) return undefined;
+    
+    const row = result[0];
+    return {
+      ibkr_connected: row.ibkr_connected,
+      market_data_active: row.market_data_active,
+      auto_trading_enabled: row.auto_trading_enabled,
+      last_update: row.last_update.getTime(),
+      capital: row.capital,
+      daily_pnl: row.daily_pnl,
+      account_balance: row.account_balance || undefined,
+      account_currency: row.account_currency || 'GBP',
+      usd_to_account_rate: row.usd_to_account_rate || 1.0,
+      account_type: row.account_type as "PAPER" | "LIVE" | null,
+      data_delay_seconds: row.data_delay_seconds || null,
+    };
+  }
+
+  async setSystemStatus(status: SystemStatus): Promise<void> {
+    const existing = await db.select().from(systemStatus).limit(1);
+    
+    if (existing.length === 0) {
+      await db.insert(systemStatus).values({
+        ibkr_connected: status.ibkr_connected,
+        market_data_active: status.market_data_active,
+        auto_trading_enabled: status.auto_trading_enabled,
+        last_update: new Date(status.last_update),
+        capital: status.capital,
+        daily_pnl: status.daily_pnl,
+        account_balance: status.account_balance,
+        account_currency: status.account_currency || 'GBP',
+        usd_to_account_rate: status.usd_to_account_rate || 1.0,
+        account_type: status.account_type,
+        data_delay_seconds: status.data_delay_seconds,
+      });
+    } else {
+      await db.update(systemStatus)
+        .set({
+          ibkr_connected: status.ibkr_connected,
+          market_data_active: status.market_data_active,
+          auto_trading_enabled: status.auto_trading_enabled,
+          last_update: new Date(status.last_update),
+          capital: status.capital,
+          daily_pnl: status.daily_pnl,
+          account_balance: status.account_balance,
+          account_currency: status.account_currency || 'GBP',
+          usd_to_account_rate: status.usd_to_account_rate || 1.0,
+          account_type: status.account_type,
+          data_delay_seconds: status.data_delay_seconds,
+          updated_at: new Date(),
+        })
+        .where(eq(systemStatus.id, existing[0].id));
+    }
+  }
+
+  async getMarketData(): Promise<MarketData | undefined> {
+    const result = await db.select().from(marketData).limit(1);
+    if (result.length === 0) return undefined;
+    
+    const row = result[0];
+    return {
+      symbol: row.symbol,
+      last_price: row.last_price,
+      bid: row.bid,
+      ask: row.ask,
+      volume: row.volume,
+      timestamp: row.timestamp.getTime(),
+    };
+  }
+
+  async setMarketData(data: MarketData): Promise<void> {
+    const existing = await db.select().from(marketData).limit(1);
+    
+    if (existing.length === 0) {
+      await db.insert(marketData).values({
+        symbol: data.symbol,
+        last_price: data.last_price,
+        bid: data.bid,
+        ask: data.ask,
+        volume: data.volume,
+        timestamp: new Date(data.timestamp),
+      });
+    } else {
+      await db.update(marketData)
+        .set({
+          symbol: data.symbol,
+          last_price: data.last_price,
+          bid: data.bid,
+          ask: data.ask,
+          volume: data.volume,
+          timestamp: new Date(data.timestamp),
+          updated_at: new Date(),
+        })
+        .where(eq(marketData.id, existing[0].id));
+    }
+  }
+}
+
+// Use database storage for critical persistent data
+export const storage = new PgStorage();

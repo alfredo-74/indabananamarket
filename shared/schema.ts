@@ -626,6 +626,65 @@ export const historicalCVAs = pgTable("historical_cvas", {
   created_at: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const positions = pgTable("positions", {
+  id: serial("id").primaryKey(),
+  contracts: integer("contracts").notNull(),
+  entry_price: real("entry_price"),
+  current_price: real("current_price").notNull(),
+  unrealized_pnl: real("unrealized_pnl").notNull(),
+  realized_pnl: real("realized_pnl").notNull(),
+  side: varchar("side").notNull(),
+  updated_at: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const trades = pgTable("trades", {
+  id: varchar("id").primaryKey(),
+  timestamp: timestamp("timestamp").notNull(),
+  type: varchar("type").notNull(),
+  entry_price: real("entry_price").notNull(),
+  exit_price: real("exit_price"),
+  contracts: integer("contracts").notNull(),
+  pnl: real("pnl"),
+  duration_ms: integer("duration_ms"),
+  regime: varchar("regime").notNull(),
+  cumulative_delta: real("cumulative_delta").notNull(),
+  status: varchar("status").notNull(),
+  orderflow_signal: varchar("orderflow_signal"),
+  confidence: real("confidence"),
+  absorption_event: varchar("absorption_event"),
+  dom_signal: varchar("dom_signal"),
+  tape_signal: varchar("tape_signal"),
+  profile_context: varchar("profile_context"),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const systemStatus = pgTable("system_status", {
+  id: serial("id").primaryKey(),
+  ibkr_connected: boolean("ibkr_connected").notNull(),
+  market_data_active: boolean("market_data_active").notNull(),
+  auto_trading_enabled: boolean("auto_trading_enabled").notNull(),
+  last_update: timestamp("last_update").notNull(),
+  capital: real("capital").notNull(),
+  daily_pnl: real("daily_pnl").notNull(),
+  account_balance: real("account_balance"),
+  account_currency: varchar("account_currency").default('GBP'),
+  usd_to_account_rate: real("usd_to_account_rate").default(1.0),
+  account_type: varchar("account_type"),
+  data_delay_seconds: integer("data_delay_seconds"),
+  updated_at: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const marketData = pgTable("market_data", {
+  id: serial("id").primaryKey(),
+  symbol: varchar("symbol").notNull(),
+  last_price: real("last_price").notNull(),
+  bid: real("bid").notNull(),
+  ask: real("ask").notNull(),
+  volume: real("volume").notNull(),
+  timestamp: timestamp("timestamp").notNull(),
+  updated_at: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const insertDailyProfileSchema = createInsertSchema(dailyProfiles).omit({ id: true, created_at: true });
 export const insertCompositeProfileSchema = createInsertSchema(compositeProfiles).omit({ id: true, updated_at: true });
 export const insertHistoricalCVASchema = createInsertSchema(historicalCVAs).omit({ id: true, created_at: true });
