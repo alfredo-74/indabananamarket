@@ -197,14 +197,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.json({ type: 'ack', message: 'Connected to trading system' });
       }
       else if (message.type === 'market_data') {
-        mockPrice = message.last_price;
+        // CRITICAL: Update heartbeat IMMEDIATELY - do NOT touch mockPrice
         bridgeLastHeartbeat = Date.now();
         
         // Update connection status in database (throttled to once per 5 seconds)
         const timeSinceLastStatusUpdate = Date.now() - (lastStatusUpdate || 0);
         if (!ibkrConnected || timeSinceLastStatusUpdate > 5000) {
           if (!ibkrConnected) {
-            console.log('✓ IBKR Bridge reconnected via HTTP');
+            console.log('✓ IBKR Bridge reconnected - real data flowing');
           }
           ibkrConnected = true;
           lastStatusUpdate = Date.now();
@@ -218,11 +218,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
 
-        // CRITICAL FIX: Feed tick into candle builder and order flow systems
+        // Process REAL bridge data - completely separate from mock system
         const timestamp = Date.now();
         const price = message.last_price;
-        const volume = message.volume || 1; // Default to 1 contract if not provided
+        const volume = message.volume || 1;
         const isBuy = message.bid && message.ask ? (price >= (message.bid + message.ask) / 2) : (Math.random() > 0.5);
+        
+        // Broadcast real market data IMMEDIATELY (this stops mock data from appearing in UI)
+        const realMarketData: MarketData = {
+          symbol: "ES",
+          last_price: price,
+          bid: message.bid || price - 0.25,
+          ask: message.ask || price + 0.25,
+          volume: message.volume || 0,
+          timestamp,
+        };
+        
+        await storage.setMarketData(realMarketData);
+        broadcast({
+          type: "market_data",
+          data: realMarketData,
+        });
         
         // 1. Add tick to Time & Sales and process for absorption
         const tapeTick = timeAndSalesProcessor.processTick(price, volume, isBuy ? "BUY" : "SELL", timestamp);
@@ -297,11 +313,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         bridgeLastHeartbeat = Date.now();
         console.log(`[DOM] Received ${message.bids?.length || 0} bids, ${message.asks?.length || 0} asks`);
         
+        // Get current price from market data (not from mockPrice)
+        const currentMarketData = await storage.getMarketData();
+        const currentPrice = currentMarketData?.last_price || 0;
+        
         // Update DOM processor with real Level II data
         const domSnapshot = domProcessor.updateSnapshot(
           message.bids || [],
           message.asks || [],
-          mockPrice
+          currentPrice
         );
         
         // Store DOM snapshot
