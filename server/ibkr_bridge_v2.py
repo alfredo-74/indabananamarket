@@ -114,23 +114,36 @@ class IBKRBridgeV2:
             positions = self.ib.positions()
             print(f"Current positions: {len(positions)}", file=sys.stderr)
             
+            # CRITICAL FIX: Reset position to 0 before checking IBKR positions
+            # This prevents phantom positions from persisting when user is actually FLAT
+            mes_es_position_found = False
+            self.current_position = 0
+            self.entry_price = None
+            self.unrealized_pnl = 0.0
+            
             for pos in positions:
                 print(f"  - {pos.contract.symbol}: {pos.position} @ {pos.avgCost}", file=sys.stderr)
                 if pos.contract.symbol in ['MES', 'ES']:
+                    mes_es_position_found = True
                     self.current_position = int(pos.position)
-                    self.entry_price = float(pos.avgCost)
-                    await self._forward_portfolio_update()
+                    self.entry_price = float(pos.avgCost) if pos.avgCost else None
             
             # Request account summary for P&L
             account_values = self.ib.accountSummary()
             for item in account_values:
-                if item.tag == 'UnrealizedPnL':
+                if item.tag == 'UnrealizedPnL' and self.current_position != 0:
                     self.unrealized_pnl = float(item.value)
                 elif item.tag == 'RealizedPnL':
                     self.realized_pnl = float(item.value)
             
-            if self.current_position != 0:
-                await self._forward_portfolio_update()
+            # ALWAYS forward position update, even if FLAT (contracts=0)
+            # This ensures phantom positions get cleared immediately
+            await self._forward_portfolio_update()
+            
+            if mes_es_position_found:
+                print(f"✅ MES/ES position: {self.current_position} @ {self.entry_price}", file=sys.stderr)
+            else:
+                print(f"✅ No MES/ES position - FLAT", file=sys.stderr)
                 
         except Exception as e:
             print(f"Error requesting positions: {e}", file=sys.stderr)
@@ -342,6 +355,10 @@ class IBKRBridgeV2:
         await self._fetch_account_data()
         await self._forward_account_data()
         
+        # Track last position refresh time
+        last_position_refresh = 0
+        last_order_check = 0
+        
         while self.connected:
             try:
                 current_time = datetime.now().timestamp()
@@ -351,6 +368,16 @@ class IBKRBridgeV2:
                     await self._fetch_account_data()
                     await self._forward_account_data()
                     self.last_account_update = current_time
+                
+                # CRITICAL: Refresh positions every 10 seconds to catch phantom position fixes
+                if current_time - last_position_refresh >= 10:
+                    await self._request_positions()
+                    last_position_refresh = current_time
+                
+                # CRITICAL: Check for pending orders every 2 seconds (for Close Position button)
+                if current_time - last_order_check >= 2:
+                    await self._check_pending_orders()
+                    last_order_check = current_time
                 
                 ticker = self.ib.ticker(self.display_contract)
                 
@@ -405,6 +432,54 @@ class IBKRBridgeV2:
                 import traceback
                 traceback.print_exc(file=sys.stderr)
                 await asyncio.sleep(1)
+    
+    async def _check_pending_orders(self):
+        """Check for and execute pending orders from the server"""
+        try:
+            response = requests.get(
+                f"{self.replit_url}/api/pending-orders",
+                timeout=2
+            )
+            
+            if response.status_code != 200:
+                return
+            
+            pending_orders = response.json()
+            
+            for order_data in pending_orders:
+                order_id = order_data.get('id')
+                action = order_data.get('action')
+                quantity = order_data.get('quantity')
+                
+                if not order_id or not action or not quantity:
+                    continue
+                
+                print(f"🔔 Executing pending order: {action} {quantity} MES (ID: {order_id})", file=sys.stderr)
+                
+                # Execute the order
+                result = await self.place_order(action, quantity)
+                
+                # Report result back to server
+                result_data = {
+                    "orderId": order_id,
+                    "status": "FILLED" if result.get("success") else "FAILED",
+                    "result": result
+                }
+                
+                requests.post(
+                    f"{self.replit_url}/api/order-result",
+                    json=result_data,
+                    timeout=2
+                )
+                
+                if result.get("success"):
+                    print(f"✅ Order {order_id} executed successfully", file=sys.stderr)
+                else:
+                    print(f"❌ Order {order_id} failed: {result.get('error')}", file=sys.stderr)
+                
+        except Exception as e:
+            # Silent fail - don't spam logs if server is unreachable
+            pass
     
     async def place_order(self, action: str, quantity: int):
         """Place a market order"""
