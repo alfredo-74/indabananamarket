@@ -445,6 +445,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Initialize bridge status as disconnected on startup (prevents stale "connected" status from previous session)
+  (async () => {
+    const status = await storage.getSystemStatus();
+    if (status && status.ibkr_connected) {
+      console.log('[INIT] Resetting bridge status to disconnected on startup');
+      status.ibkr_connected = false;
+      status.market_data_active = false;
+      await storage.setSystemStatus(status);
+      ibkrConnected = false;
+    }
+  })();
+
   // Check for bridge timeout every 2 seconds (fast detection for real trading)
   setInterval(async () => {
     const status = await storage.getSystemStatus();
@@ -461,7 +473,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         status.market_data_active = true;
         status.data_delay_seconds = 0;
       } else {
-        console.log(`✗ IBKR Bridge disconnected - no data for ${Math.round(timeSinceLastData / 1000)}s`);
+        const displayTime = bridgeLastHeartbeat === 0 
+          ? 'never connected' 
+          : `no data for ${Math.round(timeSinceLastData / 1000)}s`;
+        console.log(`✗ IBKR Bridge disconnected - ${displayTime}`);
         status.ibkr_connected = false;
         status.market_data_active = false;
         
