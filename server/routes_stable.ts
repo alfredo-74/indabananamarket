@@ -343,6 +343,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (completedCandle) {
           // New candle completed - add to storage
           await storage.addCandle(completedCandle);
+          console.log(`[CANDLE] Completed ${new Date(completedCandle.timestamp).toLocaleTimeString()} - O:${completedCandle.open.toFixed(2)} H:${completedCandle.high.toFixed(2)} L:${completedCandle.low.toFixed(2)} C:${completedCandle.close.toFixed(2)} Vol:${completedCandle.accumulated_volume} CD:${completedCandle.cumulative_delta.toFixed(0)}`);
+          
+          // Recalculate VWAP from all stored candles (including this new one)
+          const allCandles = await storage.getCandles();
+          if (allCandles.length > 0) {
+            const vwap = vwapCalculator.calculate(allCandles);
+            await storage.setVWAPData(vwap);
+            console.log(`[VWAP] Recalculated from ${allCandles.length} candles - VWAP: ${vwap.vwap?.toFixed(2) || 'N/A'}, Upper: ${vwap.upper_band?.toFixed(2) || 'N/A'}, Lower: ${vwap.lower_band?.toFixed(2) || 'N/A'}`);
+            
+            // Broadcast VWAP update to clients
+            broadcast({
+              type: "vwap_update",
+              data: vwap,
+            });
+          }
           
           // Save updated volume profile to storage (built from ticks, not candles)
           const volumeProfile = volumeProfileCalculator.getProfile();
@@ -350,8 +365,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
             await storage.setVolumeProfile(volumeProfile);
             console.log(`[VOLUME PROFILE] Updated: POC=${volumeProfile.poc.toFixed(2)}, VAH=${volumeProfile.vah.toFixed(2)}, VAL=${volumeProfile.val.toFixed(2)}, Levels=${volumeProfile.levels.length}`);
           }
-          
-          console.log(`[CANDLE] ${new Date(completedCandle.timestamp).toLocaleTimeString()} - O:${completedCandle.open.toFixed(2)} H:${completedCandle.high.toFixed(2)} L:${completedCandle.low.toFixed(2)} C:${completedCandle.close.toFixed(2)} Vol:${completedCandle.accumulated_volume} CD:${completedCandle.cumulative_delta.toFixed(0)}`);
         }
         
         res.json({ type: 'ack' });
