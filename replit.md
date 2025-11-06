@@ -6,6 +6,30 @@ OrderFlowAI is an automated trading system for futures markets, implementing the
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes (Nov 6, 2025)
+
+### Critical Fixes Completed
+1. **Mock Data Generator Control (Issue #1)**: Fixed race condition where mock data could corrupt real IBKR bridge data
+   - Added `startMockDataGenerator()` and `stopMockDataGenerator()` functions in routes.ts
+   - Mock generator now automatically stops via `clearInterval()` when IBKR bridge connects
+   - Stops on both initial handshake and reconnection after disconnect
+   - Production-safe atomic handoff from mock to real data
+
+2. **Footprint Data Backfill (Issue #2)**: Legacy footprint bars missing `imbalance_direction` field
+   - Added automatic backfill in `getFootprintBars()` method in storage.ts
+   - Calculates imbalance_direction from delta: "ASK" (positive), "BID" (negative), or "NEUTRAL"
+   - Ensures downstream analytics receive consistent data structures
+
+3. **Type Safety Fixes**: Resolved LSP errors in storage.ts
+   - Fixed Drizzle database insertion types for daily profiles
+   - Used `Array.from()` to properly type hvn_levels and lvn_levels arrays
+   - Fixed footprint backfill type inference issues
+
+### Known Issues
+- User's local `ibkr_bridge_v2.py` file needs URL update to connect to published system
+- CRITICAL: 6 daily profiles containing real IBKR data (CVA ~6907, DVA ~6851) were accidentally deleted - user needs to restore via rollback
+- AutoTrader lacks production safety features (order confirmation tracking, reject replay, trading fence on disconnect) - Issue #3 pending
+
 ## System Architecture
 
 ### Frontend
