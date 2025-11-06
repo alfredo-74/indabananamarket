@@ -428,7 +428,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
               high: bar.high,
               low: bar.low,
               close: bar.close,
-              volume: bar.volume,
               accumulated_volume: bar.volume,
               cumulative_delta: 0, // Historical bars don't have delta data
               buy_volume: 0,
