@@ -201,8 +201,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const message = req.body;
       
-      // Log ALL incoming bridge messages for debugging
-      if (message.type !== 'market_data' && message.type !== 'dom') {
+      // Log ALL incoming bridge messages for debugging (skip high-frequency market_data/dom_update)
+      if (message.type !== 'market_data' && message.type !== 'dom_update') {
         console.log(`[BRIDGE] Received message type: ${message.type}`);
       }
       
