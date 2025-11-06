@@ -1,0 +1,80 @@
+alfredo@penguin:~$ cd ~/Bananas
+ls
+attached_assets  design_guidelines.md  download_bridges.sh      ibkr_bridge_LIVE_READONLY.py     ibkr_bridge_simple.py  main.py                  package-lock.json  replit.md  start-local.sh      uv.lock
+client           dist                  drizzle.config.ts        ibkr_bridge_REAL_TIME_LEVEL2.py  ibkr_local_bridge.py   OPERATIONAL_WORKFLOW.md  postcss.config.js  server     tailwind.config.ts  vite.config.ts
+components.json  DOWNLOAD_BRIDGE.md    ibkr_bridge_download.py  IBKR_BRIDGE_SETUP.md             LOCAL_SETUP.md         package.json             pyproject.toml     shared     tsconfig.json
+alfredo@penguin:~/Bananas$ cp .env.local.template .env.local
+nano .env.local
+alfredo@penguin:~/Bananas$ npm install
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+
+added 585 packages, and audited 586 packages in 10s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+8 vulnerabilities (3 low, 5 moderate)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+npm notice
+npm notice New patch version of npm available! 11.6.1 -> 11.6.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.2
+npm notice To update run: npm install -g npm@11.6.2
+npm notice
+alfredo@penguin:~/Bananas$ ./start-local.sh
+-bash: ./start-local.sh: Permission denied
+alfredo@penguin:~/Bananas$ chmod +x start-local.sh
+alfredo@penguin:~/Bananas$ ./start-local.sh
+================================
+OrderFlowAI - Local Trading System
+================================
+
+✅ Configuration loaded
+✅ Database: postgresql://neondb_owner:npg_...
+✅ Safety key: 295d67de43...
+
+🚀 Starting Node.js server on http://localhost:5000
+
+Next steps:
+1. Open another terminal
+2. Run the Python bridge: python3 server/ibkr_bridge_local.py
+3. Open browser: http://localhost:5000
+
+Press Ctrl+C to stop the server
+================================
+
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+[SAFETY] ✅ Safety configuration loaded from database: {
+  max_drawdown_gbp: undefined,
+  max_position_size: 1,
+  trading_fence_enabled: true,
+  position_reconciliation_enabled: true,
+  reject_replay_cooldown_minutes: 30,
+  circuit_breaker_enabled: true
+}
+[SAFETY] ✅ Production Safety Manager initialized and ready
+[INIT] Resetting bridge status to disconnected on startup
+✓ Bridge HTTP endpoint initialized at /api/bridge/data
+[MOCK DATA] Starting mock data generator (development mode)
+✅ Safety authentication key validated
+5:49:45 PM [express] serving on port 5000
+✓ Composite profile initialized
+✓ IBKR Bridge connected - real data flowing
+[ABSORPTION] BUY_ABSORPTION @ 6003.52 - Ratio: 4.00:1
+✗ IBKR Bridge disconnected - no data for 12s
+✗ IBKR Bridge disconnected - no data for 14s
+[ABSORPTION] SELL_ABSORPTION @ 6002.74 - Ratio: 4.00:1
+✗ IBKR Bridge disconnected - no data for 16s
+[ABSORPTION] SELL_ABSORPTION @ 6002.73 - Ratio: 4.00:1
+[CANDLE] 5:49:00 PM - O:6003.95 H:6003.96 L:6002.68 C:6002.82 Vol:28 CD:-2
+[FOOTPRINT] Bar completed: POC=6002.74, Delta=-2, Imbalances=3

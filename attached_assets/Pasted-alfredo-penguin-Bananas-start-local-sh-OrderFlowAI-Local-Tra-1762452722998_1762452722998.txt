@@ -1,0 +1,56 @@
+alfredo@penguin:~/Bananas$ ./start-local.sh
+================================
+OrderFlowAI - Local Trading System
+================================
+
+✅ Configuration loaded
+✅ Database: postgresql://neondb_owner:npg_...
+✅ Safety key: 295d67de43...
+
+🚀 Starting Node.js server on http://localhost:5000
+
+Next steps:
+1. Open another terminal
+2. Run the Python bridge: python3 server/ibkr_bridge_local.py
+3. Open browser: http://localhost:5000
+
+Press Ctrl+C to stop the server
+================================
+
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+[INIT] Resetting bridge status to disconnected on startup
+[SAFETY] ✅ Safety configuration loaded from database: {
+  max_drawdown_gbp: undefined,
+  max_position_size: 1,
+  trading_fence_enabled: true,
+  position_reconciliation_enabled: true,
+  reject_replay_cooldown_minutes: 30,
+  circuit_breaker_enabled: true
+}
+[SAFETY] ✅ Production Safety Manager initialized and ready
+✓ Bridge HTTP endpoint initialized at /api/bridge/data
+[MOCK DATA] Starting mock data generator (development mode)
+✅ Safety authentication key validated
+6:11:27 PM [express] serving on port 5000
+✓ Composite profile initialized
+✓ IBKR Bridge connected - real data flowing
+[ABSORPTION] BUY_ABSORPTION @ 6004.12 - Ratio: 4.00:1
+✗ IBKR Bridge disconnected - no data for 10s
+[ABSORPTION] BUY_ABSORPTION @ 6004.22 - Ratio: 4.00:1
+✗ IBKR Bridge disconnected - no data for 12s
+✗ IBKR Bridge disconnected - no data for 14s
+[ABSORPTION] BUY_ABSORPTION @ 6004.62 - Ratio: 4.00:1
+✗ IBKR Bridge disconnected - no data for 16s
+[ABSORPTION] SELL_ABSORPTION @ 6004.64 - Ratio: 4.00:1
+[ABSORPTION] SELL_ABSORPTION @ 6004.58 - Ratio: 4.00:1
+✗ IBKR Bridge disconnected - no data for 18s
+./start-local.sh✗ IBKR Bridge disconnected - no data for 20s
+[ABSORPTION] BUY_ABSORPTION @ 6004.74 - Ratio: 4.00:1
+✗ IBKR Bridge disconnected - no data for 22s
+[ABSORPTION] BUY_ABSORPTION @ 6004.93 - Ratio: 4.00:1
+✗ IBKR Bridge disconnected - no data for 24s
+[ABSORPTION] BUY_ABSORPTION @ 6004.90 - Ratio: 5.00:1
+[ABSORPTION] BUY_ABSORPTION @ 6004.93 - Ratio: 4.00:1

@@ -1,0 +1,68 @@
+alfredo@penguin:~/Bananas$ ./start-local.sh
+================================
+OrderFlowAI - Local Trading System
+================================
+
+✅ Configuration loaded
+✅ Database: postgresql://neondb_owner:npg_...
+✅ Safety key: 295d67de43...
+
+🚀 Starting Node.js server on http://localhost:5000
+
+Next steps:
+1. Open another terminal
+2. Run the Python bridge: python3 server/ibkr_bridge_local.py
+3. Open browser: http://localhost:5000
+
+Press Ctrl+C to stop the server
+================================
+
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+[SAFETY] ✅ Safety configuration loaded from database: {
+  max_drawdown_gbp: undefined,
+  max_position_size: 1,
+  trading_fence_enabled: true,
+  position_reconciliation_enabled: true,
+  reject_replay_cooldown_minutes: 30,
+  circuit_breaker_enabled: true
+}
+[SAFETY] ✅ Production Safety Manager initialized and ready
+✓ Bridge HTTP endpoint initialized at /api/bridge/data
+[MOCK DATA] Starting mock data generator (development mode)
+✅ Safety authentication key validated
+6:00:38 PM [express] serving on port 5000
+✓ IBKR Bridge reconnected - real data flowing
+[MOCK DATA] ✓ Mock data generator STOPPED - real bridge data active
+✓ Composite profile initialized
+[BRIDGE] Received message type: dom
+6:00:39 PM [express] POST /api/bridge/data 200 in 6ms :: {"type":"ack"}
+6:00:40 PM [express] GET /api/pending-orders 200 in 2ms :: []
+6:00:40 PM [express] POST /api/bridge/data 200 in 393ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:00:40 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+6:00:41 PM [express] POST /api/bridge/data 200 in 383ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:00:41 PM [express] POST /api/bridge/data 200 in 2ms :: {"type":"ack"}
+6:00:42 PM [express] POST /api/bridge/data 200 in 357ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:00:42 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+6:00:42 PM [express] GET /api/pending-orders 200 in 1ms :: []
+6:00:43 PM [express] POST /api/bridge/data 200 in 373ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:00:43 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+6:00:44 PM [express] POST /api/bridge/data 200 in 969ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:00:44 PM [express] POST /api/bridge/data 200 in 0ms :: {"type":"ack"}
+6:00:45 PM [express] GET /api/pending-orders 200 in 1ms :: []
+6:00:45 PM [express] POST /api/bridge/data 200 in 383ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:00:45 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+6:00:46 PM [express] POST /api/bridge/data 200 in 451ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:00:46 PM [express] POST /api/bridge/data 200 in 0ms :: {"type":"ack"}
+6:00:47 PM [express] POST /api/bridge/data 200 in 385ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:00:47 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}

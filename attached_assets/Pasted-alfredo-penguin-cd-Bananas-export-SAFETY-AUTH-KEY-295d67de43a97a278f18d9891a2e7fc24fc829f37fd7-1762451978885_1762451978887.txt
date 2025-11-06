@@ -1,0 +1,120 @@
+alfredo@penguin:~$ cd ~/Bananas
+export SAFETY_AUTH_KEY="295d67de43a97a278f18d9891a2e7fc24fc829f37fd7dd357cd5dadfd9c03605"
+export IBKR_USERNAME="fredpaper74"
+export IBKR_PASSWORD='m!j8r5C%WF3W-#2'
+python3 server/ibkr_bridge_local.py
+======================================================================
+🏎️  IBKR BRIDGE - LOCAL MODE
+======================================================================
+🔗 Local URL: http://localhost:5000
+📊 Historical data: 7 days
+======================================================================
+🚀 Bridge LOCAL initialized - Will forward data to: http://localhost:5000
+Connecting to IB Gateway on port 4002...
+✅ Connected to IBKR Paper Trading
+Ambiguous contract: Future(symbol='ES', exchange='CME'), possibles are [Contract(secType='FUT', conId=495512563, symbol='ES', lastTradeDateOrContractMonth='20251219', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ5', tradingClass='ES'), Contract(secType='FUT', conId=515416632, symbol='ES', lastTradeDateOrContractMonth='20261218', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ6', tradingClass='ES'), Contract(secType='FUT', conId=586139767, symbol='ES', lastTradeDateOrContractMonth='20271217', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ7', tradingClass='ES'), Contract(secType='FUT', conId=649180661, symbol='ES', lastTradeDateOrContractMonth='20270617', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM7', tradingClass='ES'), Contract(secType='FUT', conId=649180666, symbol='ES', lastTradeDateOrContractMonth='20280317', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH8', tradingClass='ES'), Contract(secType='FUT', conId=649180671, symbol='ES', lastTradeDateOrContractMonth='20260918', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU6', tradingClass='ES'), Contract(secType='FUT', conId=649180675, symbol='ES', lastTradeDateOrContractMonth='20280915', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU8', tradingClass='ES'), Contract(secType='FUT', conId=649180678, symbol='ES', lastTradeDateOrContractMonth='20260618', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM6', tradingClass='ES'), Contract(secType='FUT', conId=649180681, symbol='ES', lastTradeDateOrContractMonth='20270917', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU7', tradingClass='ES'), Contract(secType='FUT', conId=649180684, symbol='ES', lastTradeDateOrContractMonth='20270319', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH7', tradingClass='ES'), Contract(secType='FUT', conId=649180690, symbol='ES', lastTradeDateOrContractMonth='20280616', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM8', tradingClass='ES'), Contract(secType='FUT', conId=649180695, symbol='ES', lastTradeDateOrContractMonth='20260320', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH6', tradingClass='ES'), Contract(secType='FUT', conId=654503299, symbol='ES', lastTradeDateOrContractMonth='20281215', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ8', tradingClass='ES'), Contract(secType='FUT', conId=672387437, symbol='ES', lastTradeDateOrContractMonth='20290316', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH9', tradingClass='ES'), Contract(secType='FUT', conId=691171642, symbol='ES', lastTradeDateOrContractMonth='20290615', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM9', tradingClass='ES'), Contract(secType='FUT', conId=711280049, symbol='ES', lastTradeDateOrContractMonth='20290921', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU9', tradingClass='ES'), Contract(secType='FUT', conId=730283071, symbol='ES', lastTradeDateOrContractMonth='20291221', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ9', tradingClass='ES'), Contract(secType='FUT', conId=750150169, symbol='ES', lastTradeDateOrContractMonth='20300315', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH0', tradingClass='ES'), Contract(secType='FUT', conId=770561177, symbol='ES', lastTradeDateOrContractMonth='20300621', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM0', tradingClass='ES'), Contract(secType='FUT', conId=793356200, symbol='ES', lastTradeDateOrContractMonth='20300920', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU0', tradingClass='ES'), Contract(secType='FUT', conId=815824241, symbol='ES', lastTradeDateOrContractMonth='20301220', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ0', tradingClass='ES')]
+Ambiguous contract: Future(symbol='MES', exchange='CME'), possibles are [Contract(secType='FUT', conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), Contract(secType='FUT', conId=750150186, symbol='MES', lastTradeDateOrContractMonth='20260320', multiplier='5', exchange='CME', currency='USD', localSymbol='MESH6', tradingClass='MES'), Contract(secType='FUT', conId=770561194, symbol='MES', lastTradeDateOrContractMonth='20260618', multiplier='5', exchange='CME', currency='USD', localSymbol='MESM6', tradingClass='MES'), Contract(secType='FUT', conId=793356217, symbol='MES', lastTradeDateOrContractMonth='20260918', multiplier='5', exchange='CME', currency='USD', localSymbol='MESU6', tradingClass='MES'), Contract(secType='FUT', conId=815824257, symbol='MES', lastTradeDateOrContractMonth='20261218', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ6', tradingClass='MES')]
+Current positions: 0
+Error forwarding portfolio update: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743da5a110>: Failed to establish a new connection: [Errno 111] Connection refused'))
+✅ No MES/ES position - FLAT
+📊 Fetching 7 days of historical data...
+✅ Received 582 bars
+❌ Error sending historical data: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743da84350>: Failed to establish a new connection: [Errno 111] Connection refused'))
+Traceback (most recent call last):
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connection.py", line 198, in _new_conn
+    sock = connection.create_connection(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/util/connection.py", line 85, in create_connection
+    raise err
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/util/connection.py", line 73, in create_connection
+    sock.connect(sa)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 493, in _make_request
+    conn.request(
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connection.py", line 494, in request
+    self.endheaders()
+  File "/usr/lib/python3.11/http/client.py", line 1277, in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+  File "/usr/lib/python3.11/http/client.py", line 1037, in _send_output
+    self.send(msg)
+  File "/usr/lib/python3.11/http/client.py", line 975, in send
+    self.connect()
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connection.py", line 325, in connect
+    self.sock = self._new_conn()
+                ^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connection.py", line 213, in _new_conn
+    raise NewConnectionError(
+urllib3.exceptions.NewConnectionError: <urllib3.connection.HTTPConnection object at 0x7f743da84350>: Failed to establish a new connection: [Errno 111] Connection refused
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/alfredo/.local/lib/python3.11/site-packages/requests/adapters.py", line 644, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/connectionpool.py", line 841, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/urllib3/util/retry.py", line 519, in increment
+    raise MaxRetryError(_pool, url, reason) from reason  # type: ignore[arg-type]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743da84350>: Failed to establish a new connection: [Errno 111] Connection refused'))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/alfredo/Bananas/server/ibkr_bridge_local.py", line 428, in send_historical_data
+    response = requests.post(
+               ^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/requests/adapters.py", line 677, in send
+    raise ConnectionError(e, request=request)
+requests.exceptions.ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743da84350>: Failed to establish a new connection: [Errno 111] Connection refused'))
+🚀 Starting real-time data stream...
+💰 Account: Balance=$1791.87, NetLiq=$1791.87, DailyPnL=$0.00
+Error forwarding account data: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743d96e250>: Failed to establish a new connection: [Errno 111] Connection refused'))
+💰 Account: Balance=$1791.87, NetLiq=$1791.87, DailyPnL=$0.00
+Error forwarding account data: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743d96ff90>: Failed to establish a new connection: [Errno 111] Connection refused'))
+Current positions: 0
+Error forwarding portfolio update: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743d991d90>: Failed to establish a new connection: [Errno 111] Connection refused'))
+✅ No MES/ES position - FLAT
+❌ Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743d96e610>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743db97e90>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ DOM Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743d8e8950>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743d8ea8d0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ DOM Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743dab1650>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743d8eabd0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ DOM Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743d8e8710>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743d96e0d0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ DOM Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743da703d0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743da70950>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ DOM Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743f6e7050>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743d96ee50>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ DOM Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743da52b10>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743d8e9410>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ DOM Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743da85f90>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743dd24910>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ DOM Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743d8e8e90>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743d8e8150>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ DOM Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743d96fe50>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743da873d0>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ DOM Request failed: ConnectionError: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/bridge/data (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x7f743dab0050>: Failed to establish a new connection: [Errno 111] Connection refused'))
+❌ Request failed: ConnectionError: HTTPConne

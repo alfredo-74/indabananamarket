@@ -1,0 +1,23 @@
+client:536 WebSocket connection to 'ws://localhost:5000/?token=OxcNufZYbFdo' failed: 
+setupWebSocket @ client:536Understand this error
+client:536 Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'ws://localhost:undefined/?token=OxcNufZYbFdo' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)Understand this error
+chunk-RPCDYKBN.js?v=9ef4178b:21551 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+chunk-RPCDYKBN.js?v=9ef4178b:521 Warning: findDOMNode is deprecated and will be removed in the next major release. Instead, add a ref directly to the element you want to reference. Learn more about using refs safely here: https://reactjs.org/link/strict-mode-find-node
+    at DraggableCore (http://localhost:5000/@fs/home/alfredo/Bananas/node_modules/.vite/deps/react-draggable.js?v=9ef4178b:1311:9)
+    at Draggable (http://localhost:5000/@fs/home/alfredo/Bananas/node_modules/.vite/deps/react-draggable.js?v=9ef4178b:1718:9)
+    at div
+    at GridWindow (http://localhost:5000/src/pages/f1-command-center.tsx:30:3)
+    at div
+    at div
+    at F1CommandCenter (http://localhost:5000/src/pages/f1-command-center.tsx:124:28)
+    at Route (http://localhost:5000/@fs/home/alfredo/Bananas/node_modules/.vite/deps/wouter.js?v=9ef4178b:323:16)
+    at Switch (http://localhost:5000/@fs/home/alfredo/Bananas/node_modules/.vite/deps/wouter.js?v=9ef4178b:379:17)
+    at Router
+    at Provider (http://localhost:5000/@fs/home/alfredo/Bananas/node_modules/.vite/deps/chunk-U7IHIBNQ.js?v=9ef4178b:32:15)
+    at TooltipProvider (http://localhost:5000/@fs/home/alfredo/Bananas/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=9ef4178b:2214:5)
+    at ThemeProvider (http://localhost:5000/src/components/ThemeProvider.tsx:21:3)
+    at QueryClientProvider (http://localhost:5000/@fs/home/alfredo/Bananas/node_modules/.vite/deps/@tanstack_react-query.js?v=9ef4178b:2805:3)
+    at App
