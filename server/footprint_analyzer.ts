@@ -19,6 +19,7 @@ export interface FootprintPriceLevel {
   total_volume: number;
   imbalance_ratio: number; // Ratio of dominant side to weaker side
   imbalanced: boolean;     // True if ratio >= 2:1
+  imbalance_direction: "BID" | "ASK" | "NEUTRAL"; // Which side is dominant
 }
 
 export interface FootprintBar {
@@ -37,8 +38,8 @@ export interface FootprintBar {
   poc_price: number;  // Point of Control - price with highest volume
   
   // Imbalance detection
-  stacked_buying: number;  // Count of consecutive levels with ask dominance
-  stacked_selling: number; // Count of consecutive levels with bid dominance
+  stacked_buying: boolean;  // True if 3+ consecutive levels with ask dominance
+  stacked_selling: boolean; // True if 3+ consecutive levels with bid dominance
   imbalance_count: number;  // Number of imbalanced levels
   
   // Delta statistics
@@ -110,8 +111,8 @@ export class FootprintAnalyzer {
       total_ask_volume: 0,
       bar_delta: 0,
       poc_price: 0,
-      stacked_buying: 0,
-      stacked_selling: 0,
+      stacked_buying: false,
+      stacked_selling: false,
       imbalance_count: 0,
       max_positive_delta: 0,
       max_negative_delta: 0,
@@ -150,6 +151,7 @@ export class FootprintAnalyzer {
         total_volume: 0,
         imbalance_ratio: 1.0,
         imbalanced: false,
+        imbalance_direction: "NEUTRAL",
       };
       this.currentBar.price_levels.push(priceLevel);
     }
@@ -174,6 +176,13 @@ export class FootprintAnalyzer {
     const minVol = Math.min(priceLevel.bid_volume, priceLevel.ask_volume);
     priceLevel.imbalance_ratio = minVol > 0 ? maxVol / minVol : maxVol;
     priceLevel.imbalanced = priceLevel.imbalance_ratio >= this.imbalanceRatioThreshold;
+    
+    // Determine imbalance direction
+    if (priceLevel.imbalanced) {
+      priceLevel.imbalance_direction = priceLevel.ask_volume > priceLevel.bid_volume ? "ASK" : "BID";
+    } else {
+      priceLevel.imbalance_direction = "NEUTRAL";
+    }
   }
   
   /**
@@ -232,7 +241,7 @@ export class FootprintAnalyzer {
   
   /**
    * Detect stacked buying or selling (3+ consecutive imbalanced levels)
-   * Tracks the MAXIMUM consecutive count, not just if it exists
+   * Returns true if 3+ consecutive levels exist, false otherwise
    */
   private detectStackedImbalances(): void {
     if (!this.currentBar || this.currentBar.price_levels.length < this.stackedImbalanceCount) {
@@ -267,9 +276,9 @@ export class FootprintAnalyzer {
       }
     }
     
-    // Store the maximum consecutive counts (only if >= threshold)
-    this.currentBar.stacked_buying = maxBuyingStack >= this.stackedImbalanceCount ? maxBuyingStack : 0;
-    this.currentBar.stacked_selling = maxSellingStack >= this.stackedImbalanceCount ? maxSellingStack : 0;
+    // Store as boolean (true if 3+ consecutive levels exist)
+    this.currentBar.stacked_buying = maxBuyingStack >= this.stackedImbalanceCount;
+    this.currentBar.stacked_selling = maxSellingStack >= this.stackedImbalanceCount;
   }
   
   /**

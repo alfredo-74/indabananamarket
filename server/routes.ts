@@ -262,16 +262,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // 5. Analyze footprint imbalances for order flow signals (PRO Course integration)
           const recentFootprintBars = await storage.getFootprintBars(5); // Last 5 bars for analysis
           const footprintSignals = orderFlowSignalDetector.analyzeFootprintImbalances(
-            recentFootprintBars.map(bar => ({
-              timestamp: bar.timestamp,
-              price_levels: bar.price_levels,
-              poc: bar.poc_price,
-              cumulative_delta: bar.bar_delta,
-              stacked_imbalances: {
-                buy_stacks: bar.stacked_buying,
-                sell_stacks: bar.stacked_selling,
-              },
-            }))
+            recentFootprintBars.map(bar => {
+              // Calculate consecutive imbalance counts from price levels
+              let buyStackCount = 0;
+              let sellStackCount = 0;
+              let consecutiveBuy = 0;
+              let consecutiveSell = 0;
+              
+              const sortedLevels = [...bar.price_levels].sort((a, b) => a.price - b.price);
+              for (const level of sortedLevels) {
+                if (level.imbalanced && level.imbalance_direction === "ASK") {
+                  consecutiveBuy++;
+                  buyStackCount = Math.max(buyStackCount, consecutiveBuy);
+                  consecutiveSell = 0;
+                } else if (level.imbalanced && level.imbalance_direction === "BID") {
+                  consecutiveSell++;
+                  sellStackCount = Math.max(sellStackCount, consecutiveSell);
+                  consecutiveBuy = 0;
+                } else {
+                  consecutiveBuy = 0;
+                  consecutiveSell = 0;
+                }
+              }
+              
+              return {
+                timestamp: bar.start_time,
+                price_levels: bar.price_levels,
+                poc: bar.poc_price,
+                cumulative_delta: bar.bar_delta,
+                stacked_imbalances: {
+                  buy_stacks: buyStackCount,
+                  sell_stacks: sellStackCount,
+                },
+              };
+            })
           );
           
           // Log any new footprint-derived signals

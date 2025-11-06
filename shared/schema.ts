@@ -283,6 +283,7 @@ export const footprintPriceLevelSchema = z.object({
   total_volume: z.number(),
   imbalance_ratio: z.number(), // Ratio of dominant side to weaker side
   imbalanced: z.boolean(),     // True if ratio >= 2:1
+  imbalance_direction: z.enum(["BID", "ASK", "NEUTRAL"]), // Which side is dominant
 });
 
 export const footprintBarSchema = z.object({
