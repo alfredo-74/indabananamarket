@@ -493,12 +493,18 @@ class IBKRBridgeV2:
                     "timestamp": int(datetime.now().timestamp() * 1000)
                 }
                 
-                response = requests.post(
-                    f"{self.replit_url}/api/bridge/data",
-                    json=market_data,
-                    timeout=1
-                )
-                print(f"📤 Tick sent: ES @ {self.last_price:.2f}", file=sys.stderr)
+                try:
+                    response = requests.post(
+                        f"{self.replit_url}/api/bridge/data",
+                        json=market_data,
+                        timeout=1
+                    )
+                    if response.status_code == 200:
+                        print(f"📤 Tick sent: ES @ {self.last_price:.2f}", file=sys.stderr)
+                    else:
+                        print(f"❌ HTTP {response.status_code}: {response.text[:100]}", file=sys.stderr)
+                except requests.exceptions.RequestException as e:
+                    print(f"❌ Request failed: {type(e).__name__}: {str(e)}", file=sys.stderr)
                 
                 # Send DOM data
                 if self.dom_bids or self.dom_asks:
@@ -509,12 +515,18 @@ class IBKRBridgeV2:
                         "timestamp": int(datetime.now().timestamp() * 1000)
                     }
                     
-                    requests.post(
-                        f"{self.replit_url}/api/bridge/data",
-                        json=dom_data,
-                        timeout=1
-                    )
-                    print(f"📤 DOM update sent ({len(self.dom_bids)} bids, {len(self.dom_asks)} asks)", file=sys.stderr)
+                    try:
+                        response = requests.post(
+                            f"{self.replit_url}/api/bridge/data",
+                            json=dom_data,
+                            timeout=1
+                        )
+                        if response.status_code == 200:
+                            print(f"📤 DOM update sent ({len(self.dom_bids)} bids, {len(self.dom_asks)} asks)", file=sys.stderr)
+                        else:
+                            print(f"❌ DOM HTTP {response.status_code}: {response.text[:100]}", file=sys.stderr)
+                    except requests.exceptions.RequestException as e:
+                        print(f"❌ DOM Request failed: {type(e).__name__}: {str(e)}", file=sys.stderr)
                 
                 await asyncio.sleep(0.5)  # 500ms updates
                 
