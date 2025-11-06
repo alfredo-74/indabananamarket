@@ -687,9 +687,54 @@ export const marketData = pgTable("market_data", {
   updated_at: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// Order Tracking for Production Safety
+export const orderTracking = pgTable("order_tracking", {
+  id: serial("id").primaryKey(),
+  order_id: varchar("order_id").notNull().unique(), // IBKR order ID
+  signal_id: varchar("signal_id").notNull(), // Original signal that triggered order
+  action: varchar("action").notNull(), // BUY, SELL, CLOSE
+  quantity: integer("quantity").notNull(),
+  entry_price: real("entry_price").notNull(),
+  status: varchar("status").notNull(), // PENDING, FILLED, REJECTED, CANCELLED
+  ibkr_status: varchar("ibkr_status"), // Raw status from IBKR
+  filled_price: real("filled_price"), // Actual fill price
+  filled_time: timestamp("filled_time"),
+  reject_reason: varchar("reject_reason"),
+  created_at: timestamp("created_at").defaultNow().notNull(),
+  updated_at: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Rejected Orders Cache (prevents replay attacks)
+export const rejectedOrders = pgTable("rejected_orders", {
+  id: serial("id").primaryKey(),
+  signal_id: varchar("signal_id").notNull(),
+  reason: varchar("reason").notNull(),
+  price: real("price").notNull(),
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+  expires_at: timestamp("expires_at").notNull(), // Auto-expire after cooldown
+});
+
+// Safety Configuration
+export const safetyConfig = pgTable("safety_config", {
+  id: serial("id").primaryKey(),
+  max_drawdown_gbp: real("max_drawdown_gbp").notNull().default(-500), // Max daily loss in GBP
+  max_position_size: integer("max_position_size").notNull().default(1), // Max contracts
+  trading_fence_enabled: boolean("trading_fence_enabled").notNull().default(true), // Stop on bridge disconnect
+  trading_fence_active: boolean("trading_fence_active").notNull().default(false), // Current fence activation state
+  fence_reason: varchar("fence_reason"), // Reason for fence activation
+  fence_activated_at: timestamp("fence_activated_at"), // When fence was activated
+  position_reconciliation_enabled: boolean("position_reconciliation_enabled").notNull().default(true),
+  reject_replay_cooldown_minutes: integer("reject_replay_cooldown_minutes").notNull().default(30),
+  circuit_breaker_enabled: boolean("circuit_breaker_enabled").notNull().default(true),
+  updated_at: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export const insertDailyProfileSchema = createInsertSchema(dailyProfiles).omit({ id: true, created_at: true });
 export const insertCompositeProfileSchema = createInsertSchema(compositeProfiles).omit({ id: true, updated_at: true });
 export const insertHistoricalCVASchema = createInsertSchema(historicalCVAs).omit({ id: true, created_at: true });
+export const insertOrderTrackingSchema = createInsertSchema(orderTracking).omit({ id: true, created_at: true, updated_at: true });
+export const insertRejectedOrderSchema = createInsertSchema(rejectedOrders).omit({ id: true, timestamp: true });
+export const insertSafetyConfigSchema = createInsertSchema(safetyConfig).omit({ id: true, updated_at: true });
 
 export type DailyProfileDB = typeof dailyProfiles.$inferSelect;
 export type InsertDailyProfile = z.infer<typeof insertDailyProfileSchema>;
@@ -697,3 +742,9 @@ export type CompositeProfileDB = typeof compositeProfiles.$inferSelect;
 export type InsertCompositeProfile = z.infer<typeof insertCompositeProfileSchema>;
 export type HistoricalCVADB = typeof historicalCVAs.$inferSelect;
 export type InsertHistoricalCVA = z.infer<typeof insertHistoricalCVASchema>;
+export type OrderTrackingDB = typeof orderTracking.$inferSelect;
+export type InsertOrderTracking = z.infer<typeof insertOrderTrackingSchema>;
+export type RejectedOrderDB = typeof rejectedOrders.$inferSelect;
+export type InsertRejectedOrder = z.infer<typeof insertRejectedOrderSchema>;
+export type SafetyConfigDB = typeof safetyConfig.$inferSelect;
+export type InsertSafetyConfig = z.infer<typeof insertSafetyConfigSchema>;

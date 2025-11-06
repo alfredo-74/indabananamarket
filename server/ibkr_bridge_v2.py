@@ -178,17 +178,90 @@ class IBKRBridgeV2:
             print(f"Error in order update handler: {e}", file=sys.stderr)
     
     def _on_order_status(self, trade):
-        """Handle order status changes"""
+        """Handle order status changes and send confirmation to trading system"""
         try:
             status = trade.orderStatus.status
-            print(f"📋 Order {trade.order.orderId} status: {status}", file=sys.stderr)
+            order_id = str(trade.order.orderId)
+            print(f"📋 Order {order_id} status: {status}", file=sys.stderr)
             
-            # When order is filled, positions will update automatically via _on_position_update
-            if status == 'Filled':
-                print(f"✅ Order filled: {trade.order.action} {trade.order.totalQuantity} @ {trade.orderStatus.avgFillPrice}", file=sys.stderr)
+            # Detect terminal states and send confirmation
+            confirmation_status = None
+            filled_price = None
+            filled_time = None
+            reject_reason = None
+            
+            status_lower = status.lower()
+            
+            if status_lower == 'filled':
+                confirmation_status = 'FILLED'
+                filled_price = float(trade.orderStatus.avgFillPrice) if trade.orderStatus.avgFillPrice else None
+                filled_time = int(datetime.now().timestamp() * 1000)
+                print(f"✅ Order filled: {trade.order.action} {trade.order.totalQuantity} @ {filled_price}", file=sys.stderr)
+            elif status_lower in ['cancelled', 'apicancelled']:
+                confirmation_status = 'CANCELLED'
+                reject_reason = 'Order cancelled'
+                print(f"⚠️ Order cancelled: {order_id}", file=sys.stderr)
+            elif status_lower in ['rejected', 'error']:
+                confirmation_status = 'REJECTED'
+                # Try to get reject reason from trade log
+                reject_reason = str(trade.log[-1].message) if trade.log and len(trade.log) > 0 else 'Order rejected by IBKR'
+                print(f"❌ Order REJECTED: {order_id} - {reject_reason}", file=sys.stderr)
+            
+            # Send confirmation to Safety Manager for terminal states
+            if confirmation_status:
+                asyncio.create_task(self._send_order_confirmation(
+                    order_id,
+                    confirmation_status,
+                    filled_price,
+                    filled_time,
+                    reject_reason
+                ))
                 
         except Exception as e:
             print(f"Error in order status handler: {e}", file=sys.stderr)
+    
+    async def _send_order_confirmation(self, order_id: str, status: str, filled_price: float = None, filled_time: int = None, reject_reason: str = None):
+        """Send order confirmation to trading system Safety Manager"""
+        try:
+            # SECURITY: Get safety auth key from environment
+            import os
+            safety_auth_key = os.environ.get('SAFETY_AUTH_KEY')
+            if not safety_auth_key:
+                print("❌ SAFETY_AUTH_KEY not set - cannot send order confirmations!", file=sys.stderr)
+                return
+            
+            payload = {
+                "order_id": order_id,
+                "status": status,
+                "filled_price": filled_price,
+                "filled_time": filled_time,
+                "reject_reason": reject_reason
+            }
+            
+            # SECURITY: Send auth key in header
+            headers = {
+                'x-safety-auth-key': safety_auth_key,
+                'Content-Type': 'application/json'
+            }
+            
+            # Use asyncio.to_thread to prevent blocking event loop
+            response = await asyncio.to_thread(
+                requests.post,
+                f"{self.replit_url}/api/order-confirmation",
+                json=payload,
+                headers=headers,
+                timeout=2
+            )
+            
+            if response.status_code == 200:
+                print(f"✅ Order confirmation sent: {order_id} - {status}", file=sys.stderr)
+            elif response.status_code == 401:
+                print(f"❌ Order confirmation UNAUTHORIZED - check SAFETY_AUTH_KEY", file=sys.stderr)
+            else:
+                print(f"⚠️ Order confirmation failed: {order_id} - HTTP {response.status_code}", file=sys.stderr)
+                
+        except Exception as e:
+            print(f"❌ Error sending order confirmation: {e}", file=sys.stderr)
     
     async def _fetch_account_data(self):
         """Fetch comprehensive account data from IBKR"""

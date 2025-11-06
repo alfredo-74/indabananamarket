@@ -8,27 +8,44 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (Nov 6, 2025)
 
-### Critical Fixes Completed
-1. **Mock Data Generator Control (Issue #1)**: Fixed race condition where mock data could corrupt real IBKR bridge data
-   - Added `startMockDataGenerator()` and `stopMockDataGenerator()` functions in routes.ts
-   - Mock generator now automatically stops via `clearInterval()` when IBKR bridge connects
-   - Stops on both initial handshake and reconnection after disconnect
-   - Production-safe atomic handoff from mock to real data
+### Production Safety System Implementation (COMPLETE)
+Implemented comprehensive AutoTrader Production Safety Manager with database persistence for real money trading:
 
-2. **Footprint Data Backfill (Issue #2)**: Legacy footprint bars missing `imbalance_direction` field
-   - Added automatic backfill in `getFootprintBars()` method in storage.ts
-   - Calculates imbalance_direction from delta: "ASK" (positive), "BID" (negative), or "NEUTRAL"
-   - Ensures downstream analytics receive consistent data structures
+**Safety Features (Database-Backed):**
+1. **Order Confirmation Tracking** - All IBKR orders tracked in `orderTracking` table, stores order status (PENDING/FILLED/REJECTED/CANCELLED), filled prices, reject reasons
+2. **Reject Replay Protection** - Rejected orders cached in `rejectedOrders` table with 30-minute cooldown, prevents duplicate attempts on same signal
+3. **Trading Fence** - Automatically activates when IBKR bridge disconnects, persists state to `safetyConfig` table, requires manual deactivation via API
+4. **Position Reconciliation** - Verifies local position matches IBKR before trades, handles GBP currency conversion
+5. **Max Drawdown Circuit Breaker** - Halts trading if daily P&L drops below -£500 (configurable in `safetyConfig` table)
+6. **Multi-Layered Safety Checks** - Pre-trade validation in auto-trading loop blocks trades on safety violations
+7. **Python Bridge Integration** - IBKR bridge sends order confirmations (FILLED/REJECTED/CANCELLED) to `/api/order-confirmation` endpoint
 
-3. **Type Safety Fixes**: Resolved LSP errors in storage.ts
-   - Fixed Drizzle database insertion types for daily profiles
-   - Used `Array.from()` to properly type hvn_levels and lvn_levels arrays
-   - Fixed footprint backfill type inference issues
+**Database Tables:**
+- `order_tracking`: order_id, signal_id, action, quantity, entry_price, status, filled_price, filled_time, reject_reason
+- `rejected_orders`: signal_id, reason, price, timestamp, expires_at (auto-expire after cooldown)
+- `safetyConfig`: max_drawdown_gbp, trading_fence_active, fence_reason, fence_activated_at, position_reconciliation_enabled
+
+**API Endpoints:**
+- GET `/api/safety/status` - Current safety status with violations list
+- POST `/api/safety/config` - Update safety configuration
+- POST `/api/safety/fence/deactivate` - Manually deactivate trading fence
+- POST `/api/order-confirmation` - Receive order confirmations from Python bridge
+
+**Architecture:**
+- `ProductionSafetyManager` class manages all safety features
+- Database-backed persistence ensures state survives server restarts
+- Integrated into auto-trading loop with comprehensive pre-trade checks
+- Python bridge (`ibkr_bridge_v2.py`) updated to send order confirmations using `asyncio.to_thread`
+
+### Earlier Critical Fixes
+1. **Mock Data Generator Control**: Fixed race condition, atomic handoff from mock to real data when bridge connects
+2. **Footprint Data Backfill**: Automatic backfill for legacy data missing `imbalance_direction` field
+3. **Type Safety Fixes**: Resolved LSP errors in storage.ts for Drizzle database insertions
 
 ### Known Issues
-- User's local `ibkr_bridge_v2.py` file needs URL update to connect to published system
-- CRITICAL: 6 daily profiles containing real IBKR data (CVA ~6907, DVA ~6851) were accidentally deleted - user needs to restore via rollback
-- AutoTrader lacks production safety features (order confirmation tracking, reject replay, trading fence on disconnect) - Issue #3 pending
+- User's local `ibkr_bridge_v2.py` needs to run to connect IBKR (URL already correct: https://inthabananamarket.replit.app)
+- CRITICAL: 6 daily profiles with real IBKR data deleted - user DECLINED rollback, will fetch historical data when ready
+- 2 LSP errors in storage.ts (unrelated to safety features - legacy profile array conversion issues)
 
 ## System Architecture
 

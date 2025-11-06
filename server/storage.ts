@@ -17,6 +17,9 @@ import type {
   InsertDailyProfile,
   InsertCompositeProfile,
   InsertHistoricalCVA,
+  OrderTrackingDB,
+  RejectedOrderDB,
+  SafetyConfigDB,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 import { db } from "./db";
@@ -28,8 +31,11 @@ import {
   trades,
   systemStatus,
   marketData,
+  orderTracking,
+  rejectedOrders,
+  safetyConfig,
 } from "@shared/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 
 export interface IStorage {
   getCandles(): Promise<VolumetricCandle[]>;
@@ -94,6 +100,18 @@ export interface IStorage {
   getFootprintBars(limit?: number): Promise<FootprintBar[]>;
   addFootprintBar(bar: FootprintBar): Promise<void>;
   getLatestFootprintBar(): Promise<FootprintBar | undefined>;
+  
+  // Production Safety (Order Tracking, Reject Replay, Trading Fence)
+  trackOrder(orderId: string, signal: any, timestamp: number): Promise<void>;
+  updateOrderStatus(orderId: string, status: string, filledPrice?: number, filledTime?: number, rejectReason?: string): Promise<void>;
+  getOrderTracking(orderId: string): Promise<any | undefined>;
+  getPendingOrders(): Promise<any[]>;
+  
+  addRejectedOrder(orderId: string, signal: any, rejectReason: string, rejectTime: number): Promise<void>;
+  getRecentRejections(minutesAgo: number): Promise<any[]>;
+  
+  getSafetyConfig(): Promise<any | undefined>;
+  updateSafetyConfig(updates: Partial<any>): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -387,6 +405,39 @@ export class MemStorage implements IStorage {
       ? this.footprintBars[this.footprintBars.length - 1]
       : undefined;
   }
+  
+  // Production Safety - MUST use database storage (implemented in PgStorage)
+  async trackOrder(orderId: string, signal: any, timestamp: number): Promise<void> {
+    throw new Error("Production safety requires database storage - use PgStorage");
+  }
+  
+  async updateOrderStatus(orderId: string, status: string, filledPrice?: number, filledTime?: number, rejectReason?: string): Promise<void> {
+    throw new Error("Production safety requires database storage - use PgStorage");
+  }
+  
+  async getOrderTracking(orderId: string): Promise<any | undefined> {
+    throw new Error("Production safety requires database storage - use PgStorage");
+  }
+  
+  async getPendingOrders(): Promise<any[]> {
+    throw new Error("Production safety requires database storage - use PgStorage");
+  }
+  
+  async addRejectedOrder(orderId: string, signal: any, rejectReason: string, rejectTime: number): Promise<void> {
+    throw new Error("Production safety requires database storage - use PgStorage");
+  }
+  
+  async getRecentRejections(minutesAgo: number): Promise<any[]> {
+    throw new Error("Production safety requires database storage - use PgStorage");
+  }
+  
+  async getSafetyConfig(): Promise<any | undefined> {
+    throw new Error("Production safety requires database storage - use PgStorage");
+  }
+  
+  async updateSafetyConfig(updates: Partial<any>): Promise<void> {
+    throw new Error("Production safety requires database storage - use PgStorage");
+  }
 }
 
 // Database-backed storage for critical persistent data
@@ -579,6 +630,92 @@ export class PgStorage extends MemStorage {
           updated_at: new Date(),
         })
         .where(eq(marketData.id, existing[0].id));
+    }
+  }
+  
+  // Production Safety Methods - Database-backed for persistence
+  async trackOrder(orderId: string, signal: any, timestamp: number): Promise<void> {
+    const signal_id = `${signal.action}_${signal.entry_price.toFixed(2)}_${signal.quantity}`;
+    await db.insert(orderTracking).values({
+      order_id: orderId,
+      signal_id: signal_id,
+      action: signal.action,
+      quantity: signal.quantity,
+      entry_price: signal.entry_price,
+      status: 'PENDING',
+    });
+  }
+  
+  async updateOrderStatus(orderId: string, status: string, filledPrice?: number, filledTime?: number, rejectReason?: string): Promise<void> {
+    await db.update(orderTracking)
+      .set({
+        status,
+        filled_price: filledPrice || null,
+        filled_time: filledTime ? new Date(filledTime) : null,
+        reject_reason: rejectReason || null,
+        updated_at: new Date(),
+      })
+      .where(eq(orderTracking.order_id, orderId));
+  }
+  
+  async getOrderTracking(orderId: string): Promise<OrderTrackingDB | undefined> {
+    const result = await db.select()
+      .from(orderTracking)
+      .where(eq(orderTracking.order_id, orderId))
+      .limit(1);
+    return result.length > 0 ? result[0] : undefined;
+  }
+  
+  async getPendingOrders(): Promise<OrderTrackingDB[]> {
+    return await db.select()
+      .from(orderTracking)
+      .where(eq(orderTracking.status, 'PENDING'));
+  }
+  
+  async addRejectedOrder(orderId: string, signal: any, rejectReason: string, rejectTime: number): Promise<void> {
+    const signal_id = `${signal.action}_${signal.entry_price.toFixed(2)}_${signal.quantity}`;
+    const expiresAt = new Date(rejectTime + 30 * 60 * 1000); // 30 minutes from now
+    await db.insert(rejectedOrders).values({
+      signal_id: signal_id,
+      reason: rejectReason,
+      price: signal.entry_price,
+      expires_at: expiresAt,
+    });
+  }
+  
+  async getRecentRejections(minutesAgo: number): Promise<RejectedOrderDB[]> {
+    const cutoffTime = new Date(Date.now() - minutesAgo * 60 * 1000);
+    return await db.select()
+      .from(rejectedOrders)
+      .where(sql`${rejectedOrders.timestamp} >= ${cutoffTime}`);
+  }
+  
+  async getSafetyConfig(): Promise<SafetyConfigDB | undefined> {
+    const result = await db.select().from(safetyConfig).limit(1);
+    return result.length > 0 ? result[0] : undefined;
+  }
+  
+  async updateSafetyConfig(updates: Partial<SafetyConfigDB>): Promise<void> {
+    const existing = await db.select().from(safetyConfig).limit(1);
+    
+    if (existing.length === 0) {
+      // Create initial config with defaults
+      await db.insert(safetyConfig).values({
+        max_drawdown_gbp: updates.max_drawdown_gbp || -500,
+        max_position_size: updates.max_position_size || 1,
+        trading_fence_enabled: updates.trading_fence_enabled !== undefined ? updates.trading_fence_enabled : true,
+        position_reconciliation_enabled: updates.position_reconciliation_enabled !== undefined ? updates.position_reconciliation_enabled : true,
+        reject_replay_cooldown_minutes: updates.reject_replay_cooldown_minutes || 30,
+        circuit_breaker_enabled: updates.circuit_breaker_enabled !== undefined ? updates.circuit_breaker_enabled : true,
+      });
+    } else {
+      // Update existing config
+      await db.update(safetyConfig)
+        .set({
+          ...updates,
+          updated_at: new Date(),
+        })
+        .where(eq(safetyConfig.id, existing[0].id));
     }
   }
 }

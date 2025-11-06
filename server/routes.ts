@@ -25,6 +25,7 @@ import { CVAStackingManager } from "./cva_stacking_manager";
 import { OpeningDriveDetector } from "./opening_drive_detector";
 import { EightyPercentRuleDetector } from "./eighty_percent_rule_detector";
 import { ValueShiftDetector } from "./value_shift_detector";
+import { ProductionSafetyManager } from "./production_safety_manager";
 import type { OrderFlowSettings } from "./orderflow_strategy";
 import type {
   SystemStatus,
@@ -120,6 +121,23 @@ const defaultOrderFlowSettings: OrderFlowSettings = {
 };
 
 const autoTrader = new AutoTrader(defaultOrderFlowSettings); // Order flow-based trading strategy
+
+// Production Safety Manager - Critical safety features for real money trading
+// MUST be initialized before processing any trades to prevent race conditions
+let safetyManager: ProductionSafetyManager | null = null;
+let safetyManagerReady = false;
+
+// Initialize safety manager and wait for it to be ready
+(async () => {
+  try {
+    safetyManager = await ProductionSafetyManager.create(storage);
+    safetyManagerReady = true;
+    console.log('[SAFETY] ✅ Production Safety Manager initialized and ready');
+  } catch (error) {
+    console.error('[SAFETY] ❌ FATAL: Failed to initialize Production Safety Manager:', error);
+    process.exit(1); // Cannot trade safely without safety manager
+  }
+})();
 
 // IBKR Python bridge process
 let ibkrProcess: any = null;
@@ -1157,8 +1175,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
           if (!bridgeActivelyConnected) {
             console.log(`[AUTO-TRADE] ⚠️ BLOCKED trade - Bridge not actively connected (last data: ${Math.round((Date.now() - bridgeLastHeartbeat) / 1000)}s ago)`);
             console.log(`[AUTO-TRADE] Trade NOT created in database or sent to IBKR - preventing phantom position`);
+            // Activate trading fence on bridge disconnect (if safety manager ready)
+            if (safetyManagerReady && safetyManager) {
+              await safetyManager.activateTradingFence("IBKR bridge disconnected");
+            } else {
+              console.log(`[SAFETY] ⚠️ Cannot activate fence - safety manager not yet initialized`);
+            }
             return; // Exit early - don't create trade or update position
           }
+          
+          // PRODUCTION SAFETY CHECKS - Multi-layered protection
+          // CRITICAL: Verify safety manager is initialized before trading
+          if (!safetyManagerReady || !safetyManager) {
+            console.log(`[SAFETY] ⚠️ TRADE BLOCKED - Safety manager not yet initialized`);
+            return; // Block trade if safety system not ready
+          }
+          
+          const safetyStatus = await safetyManager.canExecuteTrade(
+            signal,
+            position,
+            status.daily_pnl || 0,
+            bridgeActivelyConnected
+          );
+          
+          if (!safetyStatus.trading_allowed) {
+            console.log(`[SAFETY] 🚫 TRADE BLOCKED: ${safetyStatus.reason}`);
+            console.log(`[SAFETY] Violations: ${safetyStatus.violations.join(', ')}`);
+            console.log(`[SAFETY] Daily P&L: £${safetyStatus.daily_pnl.toFixed(2)} / Limit: £${safetyStatus.drawdown_limit.toFixed(2)}`);
+            return; // Exit early - safety violation
+          }
+          
+          console.log(`[SAFETY] ✅ All safety checks passed - executing trade`);
           
           // Open new position
           const trade = await storage.addTrade({
@@ -1203,6 +1250,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
               status: 'PENDING',
             };
             pendingOrders.set(orderId, order);
+            
+            // Track order in Safety Manager for confirmation tracking (if ready)
+            if (safetyManagerReady && safetyManager) {
+              await safetyManager.trackOrder(signal, orderId);
+            }
+            
             console.log(`[IBKR ORDER] ✅ Queued ${signal.action} ${signal.quantity} MES (ID: ${orderId}) - Bridge verified active`);
           } else {
             console.log(`[IBKR ORDER] ⚠️ Bridge NOT actively sending data - trade logged but NOT sent to IBKR`);
@@ -2043,8 +2096,133 @@ export async function registerRoutes(app: Express): Promise<Server> {
       status.auto_trading_enabled = false;
       await storage.setSystemStatus(status);
     }
+    
+    // Activate trading fence on emergency stop (if safety manager ready)
+    if (safetyManagerReady && safetyManager) {
+      await safetyManager.activateTradingFence("Emergency stop activated");
+    } else {
+      console.log(`[SAFETY] ⚠️ Cannot activate fence - safety manager not yet initialized`);
+    }
 
-    res.json({ success: true, message: "Emergency stop executed" });
+    res.json({ success: true, message: "Emergency stop executed - trading fence activated" });
+  });
+
+  // SAFETY ENDPOINTS - CRITICAL: These control trading safety features
+  // SECURITY: Require auth key in environment - REFUSE TO START without it
+  const SAFETY_AUTH_KEY = process.env.SAFETY_AUTH_KEY;
+  if (!SAFETY_AUTH_KEY || SAFETY_AUTH_KEY.length < 32) {
+    console.error("❌ FATAL: SAFETY_AUTH_KEY environment variable must be set and be at least 32 characters!");
+    console.error("❌ This key protects trading safety endpoints from unauthorized access.");
+    console.error("❌ Generate one with: openssl rand -hex 32");
+    process.exit(1); // Refuse to start without proper security
+  }
+  console.log("✅ Safety authentication key validated");
+  
+  const requireSafetyAuth = (req: any, res: any, next: any) => {
+    const authKey = req.headers['x-safety-auth-key'];
+    if (!authKey || authKey !== SAFETY_AUTH_KEY) {
+      console.warn(`[SECURITY] ⚠️ Unauthorized safety endpoint access attempt from ${req.ip} to ${req.path}`);
+      return res.status(401).json({ error: "Unauthorized - invalid safety auth key" });
+    }
+    next();
+  };
+
+  // GET /api/safety/status - Get production safety status (read-only, no auth required)
+  app.get("/api/safety/status", async (req, res) => {
+    try {
+      if (!safetyManagerReady || !safetyManager) {
+        return res.status(503).json({ error: "Safety Manager not initialized - server starting up" });
+      }
+      const status = await storage.getSystemStatus();
+      const daily_pnl = status?.daily_pnl || 0;
+      const safetyStatus = safetyManager.getSafetyStatus(daily_pnl);
+      res.json(safetyStatus);
+    } catch (error) {
+      console.error("Safety status error:", error);
+      res.status(500).json({ error: "Failed to get safety status" });
+    }
+  });
+
+  // POST /api/safety/config - Update safety configuration (REQUIRES AUTH)
+  app.post("/api/safety/config", requireSafetyAuth, async (req, res) => {
+    try {
+      if (!safetyManagerReady || !safetyManager) {
+        return res.status(503).json({ error: "Safety Manager not initialized - server starting up" });
+      }
+      
+      // Validate required fields
+      const { max_drawdown_gbp, max_position_size } = req.body;
+      if (max_drawdown_gbp !== undefined && (typeof max_drawdown_gbp !== 'number' || max_drawdown_gbp > 0)) {
+        return res.status(400).json({ error: "max_drawdown_gbp must be a negative number" });
+      }
+      if (max_position_size !== undefined && (typeof max_position_size !== 'number' || max_position_size < 1)) {
+        return res.status(400).json({ error: "max_position_size must be a positive number" });
+      }
+      
+      safetyManager.updateConfig(req.body);
+      const newConfig = safetyManager.getConfig();
+      console.log(`[SECURITY] Safety config updated by ${req.ip}:`, newConfig);
+      res.json({ success: true, config: newConfig });
+    } catch (error) {
+      console.error("Safety config update error:", error);
+      res.status(500).json({ error: "Failed to update safety config" });
+    }
+  });
+
+  // POST /api/safety/fence/deactivate - Manually deactivate trading fence (REQUIRES AUTH)
+  app.post("/api/safety/fence/deactivate", requireSafetyAuth, async (req, res) => {
+    try {
+      if (!safetyManagerReady || !safetyManager) {
+        return res.status(503).json({ error: "Safety Manager not initialized - server starting up" });
+      }
+      
+      await safetyManager.deactivateTradingFence();
+      const status = await storage.getSystemStatus();
+      const daily_pnl = status?.daily_pnl || 0;
+      const safetyStatus = safetyManager.getSafetyStatus(daily_pnl);
+      console.log(`[SECURITY] Trading fence deactivated by ${req.ip}`);
+      res.json({ success: true, safety_status: safetyStatus });
+    } catch (error) {
+      console.error("Trading fence deactivation error:", error);
+      res.status(500).json({ error: "Failed to deactivate trading fence" });
+    }
+  });
+
+  // POST /api/order-confirmation - Handle order confirmation from IBKR bridge (REQUIRES AUTH)
+  // SECURITY: This endpoint can manipulate order tracking - MUST be protected
+  // The Python bridge must send the same auth key as other safety endpoints
+  app.post("/api/order-confirmation", requireSafetyAuth, async (req, res) => {
+    try {
+      if (!safetyManagerReady || !safetyManager) {
+        return res.status(503).json({ error: "Safety Manager not initialized - server starting up" });
+      }
+      
+      const { order_id, status: orderStatus, filled_price, filled_time, reject_reason } = req.body;
+      
+      // Validate required fields
+      if (!order_id || typeof order_id !== 'string') {
+        return res.status(400).json({ error: "Missing or invalid order_id" });
+      }
+      if (!orderStatus || !['FILLED', 'REJECTED', 'CANCELLED'].includes(orderStatus)) {
+        return res.status(400).json({ error: "Invalid status - must be FILLED, REJECTED, or CANCELLED" });
+      }
+      if (filled_price !== undefined && filled_price !== null && typeof filled_price !== 'number') {
+        return res.status(400).json({ error: "filled_price must be a number" });
+      }
+
+      await safetyManager.processOrderConfirmation({
+        order_id,
+        status: orderStatus,
+        filled_price,
+        filled_time,
+        reject_reason,
+      });
+
+      res.json({ success: true, message: "Order confirmation processed" });
+    } catch (error) {
+      console.error("Order confirmation processing error:", error);
+      res.status(500).json({ error: "Failed to process order confirmation" });
+    }
   });
 
   // POST /api/trading/apply-params - Apply backtest parameters to live trading
