@@ -8,44 +8,72 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (Nov 6, 2025)
 
-### Production Safety System Implementation (COMPLETE)
-Implemented comprehensive AutoTrader Production Safety Manager with database persistence for real money trading:
+### Production Safety System Implementation (PRODUCTION-READY)
+Implemented comprehensive AutoTrader Production Safety Manager with database persistence and security hardening for real money trading with £1,912 GBP IBKR account.
 
 **Safety Features (Database-Backed):**
 1. **Order Confirmation Tracking** - All IBKR orders tracked in `orderTracking` table, stores order status (PENDING/FILLED/REJECTED/CANCELLED), filled prices, reject reasons
 2. **Reject Replay Protection** - Rejected orders cached in `rejectedOrders` table with 30-minute cooldown, prevents duplicate attempts on same signal
-3. **Trading Fence** - Automatically activates when IBKR bridge disconnects, persists state to `safetyConfig` table, requires manual deactivation via API
+3. **Trading Fence** - Automatically activates when IBKR bridge disconnects, persists state to `safetyConfig` table, requires authenticated manual deactivation via API
 4. **Position Reconciliation** - Verifies local position matches IBKR before trades, handles GBP currency conversion
 5. **Max Drawdown Circuit Breaker** - Halts trading if daily P&L drops below -£500 (configurable in `safetyConfig` table)
 6. **Multi-Layered Safety Checks** - Pre-trade validation in auto-trading loop blocks trades on safety violations
-7. **Python Bridge Integration** - IBKR bridge sends order confirmations (FILLED/REJECTED/CANCELLED) to `/api/order-confirmation` endpoint
+7. **Readiness Guards** - All code paths check `safetyManagerReady` flag to prevent race conditions during startup
+8. **Fail-Safe Architecture** - Server refuses to start if safety manager initialization fails or SAFETY_AUTH_KEY missing
+
+**Security Features:**
+1. **SAFETY_AUTH_KEY Required** - Server performs fail-fast validation on startup, refuses to start if key missing or < 32 characters
+2. **Endpoint Authentication** - All safety-critical endpoints require `x-safety-auth-key` header:
+   - POST `/api/safety/config` - Update safety configuration (PROTECTED)
+   - POST `/api/safety/fence/deactivate` - Manually deactivate trading fence (PROTECTED)
+   - POST `/api/order-confirmation` - Receive order confirmations from Python bridge (PROTECTED)
+3. **Input Validation** - All safety endpoints validate request parameters (types, ranges, enums)
+4. **Security Logging** - All unauthorized access attempts logged with requester IP address
 
 **Database Tables:**
-- `order_tracking`: order_id, signal_id, action, quantity, entry_price, status, filled_price, filled_time, reject_reason
-- `rejected_orders`: signal_id, reason, price, timestamp, expires_at (auto-expire after cooldown)
+- `orderTracking`: order_id, signal_id, action, quantity, entry_price, status, filled_price, filled_time, reject_reason
+- `rejectedOrders`: signal_id, reason, price, timestamp, expires_at (auto-expire after cooldown)
 - `safetyConfig`: max_drawdown_gbp, trading_fence_active, fence_reason, fence_activated_at, position_reconciliation_enabled
 
 **API Endpoints:**
-- GET `/api/safety/status` - Current safety status with violations list
-- POST `/api/safety/config` - Update safety configuration
-- POST `/api/safety/fence/deactivate` - Manually deactivate trading fence
-- POST `/api/order-confirmation` - Receive order confirmations from Python bridge
+- GET `/api/safety/status` - Current safety status with violations list (read-only, no auth)
+- POST `/api/safety/config` - Update safety configuration (REQUIRES AUTH)
+- POST `/api/safety/fence/deactivate` - Manually deactivate trading fence (REQUIRES AUTH)
+- POST `/api/order-confirmation` - Receive order confirmations from Python bridge (REQUIRES AUTH)
 
 **Architecture:**
-- `ProductionSafetyManager` class manages all safety features
+- `ProductionSafetyManager` class with async factory pattern (`ProductionSafetyManager.create()`)
 - Database-backed persistence ensures state survives server restarts
-- Integrated into auto-trading loop with comprehensive pre-trade checks
-- Python bridge (`ibkr_bridge_v2.py`) updated to send order confirmations using `asyncio.to_thread`
+- Integrated into auto-trading loop with comprehensive pre-trade checks and readiness guards
+- Python bridge (`ibkr_bridge_v2.py`) sends order confirmations with authentication header using `asyncio.to_thread`
+- All safety manager code paths protected by `safetyManagerReady` flag to prevent null reference errors
+
+**Running IBKR Bridge with Authentication:**
+The Python bridge requires the same SAFETY_AUTH_KEY environment variable:
+```bash
+export SAFETY_AUTH_KEY="your-64-character-key-here"
+python server/ibkr_bridge_v2.py
+```
+The bridge will refuse to send order confirmations if SAFETY_AUTH_KEY is not set.
 
 ### Earlier Critical Fixes
 1. **Mock Data Generator Control**: Fixed race condition, atomic handoff from mock to real data when bridge connects
 2. **Footprint Data Backfill**: Automatic backfill for legacy data missing `imbalance_direction` field
 3. **Type Safety Fixes**: Resolved LSP errors in storage.ts for Drizzle database insertions
 
+### CVA Historical Data Recovery (AUTOMATED)
+The bridge automatically recovers missing daily profiles when connected:
+- Fetches 7 days of historical 5-minute bars from IBKR by default
+- Rebuilds Market Profile and Volume Profile for each day
+- Persists to database (survives restarts)
+- Reconstructs 5-day CVA automatically
+- User can customize with `--historical-days N` flag
+
+To recover your 6 deleted daily profiles: Just run the bridge once with SAFETY_AUTH_KEY set!
+
 ### Known Issues
-- User's local `ibkr_bridge_v2.py` needs to run to connect IBKR (URL already correct: https://inthabananamarket.replit.app)
-- CRITICAL: 6 daily profiles with real IBKR data deleted - user DECLINED rollback, will fetch historical data when ready
 - 2 LSP errors in storage.ts (unrelated to safety features - legacy profile array conversion issues)
+- User needs to run local `ibkr_bridge_v2.py` with SAFETY_AUTH_KEY to connect IBKR and recover CVA data
 
 ## System Architecture
 

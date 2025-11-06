@@ -592,10 +592,24 @@ class IBKRBridgeV2:
 
 async def main():
     """Main entry point"""
+    import argparse
+    import os
+    
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser(description='IBKR Bridge V2 - Real-time market data with automatic CVA recovery')
+    parser.add_argument('--historical-days', type=int, 
+                        default=int(os.environ.get('HISTORICAL_DAYS', '7')),
+                        help='Number of days of historical data to fetch (default: 7, or HISTORICAL_DAYS env var)')
+    parser.add_argument('--skip-historical', action='store_true',
+                        help='Skip historical data fetch on startup')
+    args = parser.parse_args()
+    
     print("=" * 70, file=sys.stderr)
     print("🏎️  IBKR BRIDGE V2 WITH REAL ACCOUNT DATA", file=sys.stderr)
     print("=" * 70, file=sys.stderr)
     print(f"🔗 Production URL: {PRODUCTION_URL}", file=sys.stderr)
+    if not args.skip_historical:
+        print(f"📊 Historical data: {args.historical_days} days", file=sys.stderr)
     print("=" * 70, file=sys.stderr)
     
     bridge = IBKRBridgeV2(PRODUCTION_URL)
@@ -606,8 +620,11 @@ async def main():
             print("❌ Failed to connect to IBKR", file=sys.stderr)
             return
         
-        # Send historical data for CVA
-        await bridge.send_historical_data(days=5)
+        # Send historical data for CVA (unless skipped)
+        if not args.skip_historical:
+            await bridge.send_historical_data(days=args.historical_days)
+        else:
+            print("⏭️  Skipping historical data fetch", file=sys.stderr)
         
         # Start streaming real-time data
         await bridge.stream_market_data()

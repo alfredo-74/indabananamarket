@@ -31,7 +31,31 @@ The bridge script runs on your computer and forwards price data from IB Gateway 
 
 ## Step-by-Step Setup
 
-### Step 1: Install Python Libraries (One-Time Setup)
+### Step 1: Get Your SAFETY_AUTH_KEY (REQUIRED - New Security Feature)
+
+**The production safety system now requires authentication** to prevent unauthorized access to trading controls.
+
+1. **In Replit**, click **"Tools"** → **"Secrets"** in the left sidebar
+2. Find the secret named `SAFETY_AUTH_KEY`
+3. Click the **eye icon** to reveal the 64-character key
+4. **Copy the entire key**
+
+5. **Set it as an environment variable** on your ChromeOS/computer:
+
+```bash
+# In your Linux terminal (ChromeOS), run:
+export SAFETY_AUTH_KEY="paste-your-64-character-key-here"
+```
+
+**IMPORTANT:** You must set this in the same terminal session where you run the bridge script!
+
+**Why is this needed?** 
+- Protects order confirmation tracking
+- Prevents unauthorized safety fence deactivation  
+- Secures trading configuration changes
+- Required for real money trading safety
+
+### Step 2: Install Python Libraries (One-Time Setup)
 
 Open your Linux terminal on ChromeOS and create a virtual environment:
 
@@ -46,7 +70,7 @@ source ibkr_env/bin/activate
 pip install ib_insync requests
 ```
 
-### Step 2: Start IB Gateway
+### Step 3: Start IB Gateway
 
 1. Open IB Gateway on your ChromeOS
 2. Log in with:
@@ -61,29 +85,34 @@ pip install ib_insync requests
 - Check "Enable ActiveX and Socket Clients"
 - Note: TWS uses ports 7497 (paper) / 7496 (live) - but IB Gateway uses 4002/4001
 
-### Step 3: Download the Bridge Script
+### Step 4: Download the Bridge Script
 
-1. In this Replit project, find the file `ibkr_bridge_download.py`
+**IMPORTANT:** Use the **V2 bridge** (`ibkr_bridge_v2.py`) which includes production safety features!
+
+1. In this Replit project, find the file `server/ibkr_bridge_v2.py`
 2. Copy all the code from that file
 3. On your ChromeOS, create a new file:
    ```bash
-   nano ibkr_bridge_download.py
+   nano ibkr_bridge_v2.py
    ```
 4. Paste the code and save (Ctrl+X, then Y, then Enter)
 
-### Step 4: Run the Bridge
+### Step 5: Run the Bridge
 
-Make sure your virtual environment is activated:
+**IMPORTANT:** Run these commands in order:
 
 ```bash
+# 1. Activate virtual environment
 source ibkr_env/bin/activate
+
+# 2. Set your SAFETY_AUTH_KEY (copy from Replit Secrets!)
+export SAFETY_AUTH_KEY="paste-your-64-character-key-here"
+
+# 3. Run the bridge
+python3 ibkr_bridge_v2.py
 ```
 
-Then run the bridge with your Replit URL:
-
-```bash
-python3 ibkr_bridge_download.py https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
-```
+The bridge automatically connects to `https://inthabananamarket.replit.app`
 
 **Important:** 
 - Use `https://` (your regular Replit URL)
@@ -136,10 +165,23 @@ Press Ctrl+C to stop
 ### "Failed to connect to Replit"
 
 **Fix:**
-- Make sure your Replit URL is correct (copy from browser address bar)
-- Use `https://` (not `wss://` - that's the old version)
+- The bridge automatically uses `https://inthabananamarket.replit.app`
 - Verify your trading system is running on Replit
 - Make sure you have internet connection
+
+### "❌ SAFETY_AUTH_KEY not set"
+
+**Fix:**
+- Set the environment variable: `export SAFETY_AUTH_KEY="your-key"`
+- Must be set in the same terminal where you run the bridge
+- Copy the exact key from Replit Secrets (Tools → Secrets)
+
+### "❌ Order confirmation UNAUTHORIZED"
+
+**Fix:**
+- Your SAFETY_AUTH_KEY doesn't match the server
+- Get the correct key from Replit Secrets
+- Make sure there are no extra spaces when copying
 
 ### No market data showing
 
@@ -162,31 +204,94 @@ Press Ctrl+C to stop
 
 1. Open terminal on ChromeOS
 2. Activate virtual environment: `source ibkr_env/bin/activate`
-3. Run: `python3 ibkr_bridge_download.py https://[your-url]`
-4. Keep terminal open while trading
-5. Press Ctrl+C to stop
+3. Set SAFETY_AUTH_KEY: `export SAFETY_AUTH_KEY="your-key"`
+4. Run: `python3 ibkr_bridge_v2.py`
+5. Keep terminal open while trading
+6. Press Ctrl+C to stop
 
 **Optional - Run in background:**
 ```bash
 screen -S ibkr
 source ibkr_env/bin/activate
-python3 ibkr_bridge_download.py https://[your-url]
+export SAFETY_AUTH_KEY="your-64-character-key-here"
+python3 ibkr_bridge_v2.py
 ```
 - Press Ctrl+A then D to detach
 - To check it later: `screen -r ibkr`
+
+**Pro Tip:** Save the key in a file (`.ibkr_env`) and source it:
+```bash
+echo 'export SAFETY_AUTH_KEY="your-key"' > ~/.ibkr_env
+source ~/.ibkr_env
+python3 ibkr_bridge_v2.py
+```
+
+## Automatic CVA Historical Data Recovery
+
+**When you first run the bridge, it automatically:**
+1. ✅ Fetches the last **7 days** of historical 5-minute bar data from IBKR (configurable)
+2. ✅ Rebuilds daily Market Profile and Volume Profile for each day
+3. ✅ Persists them to the database (survives server restarts)
+4. ✅ Reconstructs the 5-day Composite Value Area (CVA)
+
+This means **your CVA will be automatically recovered** the first time you connect the bridge! No manual intervention needed.
+
+**Default behavior (7 days):**
+```bash
+python3 ibkr_bridge_v2.py
+# Fetches last 7 days automatically
+```
+
+**Custom number of days:**
+```bash
+python3 ibkr_bridge_v2.py --historical-days 10
+# Fetches last 10 days
+```
+
+**Skip historical fetch (for testing):**
+```bash
+python3 ibkr_bridge_v2.py --skip-historical
+# Only streams real-time data, no historical fetch
+```
+
+**You'll see in the terminal:**
+```
+📊 Historical data: 7 days
+📊 Fetching 7 days of historical data...
+✅ Received 2184 bars
+✅ Sent 2025-10-31: 312 bars
+✅ Sent 2025-11-01: 312 bars
+✅ Sent 2025-11-04: 312 bars
+✅ Sent 2025-11-05: 312 bars
+✅ Sent 2025-11-06: 312 bars
+✅ Sent 2025-11-07: 312 bars
+✅ Sent 2025-11-08: 312 bars
+🎉 Historical data upload complete - 7 days sent
+```
+
+**In the trading system:**
+- Daily profiles stored in database (check `/api/composite-profile`)
+- CVA VAH, VAL, and POC populate immediately (5-day rolling window)
+- All 7 PRO course systems have full context
+- Value Migration detection activates
+- CVA Stacking system builds 30-day historical archive
+
+**Note:** The system uses the most recent 5 days for CVA calculation, but fetching 7 days ensures you have backup data and can recover from weekends/holidays.
 
 ## Normal Operation
 
 ### With Bridge Connected (Live Data):
 - Green "IBKR Connected" indicator
 - Real ES prices from IB Gateway (current front month contract)
-- All trading algorithms use real market data
+- **5-day CVA automatically built from historical data**
+- All trading algorithms use real market data with full context
 - Auto-trading can execute real (paper) trades
 
 ### Without Bridge (Simulated Data):
 - Yellow/Red connection indicator  
 - Simulated price movements
-- Algorithms still work for testing
+- **No CVA data** (requires real historical bars from IBKR)
+- Algorithms still work for testing (using simulated profiles)
 - No real market data required
 
 Both modes work - the system adapts automatically!
