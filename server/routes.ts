@@ -187,6 +187,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log('✓ IBKR Bridge connected via HTTP');
         ibkrConnected = true;
         bridgeLastHeartbeat = Date.now();
+        
+        // CRITICAL: Stop mock data generator when bridge connects
+        stopMockDataGenerator();
+        
         const status = await storage.getSystemStatus();
         if (status) {
           status.ibkr_connected = true;
@@ -205,6 +209,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (!ibkrConnected || timeSinceLastStatusUpdate > 5000) {
           if (!ibkrConnected) {
             console.log('✓ IBKR Bridge reconnected - real data flowing');
+            // CRITICAL: Stop mock data generator when bridge reconnects
+            stopMockDataGenerator();
           }
           ibkrConnected = true;
           lastStatusUpdate = Date.now();
@@ -808,18 +814,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // and sends data to /api/bridge/data endpoint
   // startIBKRConnector();
 
-  // Simulate market data updates (500ms interval)
-  setInterval(async () => {
-    // CRITICAL: Skip ALL mock data processing when real bridge is connected
-    // Check if bridge sent data in last 3 seconds (actively connected)
-    const bridgeActivelyConnected = (Date.now() - bridgeLastHeartbeat) < 3000;
-    
-    if (bridgeActivelyConnected) {
-      // Real bridge data is flowing - skip mock data completely
+  // Mock data generator interval (CRITICAL: Must be cancellable for production safety)
+  let mockDataInterval: NodeJS.Timeout | null = null;
+  
+  function startMockDataGenerator() {
+    if (mockDataInterval) {
+      console.log('[MOCK DATA] Generator already running');
       return;
     }
     
-    // Bridge disconnected - generate mock tick data for development/testing
+    console.log('[MOCK DATA] Starting mock data generator (development mode)');
+    mockDataInterval = setInterval(async () => {
+      // Generate mock tick data for development/testing
     const volatility = 0.25;
     const tickChange = (Math.random() - 0.5) * volatility;
     mockPrice += tickChange;
@@ -1296,7 +1302,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         data: position,
       });
     }
-  }, 500);
+    }, 500);
+  }
+  
+  function stopMockDataGenerator() {
+    if (mockDataInterval) {
+      clearInterval(mockDataInterval);
+      mockDataInterval = null;
+      console.log('[MOCK DATA] ✓ Mock data generator STOPPED - real bridge data active');
+    }
+  }
+  
+  // Start mock data generator on server startup (will auto-stop when bridge connects)
+  startMockDataGenerator();
 
   // API Routes
   

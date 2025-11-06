@@ -350,7 +350,25 @@ export class MemStorage implements IStorage {
   }
   
   async getFootprintBars(limit: number = 100): Promise<FootprintBar[]> {
-    return this.footprintBars.slice(-limit);
+    // CRITICAL: Backfill missing imbalance_direction for legacy data
+    return this.footprintBars.slice(-limit).map(bar => ({
+      ...bar,
+      price_levels: bar.price_levels.map(level => {
+        // If level already has imbalance_direction, keep it
+        if ('imbalance_direction' in level) {
+          return level;
+        }
+        // Backfill for legacy data: calculate from delta
+        const direction: "BID" | "ASK" | "NEUTRAL" = 
+          level.imbalanced 
+            ? (level.delta > 0 ? "ASK" : "BID")
+            : "NEUTRAL";
+        return {
+          ...level,
+          imbalance_direction: direction,
+        };
+      }),
+    }));
   }
   
   async addFootprintBar(bar: FootprintBar): Promise<void> {
