@@ -193,13 +193,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
 
   // HTTP endpoint for IBKR bridge (more reliable than WebSocket for external connections)
-  let bridgeLastHeartbeat = 0;
+  let bridgeLastHeartbeat = Date.now(); // Initialize to now to prevent "never connected" spam on startup
   let lastStatusUpdate = 0; // Throttle database status updates
   const BRIDGE_TIMEOUT_MS = 10000; // 10 seconds without data = disconnected (allows bridge processing time)
 
   app.post('/api/bridge/data', async (req, res) => {
     try {
       const message = req.body;
+      
+      // Log ALL incoming bridge messages for debugging
+      if (message.type !== 'market_data' && message.type !== 'dom') {
+        console.log(`[BRIDGE] Received message type: ${message.type}`);
+      }
       
       if (message.type === 'handshake') {
         console.log('✓ IBKR Bridge connected via HTTP');
