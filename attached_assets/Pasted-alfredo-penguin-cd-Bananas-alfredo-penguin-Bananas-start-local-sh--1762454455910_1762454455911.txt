@@ -1,0 +1,114 @@
+alfredo@penguin:~$ cd Bananas
+alfredo@penguin:~/Bananas$ ./start-local.sh
+================================
+OrderFlowAI - Local Trading System
+================================
+
+✅ Configuration loaded
+✅ Database: postgresql://neondb_owner:npg_...
+✅ Safety key: 295d67de43...
+
+🚀 Starting Node.js server on http://localhost:5000
+
+Next steps:
+1. Open another terminal
+2. Run the Python bridge: python3 server/ibkr_bridge_local.py
+3. Open browser: http://localhost:5000
+
+Press Ctrl+C to stop the server
+================================
+
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+[SAFETY] ✅ Safety configuration loaded from database: {
+  max_drawdown_gbp: undefined,
+  max_position_size: 1,
+  trading_fence_enabled: true,
+  position_reconciliation_enabled: true,
+  reject_replay_cooldown_minutes: 30,
+  circuit_breaker_enabled: true
+}
+[SAFETY] ✅ Production Safety Manager initialized and ready
+✓ Bridge HTTP endpoint initialized at /api/bridge/data
+✅ Safety authentication key validated
+6:40:07 PM [express] serving on port 5000
+✓ Composite profile initialized
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+[BRIDGE] Received message type: portfolio_update
+[PORTFOLIO] Position update: 0 contracts, uPnL: 0.00
+6:40:39 PM [express] POST /api/bridge/data 200 in 790ms :: {"type":"ack"}
+✓ IBKR Bridge connected - real data flowing
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-10-29: 90 bars
+[CVA] Added 2025-10-29 to composite - POC: 6889.75, VAH: 6937.50, VAL: 6887.00
+[DB] ✅ Persisted daily profile for 2025-10-29
+6:40:40 PM [express] POST /api/bridge/data 200 in 352ms :: {"type":"ack"}
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-10-30: 90 bars
+[CVA] Added 2025-10-30 to composite - POC: 6853.75, VAH: 6896.50, VAL: 6853.75
+[DB] ✅ Persisted daily profile for 2025-10-30
+6:40:40 PM [express] POST /api/bridge/data 200 in 185ms :: {"type":"ack"}
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-10-31: 90 bars
+[CVA] Added 2025-10-31 to composite - POC: 6872.00, VAH: 6899.50, VAL: 6871.00
+[DB] ✅ Persisted daily profile for 2025-10-31
+6:40:40 PM [express] POST /api/bridge/data 200 in 191ms :: {"type":"ack"}
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-11-03: 90 bars
+[CVA] Added 2025-11-03 to composite - POC: 6885.25, VAH: 6888.00, VAL: 6873.75
+[DB] ✅ Persisted daily profile for 2025-11-03
+6:40:41 PM [express] POST /api/bridge/data 200 in 182ms :: {"type":"ack"}
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-11-04: 90 bars
+[CVA] Added 2025-11-04 to composite - POC: 6803.50, VAH: 6830.50, VAL: 6798.25
+[DB] ✅ Persisted daily profile for 2025-11-04
+6:40:41 PM [express] POST /api/bridge/data 200 in 184ms :: {"type":"ack"}
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-11-05: 90 bars
+[CVA] Added 2025-11-05 to composite - POC: 6824.25, VAH: 6843.75, VAL: 6792.75
+[DB] ✅ Persisted daily profile for 2025-11-05
+6:40:41 PM [express] POST /api/bridge/data 200 in 184ms :: {"type":"ack"}
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-11-06: 51 bars
+[CVA] Added 2025-11-06 to composite - POC: 6760.50, VAH: 6778.00, VAL: 6738.25
+[DB] ✅ Persisted daily profile for 2025-11-06
+6:40:41 PM [express] POST /api/bridge/data 200 in 181ms :: {"type":"ack"}
+[BRIDGE] Received message type: account_data
+✓ IBKR Bridge connected - real data flowing
+[ACCOUNT] Balance: $1792.31, NetLiq: $1792.31, Daily P&L: +$0.00
+6:40:42 PM [express] POST /api/bridge/data 200 in 518ms :: {"type":"ack"}
+[BRIDGE] Received message type: account_data
+[ACCOUNT] Balance: $1792.31, NetLiq: $1792.31, Daily P&L: +$0.00
+6:40:42 PM [express] POST /api/bridge/data 200 in 514ms :: {"type":"ack"}
+[BRIDGE] Received message type: portfolio_update
+[PORTFOLIO] Position update: 0 contracts, uPnL: 0.00
+6:40:43 PM [express] POST /api/bridge/data 200 in 687ms :: {"type":"ack"}
+6:40:43 PM [express] GET /api/pending-orders 200 in 1ms :: []
+6:40:44 PM [express] POST /api/bridge/data 200 in 872ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:40:44 PM [express] POST /api/bridge/data 200 in 0ms :: {"type":"ack"}
+6:40:44 PM [express] GET /api/pending-orders 200 in 1ms :: []
+6:40:45 PM [express] POST /api/bridge/data 200 in 433ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:40:45 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+✓ IBKR Bridge connected - real data flowing
+6:40:45 PM [express] POST /api/bridge/data 200 in 342ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:40:45 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+6:40:46 PM [express] POST /api/bridge/data 200 in 344ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:40:46 PM [express] POST /api/bridge/data 200 in 0ms :: {"type":"ack"}
+✓ IBKR Bridge connected - real data flowing
+6:40:47 PM [express] GET /api/pending-orders 200 in 0ms :: []
+6:40:47 PM [express] POST /api/bridge/data 200 in 343ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:40:47 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+6:40:48 PM [express] POST /api/bridge/data 200 in 348ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:40:48 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+✓ IBKR Bridge connected - real data flowing
