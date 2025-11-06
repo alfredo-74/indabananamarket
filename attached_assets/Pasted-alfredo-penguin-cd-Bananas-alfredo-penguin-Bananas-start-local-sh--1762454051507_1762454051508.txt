@@ -1,0 +1,241 @@
+alfredo@penguin:~$ cd Bananas
+alfredo@penguin:~/Bananas$ ./start-local.sh
+================================
+OrderFlowAI - Local Trading System
+================================
+
+✅ Configuration loaded
+✅ Database: postgresql://neondb_owner:npg_...
+✅ Safety key: 295d67de43...
+
+🚀 Starting Node.js server on http://localhost:5000
+
+Next steps:
+1. Open another terminal
+2. Run the Python bridge: python3 server/ibkr_bridge_local.py
+3. Open browser: http://localhost:5000
+
+Press Ctrl+C to stop the server
+================================
+
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+[SAFETY] ✅ Safety configuration loaded from database: {
+  max_drawdown_gbp: undefined,
+  max_position_size: 1,
+  trading_fence_enabled: true,
+  position_reconciliation_enabled: true,
+  reject_replay_cooldown_minutes: 30,
+  circuit_breaker_enabled: true
+}
+[SAFETY] ✅ Production Safety Manager initialized and ready
+✓ Bridge HTTP endpoint initialized at /api/bridge/data
+✅ Safety authentication key validated
+6:32:20 PM [express] serving on port 5000
+✓ Composite profile initialized
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+[BRIDGE] Received message type: portfolio_update
+[PORTFOLIO] Position update: 0 contracts, uPnL: 0.00
+6:32:44 PM [express] POST /api/bridge/data 200 in 693ms :: {"type":"ack"}
+✓ IBKR Bridge connected - real data flowing
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-10-29: 90 bars
+[CVA] Added 2025-10-29 to composite - POC: 6889.75, VAH: 6937.50, VAL: 6887.00
+[DB] ✅ Persisted daily profile for 2025-10-29
+6:32:45 PM [express] POST /api/bridge/data 200 in 364ms :: {"type":"ack"}
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-10-30: 90 bars
+[CVA] Added 2025-10-30 to composite - POC: 6853.75, VAH: 6896.50, VAL: 6853.75
+[DB] ✅ Persisted daily profile for 2025-10-30
+6:32:45 PM [express] POST /api/bridge/data 200 in 237ms :: {"type":"ack"}
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-10-31: 90 bars
+[CVA] Added 2025-10-31 to composite - POC: 6872.00, VAH: 6899.50, VAL: 6871.00
+[DB] ✅ Persisted daily profile for 2025-10-31
+6:32:46 PM [express] POST /api/bridge/data 200 in 190ms :: {"type":"ack"}
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-11-03: 90 bars
+[CVA] Added 2025-11-03 to composite - POC: 6885.25, VAH: 6888.00, VAL: 6873.75
+[DB] ✅ Persisted daily profile for 2025-11-03
+6:32:46 PM [express] POST /api/bridge/data 200 in 196ms :: {"type":"ack"}
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-11-04: 90 bars
+[CVA] Added 2025-11-04 to composite - POC: 6803.50, VAH: 6830.50, VAL: 6798.25
+[DB] ✅ Persisted daily profile for 2025-11-04
+6:32:46 PM [express] POST /api/bridge/data 200 in 188ms :: {"type":"ack"}
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-11-05: 90 bars
+[CVA] Added 2025-11-05 to composite - POC: 6824.25, VAH: 6843.75, VAL: 6792.75
+[DB] ✅ Persisted daily profile for 2025-11-05
+6:32:46 PM [express] POST /api/bridge/data 200 in 182ms :: {"type":"ack"}
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-11-06: 49 bars
+[CVA] Added 2025-11-06 to composite - POC: 6760.50, VAH: 6817.75, VAL: 6752.75
+[DB] ✅ Persisted daily profile for 2025-11-06
+6:32:46 PM [express] POST /api/bridge/data 200 in 181ms :: {"type":"ack"}
+[BRIDGE] Received message type: account_data
+[ACCOUNT] Balance: $1792.18, NetLiq: $1792.18, Daily P&L: +$0.00
+6:32:47 PM [express] POST /api/bridge/data 200 in 597ms :: {"type":"ack"}
+[BRIDGE] Received message type: account_data
+✓ IBKR Bridge connected - real data flowing
+[ACCOUNT] Balance: $1792.18, NetLiq: $1792.18, Daily P&L: +$0.00
+6:32:48 PM [express] POST /api/bridge/data 200 in 565ms :: {"type":"ack"}
+[BRIDGE] Received message type: portfolio_update
+[PORTFOLIO] Position update: 0 contracts, uPnL: 0.00
+6:32:48 PM [express] POST /api/bridge/data 200 in 734ms :: {"type":"ack"}
+6:32:48 PM [express] GET /api/pending-orders 200 in 2ms :: []
+6:32:49 PM [express] POST /api/bridge/data 200 in 930ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:32:49 PM [express] POST /api/bridge/data 200 in 0ms :: {"type":"ack"}
+6:32:50 PM [express] GET /api/pending-orders 200 in 1ms :: []
+6:32:50 PM [express] POST /api/bridge/data 200 in 351ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:32:50 PM [express] POST /api/bridge/data 200 in 0ms :: {"type":"ack"}
+6:32:51 PM [express] POST /api/bridge/data 200 in 355ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:32:51 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+✓ IBKR Bridge connected - real data flowing
+6:32:52 PM [express] POST /api/bridge/data 200 in 339ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:32:52 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+6:32:53 PM [express] GET /api/pending-orders 200 in 1ms :: []
+Browserslist: browsers data (caniuse-lite) is 13 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+
+A PostCSS plugin did not pass the `from` option to `postcss.parse`. This may cause imported assets to be incorrectly transformed. If you've recently added a PostCSS plugin that raised this warning, please contact the package author to fix the issue.
+6:32:54 PM [express] POST /api/bridge/data 200 in 1317ms :: {"type":"ack"}
+✓ IBKR Bridge connected - real data flowing
+[BRIDGE] Received message type: dom
+6:32:54 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+6:32:54 PM [express] GET /api/volume-profile 200 in 1ms
+6:32:54 PM [express] GET /api/absorption-events 304 in 1ms :: []
+6:32:54 PM [express] GET /api/orderflow-signals 304 in 0ms :: []
+6:32:54 PM [express] GET /api/candles 200 in 0ms :: []
+6:32:54 PM [express] GET /api/vwap 200 in 0ms :: {"vwap":null,"sd1_upper":null,"sd1_lower":null,"sd2…
+6:32:55 PM [express] GET /api/status 200 in 190ms :: {"ibkr_connected":true,"market_data_active":tru…
+6:32:55 PM [express] GET /api/footprint 304 in 1ms :: []
+6:32:55 PM [express] GET /api/cva-stacking 200 in 1ms :: {"stacked_levels":[{"price_level":6872,"lev…
+6:32:55 PM [express] GET /api/pending-orders 200 in 1ms :: []
+6:32:55 PM [express] GET /api/opening-drive 200 in 184ms :: {"detected":false,"direction":null,"stre…
+6:32:55 PM [express] GET /api/eighty-percent-rule 304 in 187ms :: {"detected":false,"direction":null…
+6:32:55 PM [express] GET /api/market-data 200 in 735ms :: {"symbol":"ES","last_price":6760.25,"bid":…
+6:32:55 PM [express] GET /api/position 200 in 180ms :: {"contracts":0,"entry_price":null,"current_pr…
+6:32:55 PM [express] GET /api/value-migration 200 in 1056ms
+6:32:55 PM [express] GET /api/composite-profile 200 in 1086ms :: {"composite_vah":6899.5,"composite_…
+6:32:55 PM [express] GET /api/absorption-events 304 in 0ms :: []
+6:32:55 PM [express] GET /api/vwap 304 in 1ms :: {"vwap":null,"sd1_upper":null,"sd1_lower":null,"sd2…
+6:32:55 PM [express] POST /api/bridge/data 200 in 899ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:32:55 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+6:32:56 PM [express] GET /api/daily-hypothesis 200 in 1246ms
+6:32:56 PM [express] GET /api/trade-recommendations 304 in 1240ms :: []
+6:32:56 PM [express] GET /api/trades 304 in 350ms :: [{"id":"f0c33c6c-70e0-440f-bbf4-b688dc577fb8","…
+6:32:56 PM [express] GET /api/value-shift 200 in 702ms :: []
+6:32:56 PM [express] GET /api/status 304 in 180ms :: {"ibkr_connected":true,"market_data_active":tru…
+6:32:56 PM [express] GET /api/market-data 200 in 182ms :: {"symbol":"ES","last_price":6760,"bid":675…
+✓ IBKR Bridge connected - real data flowing
+6:32:56 PM [express] POST /api/bridge/data 200 in 357ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:32:56 PM [express] POST /api/bridge/data 200 in 0ms :: {"type":"ack"}
+6:32:56 PM [express] GET /api/position 304 in 171ms :: {"contracts":0,"entry_price":null,"current_pr…
+6:32:56 PM [express] GET /api/orderflow-signals 304 in 1ms :: []
+6:32:56 PM [express] GET /api/market-data 200 in 173ms :: {"symbol":"ES","last_price":6760,"bid":675…
+6:32:56 PM [express] GET /api/absorption-events 304 in 0ms :: []
+6:32:56 PM [express] GET /api/vwap 304 in 0ms :: {"vwap":null,"sd1_upper":null,"sd1_lower":null,"sd2…
+6:32:57 PM [express] GET /api/pending-orders 200 in 1ms :: []
+6:32:57 PM [express] GET /api/volume-profile 304 in 0ms
+6:32:57 PM [express] GET /api/absorption-events 304 in 1ms :: []
+6:32:57 PM [express] GET /api/orderflow-signals 304 in 1ms :: []
+6:32:57 PM [express] GET /api/candles 304 in 0ms :: []
+6:32:57 PM [express] GET /api/vwap 304 in 0ms :: {"vwap":null,"sd1_upper":null,"sd1_lower":null,"sd2…
+6:32:57 PM [express] POST /api/bridge/data 200 in 354ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:32:57 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+6:32:57 PM [express] GET /api/market-data 200 in 181ms :: {"symbol":"ES","last_price":6760.25,"bid":…
+6:32:57 PM [express] GET /api/status 200 in 184ms :: {"ibkr_connected":true,"market_data_active":tru…
+6:32:57 PM [express] GET /api/footprint 304 in 1ms :: []
+6:32:57 PM [express] GET /api/eighty-percent-rule 304 in 181ms :: {"detected":false,"direction":null…
+6:32:57 PM [express] GET /api/cva-stacking 304 in 1ms :: {"stacked_levels":[{"price_level":6872,"lev…
+6:32:58 PM [express] GET /api/value-migration 304 in 531ms
+6:32:58 PM [express] GET /api/composite-profile 304 in 541ms :: {"composite_vah":6899.5,"composite_v…
+6:32:58 PM [express] GET /api/opening-drive 304 in 182ms :: {"detected":false,"direction":null,"stre…
+[BRIDGE] Received message type: portfolio_update
+6:32:58 PM [express] GET /api/position 304 in 180ms :: {"contracts":0,"entry_price":null,"current_pr…
+6:32:58 PM [express] GET /api/trades 304 in 183ms :: [{"id":"f0c33c6c-70e0-440f-bbf4-b688dc577fb8","…
+6:32:58 PM [express] GET /api/trade-recommendations 304 in 717ms :: []
+6:32:58 PM [express] GET /api/daily-hypothesis 304 in 729ms
+6:32:58 PM [express] GET /api/market-data 304 in 173ms :: {"symbol":"ES","last_price":6760.25,"bid":…
+6:32:58 PM [express] GET /api/value-shift 304 in 704ms :: []
+6:32:58 PM [express] GET /api/absorption-events 304 in 0ms :: []
+6:32:58 PM [express] GET /api/vwap 304 in 1ms :: {"vwap":null,"sd1_upper":null,"sd1_lower":null,"sd2…
+[PORTFOLIO] Position update: 0 contracts, uPnL: 0.00
+6:32:58 PM [express] POST /api/bridge/data 200 in 690ms :: {"type":"ack"}
+6:32:58 PM [express] GET /api/status 200 in 169ms :: {"ibkr_connected":false,"market_data_active":fa…
+6:32:59 PM [express] GET /api/market-data 304 in 168ms :: {"symbol":"ES","last_price":6760.25,"bid":…
+6:32:59 PM [express] POST /api/bridge/data 200 in 341ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:32:59 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+6:32:59 PM [express] GET /api/position 304 in 171ms :: {"contracts":0,"entry_price":null,"current_pr…
+6:32:59 PM [express] GET /api/orderflow-signals 304 in 1ms :: []
+6:32:59 PM [express] GET /api/absorption-events 304 in 1ms :: []
+6:32:59 PM [express] GET /api/vwap 304 in 1ms :: {"vwap":null,"sd1_upper":null,"sd1_lower":null,"sd2…
+6:32:59 PM [express] GET /api/pending-orders 200 in 1ms :: []
+6:32:59 PM [express] GET /api/market-data 200 in 170ms :: {"symbol":"ES","last_price":6760.25,"bid":…
+✓ IBKR Bridge connected - real data flowing
+6:33:00 PM [express] POST /api/bridge/data 200 in 344ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:33:00 PM [express] POST /api/bridge/data 200 in 0ms :: {"type":"ack"}
+6:33:00 PM [express] GET /api/status 304 in 193ms :: {"ibkr_connected":false,"market_data_active":fa…
+6:33:00 PM [express] GET /api/market-data 200 in 193ms :: {"symbol":"ES","last_price":6760.5,"bid":6…
+6:33:00 PM [express] GET /api/absorption-events 304 in 1ms :: []
+6:33:00 PM [express] GET /api/vwap 304 in 0ms :: {"vwap":null,"sd1_upper":null,"sd1_lower":null,"sd2…
+6:33:00 PM [express] GET /api/position 304 in 178ms :: {"contracts":0,"entry_price":null,"current_pr…
+6:33:01 PM [express] GET /api/market-data 304 in 187ms :: {"symbol":"ES","last_price":6760.5,"bid":6…
+6:33:01 PM [express] GET /api/status 200 in 176ms :: {"ibkr_connected":true,"market_data_active":tru…
+[VOLUME PROFILE] Updated: POC=6760.25, VAH=6760.25, VAL=6760.00, Levels=4
+[CANDLE] 6:32:00 PM - O:6760.25 H:6760.50 L:6760.00 C:6760.50 Vol:12684769 CD:5073759
+6:33:01 PM [express] POST /api/bridge/data 200 in 888ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:33:01 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+6:33:01 PM [express] GET /api/pending-orders 200 in 1ms :: []
+6:33:02 PM [express] GET /api/volume-profile 200 in 1ms :: {"levels":[{"price":6760.75,"total_volume…
+6:33:02 PM [express] GET /api/absorption-events 200 in 1ms :: []
+6:33:02 PM [express] GET /api/orderflow-signals 200 in 1ms :: []
+6:33:02 PM [express] GET /api/candles 200 in 1ms :: [{"timestamp":1762453920000,"open":6760.25,"high…
+6:33:02 PM [express] GET /api/vwap 200 in 1ms :: {"vwap":null,"sd1_upper":null,"sd1_lower":null,"sd2…
+6:33:02 PM [express] GET /api/status 200 in 174ms :: {"ibkr_connected":true,"market_data_active":tru…
+6:33:02 PM [express] GET /api/market-data 200 in 178ms :: {"symbol":"ES","last_price":6760.75,"bid":…
+6:33:02 PM [express] GET /api/footprint 200 in 0ms :: []
+6:33:02 PM [express] GET /api/cva-stacking 200 in 1ms :: {"stacked_levels":[{"price_level":6872,"lev…
+6:33:02 PM [express] POST /api/bridge/data 200 in 344ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:33:02 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+6:33:02 PM [express] GET /api/eighty-percent-rule 200 in 172ms :: {"detected":false,"direction":null…
+6:33:02 PM [express] GET /api/opening-drive 200 in 176ms :: {"detected":false,"direction":null,"stre…
+6:33:02 PM [express] GET /api/value-migration 200 in 536ms :: {"migration_type":"BEARISH_MIGRATION",…
+6:33:02 PM [express] GET /api/position 200 in 187ms :: {"contracts":0,"entry_price":null,"current_pr…
+6:33:02 PM [express] GET /api/composite-profile 200 in 541ms :: {"composite_vah":6899.5,"composite_v…
+6:33:02 PM [express] GET /api/trade-recommendations 200 in 691ms :: []
+6:33:02 PM [express] GET /api/daily-hypothesis 200 in 715ms :: {"condition":"OPENING_DRIVE","confide…
+6:33:02 PM [express] GET /api/trades 200 in 181ms :: [{"id":"f0c33c6c-70e0-440f-bbf4-b688dc577fb8","…
+6:33:02 PM [express] GET /api/market-data 200 in 168ms :: {"symbol":"ES","last_price":6760.75,"bid":…
+6:33:03 PM [express] GET /api/vwap 304 in 0ms :: {"vwap":null,"sd1_upper":null,"sd1_lower":null,"sd2…
+6:33:03 PM [express] GET /api/absorption-events 304 in 1ms :: []
+6:33:03 PM [express] GET /api/value-shift 200 in 702ms :: [{"condition":"BUILDING_BELOW_VALUE","dete…
+6:33:03 PM [express] POST /api/bridge/data 200 in 344ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:33:03 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+6:33:03 PM [express] GET /api/status 200 in 183ms :: {"ibkr_connected":false,"market_data_active":fa…
+6:33:03 PM [express] GET /api/market-data 200 in 175ms :: {"symbol":"ES","last_price":6760.75,"bid":…
+6:33:03 PM [express] GET /api/position 304 in 180ms :: {"contracts":0,"entry_price":null,"current_pr…
+6:33:04 PM [express] POST /api/bridge/data 200 in 351ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+6:33:04 PM [express] POST /api/bridge/data 200 in 0ms :: {"type":"ack"}
+✓ IBKR Bridge connected - real data flowing
+6:33:04 PM [express] GET /api/orderflow-signals 304 in 1ms :: []

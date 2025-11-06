@@ -1,0 +1,205 @@
+alfredo@penguin:~/Bananas$ export SAFETY_AUTH_KEY="295d67de43a97a278f18d9891a2e7fc24fc829f37fd7dd357cd5dadfd9c03605"
+export IBKR_USERNAME="fredpaper74"
+export IBKR_PASSWORD='m!j8r5C%WF3W-#2'
+python3 server/ibkr_bridge_local.py
+======================================================================
+🏎️  IBKR BRIDGE - LOCAL MODE
+======================================================================
+🔗 Local URL: http://localhost:5000
+📊 Historical data: 7 days
+======================================================================
+🚀 Bridge LOCAL initialized - Will forward data to: http://localhost:5000
+Connecting to IB Gateway on port 4002...
+✅ Connected to IBKR Paper Trading
+Ambiguous contract: Future(symbol='ES', exchange='CME'), possibles are [Contract(secType='FUT', conId=495512563, symbol='ES', lastTradeDateOrContractMonth='20251219', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ5', tradingClass='ES'), Contract(secType='FUT', conId=515416632, symbol='ES', lastTradeDateOrContractMonth='20261218', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ6', tradingClass='ES'), Contract(secType='FUT', conId=586139767, symbol='ES', lastTradeDateOrContractMonth='20271217', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ7', tradingClass='ES'), Contract(secType='FUT', conId=649180661, symbol='ES', lastTradeDateOrContractMonth='20270617', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM7', tradingClass='ES'), Contract(secType='FUT', conId=649180666, symbol='ES', lastTradeDateOrContractMonth='20280317', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH8', tradingClass='ES'), Contract(secType='FUT', conId=649180671, symbol='ES', lastTradeDateOrContractMonth='20260918', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU6', tradingClass='ES'), Contract(secType='FUT', conId=649180675, symbol='ES', lastTradeDateOrContractMonth='20280915', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU8', tradingClass='ES'), Contract(secType='FUT', conId=649180678, symbol='ES', lastTradeDateOrContractMonth='20260618', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM6', tradingClass='ES'), Contract(secType='FUT', conId=649180681, symbol='ES', lastTradeDateOrContractMonth='20270917', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU7', tradingClass='ES'), Contract(secType='FUT', conId=649180684, symbol='ES', lastTradeDateOrContractMonth='20270319', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH7', tradingClass='ES'), Contract(secType='FUT', conId=649180690, symbol='ES', lastTradeDateOrContractMonth='20280616', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM8', tradingClass='ES'), Contract(secType='FUT', conId=649180695, symbol='ES', lastTradeDateOrContractMonth='20260320', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH6', tradingClass='ES'), Contract(secType='FUT', conId=654503299, symbol='ES', lastTradeDateOrContractMonth='20281215', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ8', tradingClass='ES'), Contract(secType='FUT', conId=672387437, symbol='ES', lastTradeDateOrContractMonth='20290316', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH9', tradingClass='ES'), Contract(secType='FUT', conId=691171642, symbol='ES', lastTradeDateOrContractMonth='20290615', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM9', tradingClass='ES'), Contract(secType='FUT', conId=711280049, symbol='ES', lastTradeDateOrContractMonth='20290921', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU9', tradingClass='ES'), Contract(secType='FUT', conId=730283071, symbol='ES', lastTradeDateOrContractMonth='20291221', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ9', tradingClass='ES'), Contract(secType='FUT', conId=750150169, symbol='ES', lastTradeDateOrContractMonth='20300315', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH0', tradingClass='ES'), Contract(secType='FUT', conId=770561177, symbol='ES', lastTradeDateOrContractMonth='20300621', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM0', tradingClass='ES'), Contract(secType='FUT', conId=793356200, symbol='ES', lastTradeDateOrContractMonth='20300920', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU0', tradingClass='ES'), Contract(secType='FUT', conId=815824241, symbol='ES', lastTradeDateOrContractMonth='20301220', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ0', tradingClass='ES')]
+Ambiguous contract: Future(symbol='MES', exchange='CME'), possibles are [Contract(secType='FUT', conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), Contract(secType='FUT', conId=750150186, symbol='MES', lastTradeDateOrContractMonth='20260320', multiplier='5', exchange='CME', currency='USD', localSymbol='MESH6', tradingClass='MES'), Contract(secType='FUT', conId=770561194, symbol='MES', lastTradeDateOrContractMonth='20260618', multiplier='5', exchange='CME', currency='USD', localSymbol='MESM6', tradingClass='MES'), Contract(secType='FUT', conId=793356217, symbol='MES', lastTradeDateOrContractMonth='20260918', multiplier='5', exchange='CME', currency='USD', localSymbol='MESU6', tradingClass='MES'), Contract(secType='FUT', conId=815824257, symbol='MES', lastTradeDateOrContractMonth='20261218', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ6', tradingClass='MES')]
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📊 Fetching 7 days of historical data...
+✅ Received 589 bars
+✅ Sent 2025-10-29: 90 bars
+✅ Sent 2025-10-30: 90 bars
+✅ Sent 2025-10-31: 90 bars
+✅ Sent 2025-11-03: 90 bars
+✅ Sent 2025-11-04: 90 bars
+✅ Sent 2025-11-05: 90 bars
+✅ Sent 2025-11-06: 49 bars
+🎉 Historical data upload complete - 7 days sent
+🚀 Starting real-time data stream...
+💰 Account: Balance=$1792.18, NetLiq=$1792.18, DailyPnL=$0.00
+📤 Account data sent: Balance=$1792.18, Daily PnL=$0.00
+💰 Account: Balance=$1792.18, NetLiq=$1792.18, DailyPnL=$0.00
+📤 Account data sent: Balance=$1792.18, Daily PnL=$0.00
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6760.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.00
+📤 DOM update sent (10 bids, 10 asks)
+❌ Request failed: ReadTimeout: HTTPConnectionPool(host='localhost', port=5000): Read timed out. (read timeout=1)
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.25
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6760.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6761.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.50
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1792.30, NetLiq=$1792.30, DailyPnL=$0.00
+📤 Account data sent: Balance=$1792.30, Daily PnL=$0.00
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6761.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6761.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6760.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6761.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6760.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6759.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6759.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6759.25
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1792.30, NetLiq=$1792.30, DailyPnL=$0.00
+📤 Account data sent: Balance=$1792.30, Daily PnL=$0.00
+📤 Tick sent: ES @ 6758.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6757.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6757.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6758.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6758.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6758.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6758.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6758.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6758.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6758.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6758.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6758.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6759.00
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6759.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6758.50
+📤 DOM update sent (10 bids, 10 asks)
