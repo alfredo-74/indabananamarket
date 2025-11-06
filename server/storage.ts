@@ -299,6 +299,9 @@ export class MemStorage implements IStorage {
   }
   
   async addDailyProfile(date: string, profile: VolumeProfile): Promise<void> {
+    const hvnArray: number[] = Array.from(profile.hvn_levels);
+    const lvnArray: number[] = Array.from(profile.lvn_levels);
+    
     const insertData: InsertDailyProfile = {
       date,
       poc: profile.poc,
@@ -306,14 +309,14 @@ export class MemStorage implements IStorage {
       val: profile.val,
       total_volume: profile.total_volume,
       profile_type: profile.profile_type,
-      hvn_levels: [...profile.hvn_levels] as number[],
-      lvn_levels: [...profile.lvn_levels] as number[],
+      hvn_levels: hvnArray,
+      lvn_levels: lvnArray,
       profile_data: profile as any,
     };
     
     try {
       await db.insert(dailyProfiles)
-        .values(insertData)
+        .values([insertData])
         .onConflictDoUpdate({
           target: dailyProfiles.date,
           set: {
@@ -322,8 +325,8 @@ export class MemStorage implements IStorage {
             val: insertData.val,
             total_volume: insertData.total_volume,
             profile_type: insertData.profile_type,
-            hvn_levels: insertData.hvn_levels,
-            lvn_levels: insertData.lvn_levels,
+            hvn_levels: hvnArray,
+            lvn_levels: lvnArray,
             profile_data: insertData.profile_data,
           },
         });
@@ -353,9 +356,9 @@ export class MemStorage implements IStorage {
     // CRITICAL: Backfill missing imbalance_direction for legacy data
     return this.footprintBars.slice(-limit).map(bar => ({
       ...bar,
-      price_levels: bar.price_levels.map(level => {
+      price_levels: bar.price_levels.map((level: any) => {
         // If level already has imbalance_direction, keep it
-        if ('imbalance_direction' in level) {
+        if ('imbalance_direction' in level && level.imbalance_direction) {
           return level;
         }
         // Backfill for legacy data: calculate from delta
