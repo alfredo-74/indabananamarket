@@ -1919,13 +1919,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const clientIp = req.ip || req.connection?.remoteAddress || 'unknown';
     const authKey = req.headers['x-safety-auth-key'];
     
-    // DEBUG: Log all safety auth attempts
-    console.log(`[SECURITY DEBUG] Auth check for ${req.path} - Client IP: ${clientIp}, Has auth key: ${!!authKey}`);
+    // DEBUG: Log comprehensive IP detection info
+    console.log(`[SECURITY DEBUG] Auth check for ${req.path}`);
+    console.log(`  - req.ip: ${req.ip}`);
+    console.log(`  - req.connection.remoteAddress: ${req.connection?.remoteAddress}`);
+    console.log(`  - X-Forwarded-For: ${req.headers['x-forwarded-for']}`);
+    console.log(`  - X-Real-IP: ${req.headers['x-real-ip']}`);
+    console.log(`  - Has auth key: ${!!authKey}`);
+    
+    // Extract real client IP from X-Forwarded-For (Replit proxy format)
+    const forwardedFor = req.headers['x-forwarded-for'];
+    const realClientIp = forwardedFor 
+      ? (Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor.split(',')[0].trim())
+      : clientIp;
+    
+    console.log(`  - Resolved client IP: ${realClientIp}`);
     
     // TRUSTED IP: Allow requests from the Chromebook IBKR bridge (user's local machine)
     const TRUSTED_IPS = ['172.31.73.162']; // Chromebook IP running Python IBKR bridge
-    if (TRUSTED_IPS.includes(clientIp)) {
-      console.log(`[SECURITY] ✅ TRUSTED IP: Allowing request to ${req.path} from ${clientIp}`);
+    if (TRUSTED_IPS.includes(realClientIp)) {
+      console.log(`[SECURITY] ✅ TRUSTED IP: Allowing request to ${req.path} from ${realClientIp}`);
       return next();
     }
     
