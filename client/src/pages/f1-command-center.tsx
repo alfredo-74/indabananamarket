@@ -26,6 +26,7 @@ function useDraggable(
   onDragStop: (x: number, y: number) => void
 ) {
   const ref = useRef<HTMLDivElement>(null);
+  const parentRef = useRef<HTMLDivElement>(null);
   const isDraggingRef = useRef(false);
   const startPosRef = useRef({ x: 0, y: 0 });
   const currentPosRef = useRef({ x: 0, y: 0 });
@@ -61,7 +62,9 @@ function useDraggable(
       startPosRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
       currentPosRef.current = { x: rect.left, y: rect.top };
       
-      element.style.zIndex = '1000';
+      if (parentRef.current) {
+        parentRef.current.style.zIndex = '1000';
+      }
       element.setPointerCapture(e.pointerId);
       onDragStartRef.current();
     };
@@ -87,7 +90,9 @@ function useDraggable(
       isDraggingRef.current = false;
       element.releasePointerCapture(e.pointerId);
       element.style.transform = '';
-      element.style.zIndex = '';
+      if (parentRef.current) {
+        parentRef.current.style.zIndex = '';
+      }
       
       onDragStopRef.current(currentPosRef.current.x, currentPosRef.current.y);
     };
@@ -105,7 +110,7 @@ function useDraggable(
     };
   }, []);
 
-  return ref;
+  return { ref, parentRef };
 }
 
 function GridWindow({ 
@@ -140,10 +145,11 @@ function GridWindow({
     onDragStop(windowId, col, row);
   }, [windowId, winWidth, winHeight, onDragStop]);
 
-  const dragRef = useDraggable(handleStart, handleStop);
+  const { ref: dragRef, parentRef } = useDraggable(handleStart, handleStop);
   
   return (
     <div
+      ref={parentRef}
       style={{
         position: 'absolute',
         left: `${MARGIN + gridPosition.col * (winWidth + GAP)}px`,
