@@ -61,6 +61,7 @@ function useDraggable(
       startPosRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
       currentPosRef.current = { x: rect.left, y: rect.top };
       
+      element.style.zIndex = '1000';
       element.setPointerCapture(e.pointerId);
       onDragStartRef.current();
     };
@@ -86,6 +87,7 @@ function useDraggable(
       isDraggingRef.current = false;
       element.releasePointerCapture(e.pointerId);
       element.style.transform = '';
+      element.style.zIndex = '';
       
       onDragStopRef.current(currentPosRef.current.x, currentPosRef.current.y);
     };
