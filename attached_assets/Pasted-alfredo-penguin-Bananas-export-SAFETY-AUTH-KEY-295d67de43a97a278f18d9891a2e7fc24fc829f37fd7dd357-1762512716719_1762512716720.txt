@@ -1,0 +1,88 @@
+alfredo@penguin:~/Bananas$ export SAFETY_AUTH_KEY="295d67de43a97a278f18d9891a2e7fc24fc829f37fd7dd357cd9c03605"
+python server/ibkr_bridge_v2.py --server-url https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev/
+-bash: python: command not found
+alfredo@penguin:~/Bananas$ export SAFETY_AUTH_KEY="295d67de43a97a278f18d9891a2e7fc24fc829f37fd7dd357cd9c03605"
+python3 server/ibkr_bridge_v2.py --server-url https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev/
+python3: can't open file '/home/alfredo/Bananas/server/ibkr_bridge_v2.py': [Errno 2] No such file or directory
+alfredo@penguin:~/Bananas$ export SAFETY_AUTH_KEY="295d67de43a97a278f18d9891a2e7fc24fc829f37fd7dd357cd9c03605"
+python3 server/ibkr_bridge_local.py --server-url https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev/
+usage: ibkr_bridge_local.py [-h] [--historical-days HISTORICAL_DAYS] [--skip-historical]
+ibkr_bridge_local.py: error: unrecognized arguments: --server-url https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev/
+Task exception was never retrieved
+future: <Task finished name='Task-1' coro=<main() done, defined at /home/alfredo/Bananas/server/ibkr_bridge_local.py:681> exception=SystemExit(2)>
+Traceback (most recent call last):
+  File "/home/alfredo/.local/lib/python3.11/site-packages/nest_asyncio.py", line 30, in run
+    return loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/alfredo/.local/lib/python3.11/site-packages/nest_asyncio.py", line 92, in run_until_complete
+    self._run_once()
+  File "/home/alfredo/.local/lib/python3.11/site-packages/nest_asyncio.py", line 133, in _run_once
+    handle._run()
+  File "/usr/lib/python3.11/asyncio/events.py", line 80, in _run
+    self._context.run(self._callback, *self._args)
+  File "/usr/lib/python3.11/asyncio/tasks.py", line 267, in __step
+    result = coro.send(None)
+             ^^^^^^^^^^^^^^^
+  File "/home/alfredo/Bananas/server/ibkr_bridge_local.py", line 693, in main
+    args = parser.parse_args()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/argparse.py", line 1877, in parse_args
+    self.error(msg % ' '.join(argv))
+  File "/usr/lib/python3.11/argparse.py", line 2633, in error
+    self.exit(2, _('%(prog)s: error: %(message)s\n') % args)
+  File "/usr/lib/python3.11/argparse.py", line 2620, in exit
+    _sys.exit(status)
+SystemExit: 2
+alfredo@penguin:~/Bananas$ nano server/ibkr_bridge_local.py
+alfredo@penguin:~/Bananas$ export SAFETY_AUTH_KEY="295d67de43a97a278f18d9891a2e7fc24fc829f37fd7dd357cd9c03605"
+python3 server/ibkr_bridge_local.py
+======================================================================
+🏎️  IBKR BRIDGE - LOCAL MODE (AUTO-RECONNECT ENABLED)
+======================================================================
+🔗 Local URL: https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
+📊 Historical data: 7 days
+======================================================================
+✅ SAFETY_AUTH_KEY loaded (58 chars)
+🚀 Bridge LOCAL initialized - Will forward data to: https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
+Connecting to IB Gateway on port 4002...
+✅ CONNECTED to IBKR Paper Trading
+Ambiguous contract: Future(symbol='ES', exchange='CME'), possibles are [Contract(secType='FUT', conId=495512563, symbol='ES', lastTradeDateOrContractMonth='20251219', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ5', tradingClass='ES'), Contract(secType='FUT', conId=515416632, symbol='ES', lastTradeDateOrContractMonth='20261218', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ6', tradingClass='ES'), Contract(secType='FUT', conId=586139767, symbol='ES', lastTradeDateOrContractMonth='20271217', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ7', tradingClass='ES'), Contract(secType='FUT', conId=649180661, symbol='ES', lastTradeDateOrContractMonth='20270617', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM7', tradingClass='ES'), Contract(secType='FUT', conId=649180666, symbol='ES', lastTradeDateOrContractMonth='20280317', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH8', tradingClass='ES'), Contract(secType='FUT', conId=649180671, symbol='ES', lastTradeDateOrContractMonth='20260918', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU6', tradingClass='ES'), Contract(secType='FUT', conId=649180675, symbol='ES', lastTradeDateOrContractMonth='20280915', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU8', tradingClass='ES'), Contract(secType='FUT', conId=649180678, symbol='ES', lastTradeDateOrContractMonth='20260618', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM6', tradingClass='ES'), Contract(secType='FUT', conId=649180681, symbol='ES', lastTradeDateOrContractMonth='20270917', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU7', tradingClass='ES'), Contract(secType='FUT', conId=649180684, symbol='ES', lastTradeDateOrContractMonth='20270319', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH7', tradingClass='ES'), Contract(secType='FUT', conId=649180690, symbol='ES', lastTradeDateOrContractMonth='20280616', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM8', tradingClass='ES'), Contract(secType='FUT', conId=649180695, symbol='ES', lastTradeDateOrContractMonth='20260320', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH6', tradingClass='ES'), Contract(secType='FUT', conId=654503299, symbol='ES', lastTradeDateOrContractMonth='20281215', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ8', tradingClass='ES'), Contract(secType='FUT', conId=672387437, symbol='ES', lastTradeDateOrContractMonth='20290316', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH9', tradingClass='ES'), Contract(secType='FUT', conId=691171642, symbol='ES', lastTradeDateOrContractMonth='20290615', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM9', tradingClass='ES'), Contract(secType='FUT', conId=711280049, symbol='ES', lastTradeDateOrContractMonth='20290921', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU9', tradingClass='ES'), Contract(secType='FUT', conId=730283071, symbol='ES', lastTradeDateOrContractMonth='20291221', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ9', tradingClass='ES'), Contract(secType='FUT', conId=750150169, symbol='ES', lastTradeDateOrContractMonth='20300315', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH0', tradingClass='ES'), Contract(secType='FUT', conId=770561177, symbol='ES', lastTradeDateOrContractMonth='20300621', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM0', tradingClass='ES'), Contract(secType='FUT', conId=793356200, symbol='ES', lastTradeDateOrContractMonth='20300920', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU0', tradingClass='ES'), Contract(secType='FUT', conId=815824241, symbol='ES', lastTradeDateOrContractMonth='20301220', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ0', tradingClass='ES')]
+Ambiguous contract: Future(symbol='MES', exchange='CME'), possibles are [Contract(secType='FUT', conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), Contract(secType='FUT', conId=750150186, symbol='MES', lastTradeDateOrContractMonth='20260320', multiplier='5', exchange='CME', currency='USD', localSymbol='MESH6', tradingClass='MES'), Contract(secType='FUT', conId=770561194, symbol='MES', lastTradeDateOrContractMonth='20260618', multiplier='5', exchange='CME', currency='USD', localSymbol='MESM6', tradingClass='MES'), Contract(secType='FUT', conId=793356217, symbol='MES', lastTradeDateOrContractMonth='20260918', multiplier='5', exchange='CME', currency='USD', localSymbol='MESU6', tradingClass='MES'), Contract(secType='FUT', conId=815824257, symbol='MES', lastTradeDateOrContractMonth='20261218', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ6', tradingClass='MES')]
+✅ Event handlers registered
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📊 Fetching 7 days of historical data...
+✅ Received 630 bars
+✅ Sent 2025-10-29: 90 bars
+✅ Sent 2025-10-30: 90 bars
+✅ Sent 2025-10-31: 90 bars
+✅ Sent 2025-11-03: 90 bars
+✅ Sent 2025-11-04: 90 bars
+✅ Sent 2025-11-05: 90 bars
+✅ Sent 2025-11-06: 90 bars
+🎉 Historical data upload complete - 7 days sent
+🚀 Starting real-time data stream...
+💰 Account: Balance=$1791.40, NetLiq=$1791.40, DailyPnL=$0.00
+📤 Account data sent: Balance=$1791.40, Daily PnL=$0.00
+💰 Account: Balance=$1791.40, NetLiq=$1791.40, DailyPnL=$0.00
+📤 Account data sent: Balance=$1791.40, Daily PnL=$0.00
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6744.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6744.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6744.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6744.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6744.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6744.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6744.25
