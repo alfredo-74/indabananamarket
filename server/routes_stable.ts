@@ -201,6 +201,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const message = req.body;
       
+      // CRITICAL FIX: Update heartbeat for EVERY message to prevent connection blinking
+      // This ensures connection stays alive even when market_data is sparse or delayed
+      bridgeLastHeartbeat = Date.now();
+      
       // Log ALL incoming bridge messages for debugging (skip high-frequency market_data/dom_update)
       if (message.type !== 'market_data' && message.type !== 'dom_update') {
         console.log(`[BRIDGE] Received message type: ${message.type}`);
@@ -209,7 +213,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (message.type === 'handshake') {
         console.log('✓ IBKR Bridge connected via HTTP');
         ibkrConnected = true;
-        bridgeLastHeartbeat = Date.now();
         
         const status = await storage.getSystemStatus();
         if (status) {
@@ -221,9 +224,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.json({ type: 'ack', message: 'Connected to trading system' });
       }
       else if (message.type === 'market_data') {
-        // CRITICAL: Update heartbeat IMMEDIATELY - do NOT touch mockPrice
-        bridgeLastHeartbeat = Date.now();
-        
         // Update connection status in database (throttled to once per 5 seconds)
         const timeSinceLastStatusUpdate = Date.now() - (lastStatusUpdate || 0);
         if (!ibkrConnected || timeSinceLastStatusUpdate > 5000) {
@@ -371,7 +371,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       else if (message.type === 'dom_update') {
         // Handle Level II DOM data
-        bridgeLastHeartbeat = Date.now();
         console.log(`[DOM] Received ${message.bids?.length || 0} bids, ${message.asks?.length || 0} asks`);
         
         // Get current price from market data (not from mockPrice)
@@ -392,7 +391,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       else if (message.type === 'historical_bars') {
         // Handle historical data for CVA calculation
-        bridgeLastHeartbeat = Date.now();
         const { date, bars } = message;
         
         if (!date || !bars || bars.length === 0) {
@@ -468,8 +466,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       else if (message.type === 'portfolio_update') {
         // Handle portfolio/position updates from IBKR
-        bridgeLastHeartbeat = Date.now();
-        
         const { contracts, entry_price, unrealized_pnl } = message;
         
         // CRITICAL SERVER-SIDE SANITY CHECK: Reject corrupt entry prices
@@ -531,8 +527,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       else if (message.type === 'account_data') {
         // Handle account data from IBKR
-        bridgeLastHeartbeat = Date.now();
-        
         const { account_balance, net_liquidation, available_funds, unrealized_pnl, realized_pnl, daily_pnl } = message;
         const status = await storage.getSystemStatus();
         
@@ -1620,6 +1614,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // SAFETY ENDPOINTS - CRITICAL: These control trading safety features
   // SECURITY: Require auth key in environment - REFUSE TO START without it
   const SAFETY_AUTH_KEY = process.env.SAFETY_AUTH_KEY;
+  const SAFETY_AUTH_MODE = process.env.SAFETY_AUTH_MODE || "strict";
+  
   if (!SAFETY_AUTH_KEY || SAFETY_AUTH_KEY.length < 32) {
     console.error("❌ FATAL: SAFETY_AUTH_KEY environment variable must be set and be at least 32 characters!");
     console.error("❌ This key protects trading safety endpoints from unauthorized access.");
@@ -1628,11 +1624,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
   console.log("✅ Safety authentication key validated");
   
+  // Warn if running in local-only mode (less secure)
+  if (SAFETY_AUTH_MODE === "local-only") {
+    console.warn("⚠️⚠️⚠️ WARNING: Running in LOCAL-ONLY auth mode ⚠️⚠️⚠️");
+    console.warn("⚠️ Localhost requests bypass safety auth checks");
+    console.warn("⚠️ FOR LOCAL DEVELOPMENT ONLY - NEVER use in production!");
+    console.warn("⚠️ Set SAFETY_AUTH_MODE=strict in .env.local to restore full security");
+  }
+  
   const requireSafetyAuth = (req: any, res: any, next: any) => {
+    const clientIp = req.ip || req.connection?.remoteAddress || 'unknown';
     const authKey = req.headers['x-safety-auth-key'];
+    
+    // Local-only bypass: Trust localhost requests ONLY if explicitly enabled
+    if (SAFETY_AUTH_MODE === "local-only") {
+      const isLocalhost = clientIp === '127.0.0.1' || 
+                         clientIp === '::1' || 
+                         clientIp === '::ffff:127.0.0.1' ||
+                         clientIp.includes('127.0.0.1');
+      
+      if (isLocalhost) {
+        console.log(`[SECURITY] 🔓 LOCAL-ONLY: Bypassing auth for localhost request to ${req.path} from ${clientIp}`);
+        return next();
+      }
+    }
+    
+    // Standard auth check for all other cases
     if (!authKey || authKey !== SAFETY_AUTH_KEY) {
-      console.warn(`[SECURITY] ⚠️ Unauthorized safety endpoint access attempt from ${req.ip} to ${req.path}`);
-      return res.status(401).json({ error: "Unauthorized - invalid safety auth key" });
+      // Enhanced error logging with diagnostic info
+      const authKeyPreview = authKey ? `${authKey.substring(0, 8)}...` : 'none';
+      const expectedKeyPreview = SAFETY_AUTH_KEY ? `${SAFETY_AUTH_KEY.substring(0, 8)}...` : 'none';
+      
+      console.warn(`[SECURITY] ⚠️ AUTH REJECTION for ${req.path}:`);
+      console.warn(`  - Client IP: ${clientIp}`);
+      console.warn(`  - Auth mode: ${SAFETY_AUTH_MODE}`);
+      console.warn(`  - Provided key: ${authKeyPreview} (length: ${authKey?.length || 0})`);
+      console.warn(`  - Expected key: ${expectedKeyPreview} (length: ${SAFETY_AUTH_KEY?.length || 0})`);
+      console.warn(`  - Reason: ${!authKey ? 'Missing auth header' : 'Key mismatch'}`);
+      
+      return res.status(401).json({ 
+        error: "Unauthorized - invalid safety auth key",
+        hint: SAFETY_AUTH_MODE === "local-only" 
+          ? "Set SAFETY_AUTH_MODE=local-only in .env.local for localhost bypass" 
+          : "Provide x-safety-auth-key header or enable local-only mode"
+      });
     }
     next();
   };
