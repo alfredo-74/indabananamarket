@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -29,6 +29,14 @@ function useDraggable(
   const isDraggingRef = useRef(false);
   const startPosRef = useRef({ x: 0, y: 0 });
   const currentPosRef = useRef({ x: 0, y: 0 });
+  
+  const onDragStartRef = useRef(onDragStart);
+  const onDragStopRef = useRef(onDragStop);
+
+  useEffect(() => {
+    onDragStartRef.current = onDragStart;
+    onDragStopRef.current = onDragStop;
+  });
 
   useEffect(() => {
     const element = ref.current;
@@ -37,13 +45,24 @@ function useDraggable(
     const handlePointerDown = (e: PointerEvent) => {
       if (e.button !== 0) return;
       
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === 'BUTTON' ||
+        target.tagName === 'INPUT' ||
+        target.tagName === 'SELECT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.closest('button')
+      ) {
+        return;
+      }
+      
       isDraggingRef.current = true;
       const rect = element.getBoundingClientRect();
       startPosRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
       currentPosRef.current = { x: rect.left, y: rect.top };
       
       element.setPointerCapture(e.pointerId);
-      onDragStart();
+      onDragStartRef.current();
     };
 
     const handlePointerMove = (e: PointerEvent) => {
@@ -68,7 +87,7 @@ function useDraggable(
       element.releasePointerCapture(e.pointerId);
       element.style.transform = '';
       
-      onDragStop(currentPosRef.current.x, currentPosRef.current.y);
+      onDragStopRef.current(currentPosRef.current.x, currentPosRef.current.y);
     };
 
     element.addEventListener('pointerdown', handlePointerDown);
@@ -82,7 +101,7 @@ function useDraggable(
       element.removeEventListener('pointerup', handlePointerUp);
       element.removeEventListener('pointercancel', handlePointerUp);
     };
-  }, [onDragStart, onDragStop]);
+  }, []);
 
   return ref;
 }
@@ -109,14 +128,17 @@ function GridWindow({
   const winWidth = (containerWidth - MARGIN * 2 - GAP * (GRID_COLS - 1)) / GRID_COLS;
   const winHeight = (containerHeight - MARGIN * 2 - GAP * (GRID_ROWS - 1)) / GRID_ROWS;
   
-  const dragRef = useDraggable(
-    () => onDragStart(windowId),
-    (x, y) => {
-      const col = Math.max(0, Math.min(GRID_COLS - 1, Math.round((x - MARGIN) / (winWidth + GAP))));
-      const row = Math.max(0, Math.min(GRID_ROWS - 1, Math.round((y - MARGIN) / (winHeight + GAP))));
-      onDragStop(windowId, col, row);
-    }
-  );
+  const handleStart = useCallback(() => {
+    onDragStart(windowId);
+  }, [windowId, onDragStart]);
+
+  const handleStop = useCallback((x: number, y: number) => {
+    const col = Math.max(0, Math.min(GRID_COLS - 1, Math.round((x - MARGIN) / (winWidth + GAP))));
+    const row = Math.max(0, Math.min(GRID_ROWS - 1, Math.round((y - MARGIN) / (winHeight + GAP))));
+    onDragStop(windowId, col, row);
+  }, [windowId, winWidth, winHeight, onDragStop]);
+
+  const dragRef = useDraggable(handleStart, handleStop);
   
   return (
     <div
@@ -130,7 +152,7 @@ function GridWindow({
     >
       <div 
         ref={dragRef}
-        className="bg-gray-950/95 backdrop-blur-sm border-2 border-green-900/40 rounded-sm overflow-hidden cursor-move h-full w-full touch-none"
+        className="bg-gray-950/95 backdrop-blur-sm border-2 border-green-900/40 rounded-sm overflow-hidden cursor-move h-full w-full"
         data-testid={testId}
       >
         <div className="px-2 py-1 bg-green-950/30 border-b border-green-900/40 flex items-center gap-2">
