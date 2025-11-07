@@ -784,10 +784,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Initialize system status with $2,000 starting capital (default before IBKR connection)
   // NOTE: Capital will be updated from IBKR account balance when connection is established
+  // IMPORTANT: Preserve auto_trading_enabled if it exists in database
+  const existingStatus = await storage.getSystemStatus();
   await storage.setSystemStatus({
     ibkr_connected: false,
     market_data_active: false,
-    auto_trading_enabled: false,
+    auto_trading_enabled: existingStatus?.auto_trading_enabled ?? true, // Default TRUE - PRO trading ready
     last_update: Date.now(),
     capital: 2000, // Default fallback - will be replaced by real IBKR balance
     daily_pnl: 0,

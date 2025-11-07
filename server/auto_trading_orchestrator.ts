@@ -72,12 +72,15 @@ export class AutoTradingOrchestrator {
    * Called whenever new market data arrives via /api/bridge/data
    */
   onMarketDataUpdate(): void {
+    console.log('[ORCHESTRATOR] 📥 onMarketDataUpdate() called - debouncing for 1s');
+    
     // Debounce to avoid excessive analysis (wait for bar completion)
     if (this.debounceTimer) {
       clearTimeout(this.debounceTimer);
     }
     
     this.debounceTimer = setTimeout(() => {
+      console.log('[ORCHESTRATOR] ⏰ Debounce timer fired - calling analyzeAndExecute()');
       this.analyzeAndExecute().catch(err => {
         console.error('[ORCHESTRATOR] ❌ Analysis failed:', err);
       });
@@ -100,11 +103,16 @@ export class AutoTradingOrchestrator {
    */
   private async analyzeAndExecute(): Promise<void> {
     try {
+      console.log('[ORCHESTRATOR] 🔄 analyzeAndExecute() triggered');
+      
       // Step 1: Check if auto-trading is enabled
       const systemStatus = await this.storage.getSystemStatus();
       if (!systemStatus || !systemStatus.auto_trading_enabled) {
+        console.log('[ORCHESTRATOR] ⏸️ Auto-trading disabled, exiting');
         return; // Auto-trading disabled, do nothing
       }
+      
+      console.log('[ORCHESTRATOR] ✅ Auto-trading enabled, continuing...');
       
       // Step 2: Gather market data from storage and PRO managers
       const [
@@ -126,17 +134,20 @@ export class AutoTradingOrchestrator {
       ]);
       
       if (!marketData || !position) {
+        console.log('[ORCHESTRATOR] ⏸️ Missing critical data - Market:', !!marketData, 'Position:', !!position);
         return; // Missing critical data
       }
       
       // Don't open new positions if we already have one
       if (position.contracts !== 0) {
+        console.log('[ORCHESTRATOR] ⏸️ Already in position:', position.contracts);
         return;
       }
       
       // Step 3: Get PRO methodology context from managers
       const compositeProfile = this.compositeProfileSystem.getCompositeProfile();
       if (!compositeProfile) {
+        console.log('[ORCHESTRATOR] ⏸️ No composite profile available');
         return; // Need composite profile for PRO setups
       }
       
@@ -160,8 +171,11 @@ export class AutoTradingOrchestrator {
       // Validate VWAP data is complete
       if (!vwapData || vwapData.vwap === null || vwapData.sd1_upper === null || 
           vwapData.sd1_lower === null || vwapData.sd2_upper === null || vwapData.sd2_lower === null) {
+        console.log('[ORCHESTRATOR] ⏸️ Incomplete VWAP data - exists:', !!vwapData, 'vwap:', vwapData?.vwap);
         return; // Need complete VWAP data
       }
+      
+      console.log('[ORCHESTRATOR] ✅ All data validated, generating PRO setups...');
       
       // Build market context for PRO methodology
       const context = {
@@ -185,11 +199,16 @@ export class AutoTradingOrchestrator {
       // Step 4: Generate PRO methodology trade recommendations (90% - CONTEXT)
       const recommendations = this.setupRecognizer.generateRecommendations(context);
       
+      console.log(`[ORCHESTRATOR] 🎯 Generated ${recommendations.length} recommendations, Hypothesis: ${hypothesis.bias}`);
+      
       // Filter for high-confidence active setups that MATCH hypothesis direction (PRO 90% rule)
       const validSetups = recommendations
         .filter(r => {
           // Must be active and meet minimum confidence
-          if (!r.active || r.confidence < this.MIN_CONFIDENCE) return false;
+          if (!r.active || r.confidence < this.MIN_CONFIDENCE) {
+            console.log(`[PRO-90/10] ⏭️ Skipped ${r.setup_type} - Active:${r.active} Confidence:${r.confidence}% < ${this.MIN_CONFIDENCE}%`);
+            return false;
+          }
           
           // CRITICAL: Only trade in direction aligned with daily hypothesis
           if (hypothesis.bias === 'BEARISH' && r.direction === 'LONG') {
@@ -201,11 +220,13 @@ export class AutoTradingOrchestrator {
             return false;
           }
           
+          console.log(`[PRO-90/10] ✅ Accepted ${r.setup_type} - ${r.direction} @ ${r.confidence}% confidence`);
           return true;
         })
         .sort((a, b) => b.confidence - a.confidence);
       
       if (validSetups.length === 0) {
+        console.log('[ORCHESTRATOR] ⏸️ No valid setups after filtering - waiting for better opportunity');
         return; // No high-confidence setups available that match hypothesis
       }
       
