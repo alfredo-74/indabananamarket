@@ -127,6 +127,52 @@ export class ProductionSafetyManager {
       console.log(`[SAFETY] ❌ Order REJECTED: ${confirmation.order_id} - ${confirmation.reject_reason}`);
     } else if (confirmation.status === "FILLED") {
       console.log(`[SAFETY] ✅ Order FILLED: ${confirmation.order_id} @ ${confirmation.filled_price?.toFixed(2)}`);
+      
+      // Parse the signal to get order details
+      const signal = JSON.parse(orderTracking.signal);
+      const action = signal.action; // "BUY" or "SELL"
+      const quantity = signal.quantity || 1;
+      const filled_price = confirmation.filled_price || signal.entry_price;
+      
+      // Get current position
+      const currentPosition = await this.storage.getPosition();
+      const currentContracts = currentPosition?.contracts || 0;
+      const currentSide = currentPosition?.side || "FLAT";
+      
+      // Calculate new position
+      let newContracts = currentContracts;
+      if (action === "BUY") {
+        newContracts += quantity;
+      } else if (action === "SELL") {
+        newContracts -= quantity;
+      }
+      
+      const newSide = newContracts > 0 ? "LONG" : newContracts < 0 ? "SHORT" : "FLAT";
+      
+      // Update position in database
+      await this.storage.setPosition({
+        contracts: Math.abs(newContracts),
+        entry_price: filled_price,
+        current_price: filled_price,
+        unrealized_pnl: 0,
+        realized_pnl: currentPosition?.realized_pnl || 0,
+        side: newSide,
+      });
+      
+      // Create OPEN trade record
+      await this.storage.createTrade({
+        timestamp: Date.now(),
+        type: action,
+        entry_price: filled_price,
+        contracts: quantity,
+        regime: signal.regime || "UNKNOWN",
+        cumulative_delta: signal.cumulative_delta || 0,
+        status: "OPEN",
+        orderflow_signal: signal.description || `Order ${confirmation.order_id}`
+      });
+      
+      console.log(`[SAFETY] 📊 Position updated: ${newSide} ${Math.abs(newContracts)}x @ ${filled_price.toFixed(2)}`);
+      console.log(`[SAFETY] 📝 Trade created: ${action} ${quantity}x @ ${filled_price.toFixed(2)} [OPEN]`);
     }
   }
 
