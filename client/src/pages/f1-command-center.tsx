@@ -311,6 +311,20 @@ export default function F1CommandCenter() {
     },
   });
 
+  const testTradeMutation = useMutation({
+    mutationFn: async (action: "BUY" | "SELL") => {
+      return await apiRequest("POST", "/api/execute-order", { 
+        action, 
+        quantity: 1 
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/position"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/trades"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/pending-orders"] });
+    },
+  });
+
   const latestCandle = candles && candles.length > 0 ? candles[candles.length - 1] : null;
   const marketCondition = hypothesis?.condition || "UNKNOWN";
   const cumulativeDelta = latestCandle?.cumulative_delta || 0;
@@ -990,6 +1004,31 @@ export default function F1CommandCenter() {
               <RefreshCw className={`h-3 w-3 mr-1 ${forceSyncMutation.isPending ? 'animate-spin' : ''}`} />
               {forceSyncMutation.isPending ? "SYNCING..." : "FORCE SYNC"}
             </Button>
+
+            {position && position.contracts === 0 && (
+              <div className="grid grid-cols-2 gap-1 mt-1">
+                <Button
+                  onClick={() => testTradeMutation.mutate("BUY")}
+                  disabled={testTradeMutation.isPending}
+                  size="sm"
+                  variant="default"
+                  className="w-full text-[10px] h-6 bg-green-600 hover:bg-green-700"
+                  data-testid="button-test-buy"
+                >
+                  BUY 1
+                </Button>
+                <Button
+                  onClick={() => testTradeMutation.mutate("SELL")}
+                  disabled={testTradeMutation.isPending}
+                  size="sm"
+                  variant="default"
+                  className="w-full text-[10px] h-6 bg-red-600 hover:bg-red-700"
+                  data-testid="button-test-sell"
+                >
+                  SELL 1
+                </Button>
+              </div>
+            )}
             
             <div className="border-t border-gray-800 pt-1 mt-1"></div>
             

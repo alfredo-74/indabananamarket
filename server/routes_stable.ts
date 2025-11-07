@@ -49,6 +49,7 @@ import type {
   TradeRecommendation,
   FootprintBar,
 } from "@shared/schema";
+import type { TradeSignal } from "./auto_trader";
 import { spawn } from "child_process";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
@@ -131,6 +132,7 @@ interface PendingOrder {
   timestamp: number;
   status: "PENDING" | "EXECUTED" | "FAILED" | "EXPIRED";
   result?: any;
+  signal?: TradeSignal; // Store signal for tracking when IBKR order_id arrives
 }
 
 const pendingOrders: Map<string, PendingOrder> = new Map();
@@ -316,18 +318,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
             }
           }
           
-          const newTrade: NewTrade = {
+          const newTrade: Omit<Trade, "id"> = {
             timestamp: Date.now(),
             type: positionDelta > 0 ? "BUY" : "SELL",
             entry_price: incrementalEntryPrice,
+            exit_price: null,
             contracts: Math.abs(positionDelta),
+            pnl: null,
+            duration_ms: null,
             regime: "UNKNOWN",
             cumulative_delta: 0,
             status: "OPEN",
             orderflow_signal: "Manual IB entry detected via reconciliation"
           };
           
-          await storage.createTrade(newTrade);
+          await storage.addTrade(newTrade);
           console.log(`[RECONCILIATION] ✅ Created ${newTrade.type} ${newTrade.contracts}x @ ${newTrade.entry_price.toFixed(2)}`);
         }
         // Sub-case B: IBKR position magnitude < DB position (manual partial close detected)
@@ -367,20 +372,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // If closing partial trade, create new CLOSED trade for closed portion and reduce original
             else {
               // Create a new CLOSED trade for the portion that was closed
-              const closedTrade: NewTrade = {
+              const closedTrade: Omit<Trade, "id"> = {
                 timestamp: Date.now(),
                 type: trade.type,
                 entry_price: trade.entry_price,
                 exit_price: currentMarketPrice,
                 contracts: closeSize,
                 pnl: pnl,
+                duration_ms: null,
                 regime: trade.regime || "UNKNOWN",
                 cumulative_delta: trade.cumulative_delta || 0,
                 status: "CLOSED",
                 orderflow_signal: "Manual partial close via reconciliation"
               };
               
-              await storage.createTrade(closedTrade);
+              await storage.addTrade(closedTrade);
               
               // Reduce the original trade's contract count
               const remainingContracts = tradeSize - closeSize;
@@ -426,18 +432,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
           
           // Create new position
-          const newTrade: NewTrade = {
+          const newTrade: Omit<Trade, "id"> = {
             timestamp: Date.now(),
             type: ibkrPosition > 0 ? "BUY" : "SELL",
             entry_price: position?.entry_price || currentMarketPrice,
+            exit_price: null,
             contracts: Math.abs(ibkrPosition),
+            pnl: null,
+            duration_ms: null,
             regime: "UNKNOWN",
             cumulative_delta: 0,
             status: "OPEN",
             orderflow_signal: "Manual position reversal via reconciliation"
           };
           
-          await storage.createTrade(newTrade);
+          await storage.addTrade(newTrade);
           console.log(`[RECONCILIATION] ✅ Created ${newTrade.type} ${newTrade.contracts}x @ ${newTrade.entry_price.toFixed(2)}`);
         }
       }
@@ -967,15 +976,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Get current market price for the signal
+      const marketData = await storage.getMarketData();
+      const currentPrice = marketData?.last_price || 0;
+      
+      // Create TradeSignal for safety tracking (will be tracked once IBKR order_id is known)
+      const signal: TradeSignal = {
+        action,
+        quantity,
+        reason: "Manual trade via UI",
+        entry_price: currentPrice,
+        confidence: 100, // Manual trades are 100% user-driven
+      };
+      
       const order: PendingOrder = {
         id: orderId,
         action,
         quantity,
         timestamp: Date.now(),
         status: 'PENDING',
+        signal, // Store signal to track when IBKR order_id arrives
       };
       
       pendingOrders.set(orderId, order);
+      
       console.log(`[ORDER QUEUE] Added ${action} ${quantity} (ID: ${orderId})`);
       
       res.json({ success: true, orderId });
@@ -1018,6 +1043,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         order.status = status;
         order.result = result;
         console.log(`[ORDER RESULT] ${orderId}: ${status} - ${JSON.stringify(result)}`);
+        
+        // CRITICAL FIX: When order fills, track it with IBKR order_id for confirmation matching
+        if (status === 'FILLED' && result?.order_id && order.signal && safetyManager) {
+          const ibkrOrderId = result.order_id.toString();
+          await safetyManager.trackOrder(order.signal, ibkrOrderId);
+          console.log(`[SAFETY] 📝 Tracked order ${ibkrOrderId} for signal: ${order.signal.action} ${order.signal.quantity}`);
+        }
       }
       
       res.json({ success: true });
