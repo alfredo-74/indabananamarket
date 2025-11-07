@@ -1919,6 +1919,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const clientIp = req.ip || req.connection?.remoteAddress || 'unknown';
     const authKey = req.headers['x-safety-auth-key'];
     
+    // DEBUG: Log all safety auth attempts
+    console.log(`[SECURITY DEBUG] Auth check for ${req.path} - Client IP: ${clientIp}, Has auth key: ${!!authKey}`);
+    
     // TRUSTED IP: Allow requests from the Chromebook IBKR bridge (user's local machine)
     const TRUSTED_IPS = ['172.31.73.162']; // Chromebook IP running Python IBKR bridge
     if (TRUSTED_IPS.includes(clientIp)) {

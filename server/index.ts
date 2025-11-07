@@ -4,6 +4,10 @@ import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
 
+// CRITICAL: Trust proxy headers so req.ip resolves correctly
+// Replit routes all requests through a proxy, so we need this to get the real client IP
+app.set('trust proxy', 1);
+
 declare module 'http' {
   interface IncomingMessage {
     rawBody: unknown
