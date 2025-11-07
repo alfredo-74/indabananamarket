@@ -60,7 +60,24 @@ class IBKRBridgeV2:
         self.fatal_error = False
         self.fatal_error_message = None
         
+        # SECURITY: Load safety auth key from environment
+        self.safety_auth_key = os.environ.get('SAFETY_AUTH_KEY')
+        if not self.safety_auth_key:
+            print("❌ CRITICAL: SAFETY_AUTH_KEY not set - bridge will not be able to send data!", file=sys.stderr)
+            print("   Add SAFETY_AUTH_KEY to .env.local and restart the bridge", file=sys.stderr)
+        else:
+            print(f"✅ SAFETY_AUTH_KEY loaded ({len(self.safety_auth_key)} chars)", file=sys.stderr)
+        
         print(f"🚀 Bridge LOCAL initialized - Will forward data to: {self.replit_url}", file=sys.stderr)
+    
+    def _get_auth_headers(self):
+        """Get headers with safety auth key for all API requests"""
+        if not self.safety_auth_key:
+            return {'Content-Type': 'application/json'}
+        return {
+            'x-safety-auth-key': self.safety_auth_key,
+            'Content-Type': 'application/json'
+        }
     
     async def connect(self, retry_count=0, max_retries=10):
         """Connect to IBKR Paper Trading via IB Gateway with retry logic"""
@@ -352,6 +369,7 @@ class IBKRBridgeV2:
             response = requests.post(
                 f"{self.replit_url}/api/bridge/data",
                 json=data,
+                headers=self._get_auth_headers(),
                 timeout=2
             )
             
@@ -398,6 +416,7 @@ class IBKRBridgeV2:
             response = requests.post(
                 f"{self.replit_url}/api/bridge/data",
                 json=data,
+                headers=self._get_auth_headers(),
                 timeout=2
             )
             
@@ -471,6 +490,7 @@ class IBKRBridgeV2:
                 response = requests.post(
                     f"{self.replit_url}/api/bridge/data",
                     json=data,
+                    headers=self._get_auth_headers(),
                     timeout=5
                 )
                 
@@ -551,6 +571,7 @@ class IBKRBridgeV2:
                     response = requests.post(
                         f"{self.replit_url}/api/bridge/data",
                         json=market_data,
+                        headers=self._get_auth_headers(),
                         timeout=1
                     )
                     if response.status_code == 200:
@@ -573,6 +594,7 @@ class IBKRBridgeV2:
                         response = requests.post(
                             f"{self.replit_url}/api/bridge/data",
                             json=dom_data,
+                            headers=self._get_auth_headers(),
                             timeout=1
                         )
                         if response.status_code == 200:
