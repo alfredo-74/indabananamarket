@@ -153,9 +153,19 @@ let orchestratorReady = false;
     
     // Initialize orchestrator only if safety manager initialized successfully
     if (safetyManagerReady && safetyManager) {
-      orchestrator = new AutoTradingOrchestrator(storage, autoTrader, safetyManager, pendingOrders);
+      orchestrator = new AutoTradingOrchestrator(
+        storage,
+        autoTrader,
+        setupRecognizer,
+        compositeProfileSystem,
+        valueMigrationDetector,
+        hypothesisGenerator,
+        orderFlowSignalDetector,
+        safetyManager,
+        pendingOrders
+      );
       orchestratorReady = true;
-      console.log('[ORCHESTRATOR] ✅ Auto-Trading Orchestrator initialized and ready');
+      console.log('[ORCHESTRATOR] ✅ Auto-Trading Orchestrator initialized (PRO 90/10 Rule)');
     } else {
       console.error('[ORCHESTRATOR] ❌ FATAL: Cannot initialize without safety manager');
       process.exit(1);

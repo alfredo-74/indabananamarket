@@ -1,17 +1,25 @@
 /**
- * Auto-Trading Orchestrator - Missing Critical Component
+ * Auto-Trading Orchestrator - PRO Course Integration
+ * 
+ * Implements G7FX PRO methodology (90/10 rule):
+ * - 90% Context: Value Areas, Profiles, VWAP (TradeRecommendations)
+ * - 10% Order Flow: Confirmation signals (absorption, imbalances)
  * 
  * Ties together:
- * - AutoTrader signal generation
- * - ProductionSafetyManager validation
+ * - HighProbabilitySetupRecognizer (PRIMARY: PRO methodology)
+ * - OrderFlowStrategy (SECONDARY: confirmation filter)
+ * - ProductionSafetyManager (validation)
  * - Pending orders queue
- * 
- * Orchestrates automatic trade execution when auto_trading_enabled is true
  */
 
 import type { IStorage } from "./storage";
 import type { AutoTrader, TradeSignal } from "./auto_trader";
 import type { ProductionSafetyManager } from "./production_safety_manager";
+import type { HighProbabilitySetupRecognizer, TradeRecommendation } from "./high_probability_setup_recognizer";
+import type { CompositeProfileManager } from "./composite_profile";
+import type { ValueMigrationDetector } from "./value_migration_detector";
+import type { HypothesisGenerator } from "./hypothesis_generator";
+import type { OrderFlowSignalDetector } from "./orderflow_signal_detector";
 
 export interface PendingOrder {
   id: string;
@@ -24,21 +32,37 @@ export interface PendingOrder {
 export class AutoTradingOrchestrator {
   private storage: IStorage;
   private autoTrader: AutoTrader;
+  private setupRecognizer: HighProbabilitySetupRecognizer;
+  private compositeProfileSystem: CompositeProfileManager;
+  private valueMigrationDetector: ValueMigrationDetector;
+  private hypothesisGenerator: HypothesisGenerator;
+  private orderFlowSignalDetector: OrderFlowSignalDetector;
   private safetyManager: ProductionSafetyManager;
   private pendingOrders: Map<string, PendingOrder>;
   private lastSignalId: string | null = null;
   private debounceTimer: NodeJS.Timeout | null = null;
   private readonly DEBOUNCE_MS = 1000; // 1s trailing timer
   private readonly MIN_CONFIDENCE = 75; // 75% confidence required
+  private readonly MAX_POSITION_SIZE = 1; // 1 MES contract
   
   constructor(
     storage: IStorage,
     autoTrader: AutoTrader,
+    setupRecognizer: HighProbabilitySetupRecognizer,
+    compositeProfileSystem: CompositeProfileManager,
+    valueMigrationDetector: ValueMigrationDetector,
+    hypothesisGenerator: HypothesisGenerator,
+    orderFlowSignalDetector: OrderFlowSignalDetector,
     safetyManager: ProductionSafetyManager,
     pendingOrders: Map<string, PendingOrder>
   ) {
     this.storage = storage;
     this.autoTrader = autoTrader;
+    this.setupRecognizer = setupRecognizer;
+    this.compositeProfileSystem = compositeProfileSystem;
+    this.valueMigrationDetector = valueMigrationDetector;
+    this.hypothesisGenerator = hypothesisGenerator;
+    this.orderFlowSignalDetector = orderFlowSignalDetector;
     this.safetyManager = safetyManager;
     this.pendingOrders = pendingOrders;
   }
@@ -61,12 +85,18 @@ export class AutoTradingOrchestrator {
   }
   
   /**
-   * Core orchestration logic
+   * Core orchestration logic - PRO Course 90/10 Rule
+   * 
+   * PRIMARY (90%): Context-based setups from PRO methodology
+   * SECONDARY (10%): Order flow confirmation
+   * 
+   * Flow:
    * 1. Check auto_trading_enabled
-   * 2. Call autoTrader.analyzeMarket()
-   * 3. Validate signal confidence >= 75%
-   * 4. Run safety checks
-   * 5. Create pending order if all pass
+   * 2. Generate PRO methodology trade recommendations
+   * 3. Filter for high-confidence setups (75%+)
+   * 4. Use order flow analysis for confirmation boost
+   * 5. Run safety checks
+   * 6. Create pending order if all pass
    */
   private async analyzeAndExecute(): Promise<void> {
     try {
@@ -76,47 +106,157 @@ export class AutoTradingOrchestrator {
         return; // Auto-trading disabled, do nothing
       }
       
-      // Step 2: Gather market data for analysis
-      const [marketData, absorptionEvents, domSnapshot, timeAndSales, volumeProfile, position] = 
-        await Promise.all([
-          this.storage.getMarketData(),
-          this.storage.getAbsorptionEvents(50),
-          this.storage.getDomSnapshot(),
-          this.storage.getTimeAndSales(100),
-          this.storage.getVolumeProfile(),
-          this.storage.getPosition(),
-        ]);
+      // Step 2: Gather market data from storage and PRO managers
+      const [
+        marketData,
+        position,
+        vwapData,
+        volumeProfile,
+        absorptionEvents,
+        domSnapshot,
+        timeAndSales
+      ] = await Promise.all([
+        this.storage.getMarketData(),
+        this.storage.getPosition(),
+        this.storage.getVWAPData(),
+        this.storage.getVolumeProfile(),
+        this.storage.getAbsorptionEvents(50),
+        this.storage.getDomSnapshot(),
+        this.storage.getTimeAndSales(100),
+      ]);
       
       if (!marketData || !position) {
-        console.log('[ORCHESTRATOR] ⚠️ Market data or position not available');
+        return; // Missing critical data
+      }
+      
+      // Don't open new positions if we already have one
+      if (position.contracts !== 0) {
         return;
       }
       
-      // Step 3: Analyze market using AutoTrader
-      const signal = this.autoTrader.analyzeMarket(
-        marketData,
+      // Step 3: Get PRO methodology context from managers
+      const compositeProfile = this.compositeProfileSystem.getCompositeProfile();
+      if (!compositeProfile) {
+        return; // Need composite profile for PRO setups
+      }
+      
+      const migration = this.valueMigrationDetector.detectMigration(volumeProfile || null, compositeProfile);
+      
+      // Generate hypothesis (using mock overnight data for now)
+      const overnightHigh = marketData.last_price * 1.005;
+      const overnightLow = marketData.last_price * 0.995;
+      const hypothesis = this.hypothesisGenerator.generateHypothesis(
+        overnightHigh,
+        overnightLow,
+        marketData.last_price,
+        compositeProfile,
+        null,
+        migration,
+        vwapData || null
+      );
+      
+      const orderFlowSignals = this.orderFlowSignalDetector.getRecentSignals(20);
+      
+      // Validate VWAP data is complete
+      if (!vwapData || vwapData.vwap === null || vwapData.sd1_upper === null || 
+          vwapData.sd1_lower === null || vwapData.sd2_upper === null || vwapData.sd2_lower === null) {
+        return; // Need complete VWAP data
+      }
+      
+      // Build market context for PRO methodology
+      const context = {
+        currentPrice: marketData.last_price,
+        compositeProfile,
+        valueMigration: migration,
+        hypothesis,
+        orderFlowSignals,
+        vwap: vwapData.vwap,
+        vwapSD1Upper: vwapData.sd1_upper,
+        vwapSD1Lower: vwapData.sd1_lower,
+        vwapSD2Upper: vwapData.sd2_upper,
+        vwapSD2Lower: vwapData.sd2_lower,
+        volumeProfile: {
+          poc: volumeProfile?.poc || marketData.last_price,
+          vah: volumeProfile?.vah || marketData.last_price,
+          val: volumeProfile?.val || marketData.last_price,
+        },
+      };
+      
+      // Step 4: Generate PRO methodology trade recommendations (90% - CONTEXT)
+      const recommendations = this.setupRecognizer.generateRecommendations(context);
+      
+      // Filter for high-confidence active setups
+      const validSetups = recommendations
+        .filter(r => r.active && r.confidence >= this.MIN_CONFIDENCE)
+        .sort((a, b) => b.confidence - a.confidence);
+      
+      if (validSetups.length === 0) {
+        return; // No high-confidence setups available
+      }
+      
+      // Step 5: Get the best setup and apply order flow confirmation (10% - ORDER FLOW)
+      const bestSetup = validSetups[0];
+      let finalConfidence = bestSetup.confidence;
+      let confirmationDetails = bestSetup.orderflow_confirmation;
+      
+      // Use AutoTrader's OrderFlowStrategy for confirmation boost
+      const orderflowSignal = this.autoTrader['orderflowStrategy'].analyzeOrderFlow(
+        marketData.last_price,
         absorptionEvents || [],
         domSnapshot || null,
         timeAndSales || [],
-        volumeProfile || null,
-        position
+        volumeProfile || null
       );
       
-      // Step 4: Check if signal is actionable
-      if (signal.action === "NONE") {
-        return; // No trade signal
+      // Apply order flow boost: Strong confirmation = +10-15%, Weak = +0-5%
+      if (orderflowSignal.type !== 'NONE') {
+        const directionMatches = 
+          (bestSetup.direction === 'LONG' && orderflowSignal.type === 'LONG') ||
+          (bestSetup.direction === 'SHORT' && orderflowSignal.type === 'SHORT');
+        
+        if (directionMatches) {
+          // Order flow confirms the setup direction
+          const boost = Math.min(15, orderflowSignal.confidence * 0.15);
+          finalConfidence = Math.min(100, finalConfidence + boost);
+          confirmationDetails += ` | OF Boost: +${boost.toFixed(0)}% (${orderflowSignal.reason})`;
+          
+          console.log(`[PRO-90/10] ✅ Order flow CONFIRMS ${bestSetup.setup_type} (+${boost.toFixed(0)}% confidence)`);
+        } else if (orderflowSignal.confidence > 50) {
+          // Strong opposite order flow = warning
+          console.log(`[PRO-90/10] ⚠️ Order flow CONTRADICTS ${bestSetup.setup_type} - holding back`);
+          return; // Don't trade against strong opposing order flow
+        }
       }
       
-      // Step 5: Validate confidence threshold (75%+)
-      if (signal.confidence && signal.confidence < this.MIN_CONFIDENCE) {
-        console.log(`[ORCHESTRATOR] 📊 Signal confidence too low: ${signal.confidence}% < ${this.MIN_CONFIDENCE}%`);
-        return;
-      }
+      // Log the decision-making process
+      console.log('─'.repeat(70));
+      console.log(`[PRO-90/10] 📊 SETUP DETECTED: ${bestSetup.setup_type}`);
+      console.log(`[CONTEXT-90%] ${bestSetup.context_reason}`);
+      console.log(`[ORDERFLOW-10%] ${confirmationDetails}`);
+      console.log(`[CONFIDENCE] Base: ${bestSetup.confidence}% → Final: ${finalConfidence.toFixed(0)}%`);
+      console.log(`[ENTRY] ${marketData.last_price.toFixed(2)} | Stop: ${bestSetup.stop_loss.toFixed(2)} | Target: ${bestSetup.target_1.toFixed(2)}`);
+      console.log(`[R:R] ${bestSetup.risk_reward_ratio.toFixed(2)}:1`);
+      console.log('─'.repeat(70));
       
-      // Step 6: Generate signal ID for idempotency
+      // Step 6: Convert to TradeSignal for safety checks
+      const signal: TradeSignal = {
+        action: bestSetup.direction === 'LONG' ? 'BUY' : 'SELL',
+        quantity: this.MAX_POSITION_SIZE,
+        reason: `${bestSetup.setup_type}: ${bestSetup.context_reason}`,
+        entry_price: bestSetup.entry_price,
+        stop_loss: bestSetup.stop_loss,
+        take_profit: bestSetup.target_1,
+        confidence: finalConfidence,
+        orderflow_signals: {
+          absorption: confirmationDetails,
+          profile_context: `${bestSetup.setup_type} - ${bestSetup.context_reason}`,
+        },
+      };
+      
+      // Step 7: Generate signal ID for idempotency
       const signalId = this.generateSignalId(signal);
       
-      // Step 7: Prevent duplicate execution of same signal
+      // Prevent duplicate execution of same signal
       if (signalId === this.lastSignalId) {
         return; // Same signal as last time, don't re-execute
       }
@@ -139,7 +279,7 @@ export class AutoTradingOrchestrator {
       const orderId = `order_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const order: PendingOrder = {
         id: orderId,
-        action: signal.action === "CLOSE" ? "CLOSE" : signal.action,
+        action: signal.action as "BUY" | "SELL", // Safe: signal.action is always BUY or SELL at this point
         quantity: signal.quantity,
         timestamp: Date.now(),
         status: "PENDING",
@@ -152,13 +292,13 @@ export class AutoTradingOrchestrator {
       await this.safetyManager.trackOrder(signal, orderId);
       
       console.log('═'.repeat(70));
-      console.log(`[ORCHESTRATOR] 🚀 AUTO-TRADE SIGNAL DETECTED`);
-      console.log(`   Action: ${signal.action} ${signal.quantity} MES`);
-      console.log(`   Price: ${signal.entry_price?.toFixed(2)}`);
-      console.log(`   Confidence: ${signal.confidence}%`);
-      console.log(`   Reason: ${signal.reason}`);
+      console.log(`[ORCHESTRATOR] 🚀 AUTO-TRADE EXECUTING`);
+      console.log(`   Setup: ${bestSetup.setup_type}`);
+      console.log(`   Action: ${signal.action} ${signal.quantity} MES @ ${signal.entry_price?.toFixed(2)}`);
+      console.log(`   Stop: ${signal.stop_loss?.toFixed(2)} | Target: ${signal.take_profit?.toFixed(2)}`);
+      console.log(`   Confidence: ${finalConfidence.toFixed(0)}% (PRO: ${bestSetup.confidence}% + OF Boost)`);
       console.log(`   Order ID: ${orderId}`);
-      console.log(`   Safety Status: ✅ ${safetyStatus.reason}`);
+      console.log(`   Safety: ✅ ${safetyStatus.reason}`);
       console.log('═'.repeat(70));
       
     } catch (error) {
