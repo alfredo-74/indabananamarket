@@ -19,6 +19,16 @@ if [ ! -f "package.json" ]; then
     exit 1
 fi
 
+# Auto-load environment variables from .env.local
+if [ -f ".env.local" ]; then
+    echo "📄 Loading environment from .env.local"
+    set -a  # Automatically export all variables
+    source .env.local
+    set +a  # Stop auto-exporting
+else
+    echo "⚠️  Warning: .env.local not found - using existing environment variables"
+fi
+
 # Check required environment variables
 missing_vars=0
 
