@@ -388,7 +388,7 @@ class IBKRBridgeV2:
             # Calculate market price for unrealized P&L
             market_price = self.last_price if self.last_price > 0 else (self.entry_price or 0)
             
-            # CRITICAL SANITY CHECK #1: Absolute range check for ES/MES
+            # CRITICAL SANITY CHECK: Absolute range check for ES/MES
             # ES trades between 1000-15000, MES trades between 5000-75000 (ES × 5)
             # Anything outside this range is corrupt data from IBKR
             validated_entry_price = self.entry_price
@@ -398,13 +398,10 @@ class IBKRBridgeV2:
                     print(f"⚠️ REJECTING corrupt data - BLOCKING position update until valid data received", file=sys.stderr)
                     return  # Don't send this update at all - wait for valid data
                 
-                # CRITICAL SANITY CHECK #2: Relative check against market price (if available)
-                if market_price > 0:
-                    price_ratio = abs(self.entry_price / market_price)
-                    if price_ratio > 3.0 or price_ratio < 0.33:
-                        print(f"⚠️ CORRUPT ENTRY PRICE DETECTED: {self.entry_price} vs market {market_price} (ratio: {price_ratio:.2f}x)", file=sys.stderr)
-                        print(f"⚠️ REJECTING corrupt data - BLOCKING position update", file=sys.stderr)
-                        return  # Don't send this update at all
+                # NOTE: We do NOT check ratio against market_price because:
+                # - self.entry_price is MES price (e.g., 33521)
+                # - market_price is ES price (e.g., 6707)
+                # - MES is exactly 5x ES, so ratio check would incorrectly flag valid data
             
             data = {
                 "type": "portfolio_update",
