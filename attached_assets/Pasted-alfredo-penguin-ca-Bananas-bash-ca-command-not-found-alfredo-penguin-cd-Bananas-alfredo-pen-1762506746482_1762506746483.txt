@@ -1,0 +1,71 @@
+alfredo@penguin:~$ ca Bananas
+-bash: ca: command not found
+alfredo@penguin:~$ cd Bananas
+alfredo@penguin:~/Bananas$ postgresql://neondb_owner:npg_J2Frqdvh7RSf@ep-plain-queen-a6b6tize.us-west-2.aws.neon.te
+-bash: postgresql://neondb_owner:npg_J2Frqdvh7RSf@ep-plain-queen-a6b6tize.us-west-2.aws.neon.te: No such file or directory
+alfredo@penguin:~/Bananas$ export IBKR_USERNAME="fredpaper74"
+export IBKR_PASSWORD="m!j8r5C%WF3W-#2"
+export SAFETY_AUTH_KEY="295d67de43a97a278f18d9891a2e7fc24fc829f37fd7dd357cd9dadfd9c03605"
+export SESSION_SECRET="l9RVb0gOvgasVOqrPoFnV5OH9+ENB3U9XhJRwMcy4kldvq39t6Fwpd4y4g2Bwt+V/AyPMTwRxvoz/k1odksyYg=="
+export DATABASE_URL="postgresql://neondb_owner:npg_J2Frqdvh7RSf@ep-plain-queen-a6b6tize.us-west-2.aws.neon.tech/neondb?sslmode=require"
+-bash: !j8r5C: event not found
+alfredo@penguin:~/Bananas$ ./start.sh
+========================================================================
+🏎️  IBKR TRADING SYSTEM - LOCAL STARTUP
+========================================================================
+❌ IBKR_PASSWORD not set
+
+💡 Set environment variables first:
+   export DATABASE_URL="postgresql://..."
+   export SAFETY_AUTH_KEY="your-key"
+   export SESSION_SECRET="your-secret"
+   export IBKR_USERNAME="your-username"
+   export IBKR_PASSWORD="your-password"
+alfredo@penguin:~/Bananas$ export IBKR_USERNAME='fredpaper74'
+export IBKR_PASSWORD='m!j8r5C%WF3W-#2'
+export SAFETY_AUTH_KEY='295d67de43a97a278f18d9891a2e7fc24fc829f37fd7dd357cd9dadfd9c03605'
+export SESSION_SECRET='l9RVb0gOvgasVOqrPoFnV5OH9+ENB3U9XhJRwMcy4kldvq39t6Fwpd4y4g2Bwt+V/AyPMTwRxvoz/k1odksyYg=='
+export DATABASE_URL='postgresql://neondb_owner:npg_J2Frqdvh7RSf@ep-plain-queen-a6b6tize.us-west-2.aws.neon.tech/neondb?sslmode=require'
+
+./start.sh
+========================================================================
+🏎️  IBKR TRADING SYSTEM - LOCAL STARTUP
+========================================================================
+✅ Environment variables validated
+
+========================================================================
+📦 Starting Node.js Server
+========================================================================
+✅ Node.js server started (PID: 3231)
+   Logs: /tmp/nodejs-server.log
+   Waiting 5 seconds for server to initialize...
+✅ Server responding on http://localhost:5000
+
+========================================================================
+🔌 Starting IBKR Bridge (AUTO-RECONNECT ENABLED)
+========================================================================
+   Press Ctrl+C to stop both services
+========================================================================
+
+======================================================================
+🏎️  IBKR BRIDGE - LOCAL MODE (AUTO-RECONNECT ENABLED)
+======================================================================
+🔗 Local URL: http://localhost:5000
+📊 Historical data: 7 days
+======================================================================
+🚀 Bridge LOCAL initialized - Will forward data to: http://localhost:5000
+Connecting to IB Gateway on port 4002...
+API connection failed: ConnectionRefusedError(111, "Connect call failed ('127.0.0.1', 4002)")
+Make sure API port on TWS/IBG is open
+❌ Connection failed: [Errno 111] Connect call failed ('127.0.0.1', 4002)
+⏳ Waiting 1s before retry...
+🔄 Retry attempt 1/10...
+API connection failed: ConnectionRefusedError(111, "Connect call failed ('127.0.0.1', 4002)")
+Make sure API port on TWS/IBG is open
+❌ Connection failed: [Errno 111] Connect call failed ('127.0.0.1', 4002)
+⏳ Waiting 2s before retry...
+🔄 Retry attempt 2/10...
+API connection failed: ConnectionRefusedError(111, "Connect call failed ('127.0.0.1', 4002)")
+Make sure API port on TWS/IBG is open
+❌ Connection failed: [Errno 111] Connect call failed ('127.0.0.1', 4002)
+⏳ Waiting 4s before retry...
