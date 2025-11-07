@@ -6,9 +6,47 @@ OrderFlowAI is an automated trading system for futures markets, implementing the
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (Nov 6, 2025)
+## Recent Changes (Nov 7, 2025)
 
-### Production Safety System Implementation (PRODUCTION-READY)
+### IBKR Bridge Connection Blinking Fix (RESOLVED)
+Fixed the persistent connection blinking issue where the F1 Command Center UI would toggle between "Connected" and "Disconnected" states every few seconds.
+
+**Root Cause Identified:**
+- The heartbeat timeout logic only updated `bridgeLastHeartbeat` in the `market_data` branch
+- When market is quiet (sparse price updates), the heartbeat would timeout even though the bridge was sending other message types
+- This caused the 10-second timeout check to incorrectly mark the bridge as disconnected
+
+**Fix Implemented:**
+- Moved `bridgeLastHeartbeat = Date.now()` to the **top** of `/api/bridge/data` handler (line 209)
+- Now ALL message types (`market_data`, `dom`, `trades`, `account_data`, `heartbeat`) keep the connection alive
+- Removed duplicate heartbeat updates from individual message type branches (cleaner code)
+
+**Security Enhancement - Local-Only Auth Bypass:**
+Added optional `SAFETY_AUTH_MODE` environment variable for easier local development:
+- **"strict"** (default): Requires `x-safety-auth-key` header on ALL requests (production mode)
+- **"local-only"**: Bypasses auth for requests from 127.0.0.1/::1 ONLY (local dev convenience)
+- Server logs loud warnings when running in local-only mode
+- Enhanced auth rejection logging with IP address and diagnostic details
+
+**Test Results:**
+- Server logs show stable `"ibkr_connected":true` throughout startup and operation
+- Zero disconnect messages after restart
+- Connection stays green without blinking
+
+**Deployment Instructions for User:**
+1. Download updated `server/routes_stable.ts` to your local ChromeOS system
+2. Copy `.env.local.template` to `.env.local` if not already done
+3. Set `SAFETY_AUTH_MODE=local-only` in `.env.local` for easier Python bridge connection (or keep "strict" for production)
+4. Ensure `SAFETY_AUTH_KEY` is set in `.env.local` (required for server startup)
+5. Restart with `./start.sh`
+6. Connection should remain stable without blinking
+
+**Security Notes:**
+- Never commit `.env.local` to version control (contains real credentials)
+- Use "strict" mode in any hosted/production environment
+- Local-only mode ONLY bypasses auth for localhost traffic
+
+### Production Safety System Implementation (Nov 6, PRODUCTION-READY)
 Implemented comprehensive AutoTrader Production Safety Manager with database persistence and security hardening for real money trading with £1,912 GBP IBKR account.
 
 **Safety Features (Database-Backed):**
