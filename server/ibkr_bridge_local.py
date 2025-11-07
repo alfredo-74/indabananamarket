@@ -53,6 +53,13 @@ class IBKRBridgeV2:
         self.dom_bids = []
         self.dom_asks = []
         
+        # Track if event handlers are registered (prevent duplicate bindings)
+        self.handlers_registered = False
+        
+        # Track fatal errors (authentication, permission issues)
+        self.fatal_error = False
+        self.fatal_error_message = None
+        
         print(f"🚀 Bridge LOCAL initialized - Will forward data to: {self.replit_url}", file=sys.stderr)
     
     async def connect(self, retry_count=0, max_retries=10):
@@ -98,14 +105,17 @@ class IBKRBridgeV2:
             # Subscribe to Level II DOM (Depth of Market)
             self.ib.reqMktDepth(self.display_contract, numRows=10)
             
-            # Set up event handlers
-            self.ib.updateEvent += self._on_dom_update
-            self.ib.newOrderEvent += self._on_order_update
-            self.ib.orderStatusEvent += self._on_order_status
-            
-            # Subscribe to position updates
-            self.ib.positionEvent += self._on_position_update
-            self.ib.pnlEvent += self._on_pnl_update
+            # Set up event handlers ONCE (prevent duplicate bindings on reconnect)
+            if not self.handlers_registered:
+                self.ib.updateEvent += self._on_dom_update
+                self.ib.newOrderEvent += self._on_order_update
+                self.ib.orderStatusEvent += self._on_order_status
+                self.ib.positionEvent += self._on_position_update
+                self.ib.pnlEvent += self._on_pnl_update
+                self.handlers_registered = True
+                print("✅ Event handlers registered", file=sys.stderr)
+            else:
+                print("✅ Event handlers already registered (skipping)", file=sys.stderr)
             
             # Request current positions
             await self._request_positions()
@@ -114,6 +124,26 @@ class IBKRBridgeV2:
             
         except Exception as e:
             self.connected = False
+            error_msg = str(e)
+            
+            # Detect FATAL errors that won't resolve with retry
+            fatal_errors = [
+                "not connected",  # Invalid credentials
+                "Authentication failed",
+                "Invalid username",
+                "Invalid password",
+                "Permission denied",
+                "API key invalid"
+            ]
+            
+            is_fatal = any(fatal_str in error_msg for fatal_str in fatal_errors)
+            
+            if is_fatal:
+                self.fatal_error = True
+                self.fatal_error_message = str(e)
+                print(f"❌ FATAL ERROR - Cannot retry: {e}", file=sys.stderr)
+                print(f"   Check IBKR credentials and gateway configuration", file=sys.stderr)
+                return False
             
             if retry_count < max_retries:
                 wait_time = min(2 ** retry_count, 30)  # Exponential backoff, max 30s
@@ -123,6 +153,7 @@ class IBKRBridgeV2:
                 return await self.connect(retry_count + 1, max_retries)
             else:
                 print(f"❌ DISCONNECTED - Max retries ({max_retries}) exceeded: {e}", file=sys.stderr)
+                print(f"   This may be a persistent issue - check IB Gateway", file=sys.stderr)
                 return False
     
     async def _request_positions(self):
@@ -649,22 +680,42 @@ async def main():
     
     bridge = IBKRBridgeV2(LOCAL_URL)
     reconnect_attempts = 0
-    max_reconnects = 999  # Effectively infinite
+    max_reconnects = 50  # Cap reconnects to prevent infinite loops on persistent failures
+    consecutive_failures = 0
     
     try:
         while reconnect_attempts < max_reconnects:
             try:
                 # Connect to IBKR with retry logic
                 if not await bridge.connect():
+                    # Check if this was a FATAL error (auth, permissions, etc.)
+                    if bridge.fatal_error:
+                        print("=" * 70, file=sys.stderr)
+                        print("❌ FATAL ERROR - Cannot continue", file=sys.stderr)
+                        print(f"   Error: {bridge.fatal_error_message}", file=sys.stderr)
+                        print("   Action: Fix credentials/gateway configuration and restart", file=sys.stderr)
+                        print("=" * 70, file=sys.stderr)
+                        return  # Exit immediately - don't retry fatal errors
+                    
                     print("❌ Failed to connect to IBKR after retries", file=sys.stderr)
                     reconnect_attempts += 1
-                    wait_time = min(30, 5 * reconnect_attempts)
-                    print(f"⏳ Waiting {wait_time}s before full reconnect attempt {reconnect_attempts}...", file=sys.stderr)
+                    consecutive_failures += 1
+                    
+                    # Exponential backoff with cap for full reconnect attempts
+                    wait_time = min(60, 5 * consecutive_failures)
+                    print(f"⏳ Waiting {wait_time}s before full reconnect attempt {reconnect_attempts}/{max_reconnects}...", file=sys.stderr)
                     await asyncio.sleep(wait_time)
+                    
+                    # If we've failed 5 times in a row, this might be fatal
+                    if consecutive_failures >= 5:
+                        print("⚠️  WARNING: 5 consecutive connection failures", file=sys.stderr)
+                        print("   Check IB Gateway, credentials, and network connectivity", file=sys.stderr)
+                    
                     continue
                 
-                # Reset reconnect counter on successful connection
+                # Reset counters on successful connection
                 reconnect_attempts = 0
+                consecutive_failures = 0
                 
                 # Send historical data for CVA (unless skipped)
                 if not args.skip_historical:
@@ -679,7 +730,11 @@ async def main():
                 print("⚠️ Connection lost - attempting reconnect...", file=sys.stderr)
                 bridge.disconnect()
                 reconnect_attempts += 1
-                await asyncio.sleep(5)
+                consecutive_failures += 1
+                
+                # Backoff before reconnect
+                wait_time = min(30, 5 * consecutive_failures)
+                await asyncio.sleep(wait_time)
                 
             except KeyboardInterrupt:
                 raise  # Bubble up to outer handler
@@ -687,8 +742,9 @@ async def main():
                 print(f"❌ Error in main loop: {e}", file=sys.stderr)
                 bridge.disconnect()
                 reconnect_attempts += 1
-                wait_time = min(30, 5 * reconnect_attempts)
-                print(f"⏳ Waiting {wait_time}s before reconnect...", file=sys.stderr)
+                consecutive_failures += 1
+                wait_time = min(60, 5 * consecutive_failures)
+                print(f"⏳ Waiting {wait_time}s before reconnect attempt {reconnect_attempts}/{max_reconnects}...", file=sys.stderr)
                 await asyncio.sleep(wait_time)
         
     except KeyboardInterrupt:
