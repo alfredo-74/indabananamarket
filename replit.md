@@ -39,7 +39,11 @@ The backend is a Node.js Express.js server written in TypeScript, providing REST
     - **TimeAndSalesProcessor** and **DomProcessor**: Process tick data and Level 2 market depth.
     - **VolumeProfileCalculator** and **AbsorptionDetector**: Build volume profiles and identify absorption.
     - **Footprint-Order Flow Integration**: Combines data for comprehensive signal detection.
-- **Auto-Trading Orchestrator**: Event-driven system (`server/auto_trading_orchestrator.ts`) that bridges real-time market data to automated trade execution. Features include:
+- **Auto-Trading Orchestrator**: Event-driven system (`server/auto_trading_orchestrator.ts`) implementing PRO 90/10 Rule - prioritizes context-driven setups (90%) confirmed by order flow (10%). Features include:
+    - **PRO Methodology Integration**: Consumes TradeRecommendations from `HighProbabilitySetupRecognizer` (VA breakouts, mean reversion, opening drive).
+    - **Order Flow Confirmation**: Uses `OrderFlowStrategy` to boost/filter PRO setups (+10-15% confidence when direction matches).
+    - **Decision Logic Flow**: Context validation → Setup selection → Order flow confirmation → Safety checks → Execution.
+    - **Comprehensive Logging**: Logs setup detection, order flow boost, confidence calculations, and execution reasoning.
     - 1-second debounce protection on market data ticks.
     - Signal ID tracking to prevent duplicate orders.
     - 75%+ confidence threshold for signal execution.
