@@ -127,18 +127,23 @@ export class HighProbabilitySetupRecognizer {
   /**
    * Detect Value Area Fade Setup
    * 
-   * Price at VAH/VAL extreme with order flow showing exhaustion
-   * High probability mean reversion back to POC/VWAP
+   * VADEERA PRO METHODOLOGY: Use DVA (Daily Value Area) for primary intraday mean reversion setups
+   * - DVA VAH/VAL = Today's extremes for fade entries
+   * - Target: DVA POC and VWAP for mean reversion
+   * - CVA only used for context (not primary trade reference)
    */
   private detectValueAreaFade(context: MarketContext): TradeRecommendation | null {
-    const { currentPrice, compositeProfile, orderFlowSignals, vwap } = context;
-    const { composite_vah, composite_val, composite_poc } = compositeProfile;
+    const { currentPrice, volumeProfile, orderFlowSignals, vwap } = context;
+    const { vah: dva_vah, val: dva_val, poc: dva_poc } = volumeProfile; // DVA = Daily Value Area
 
-    // Check if price is at composite VAH (fade short setup)
-    const atVAH = currentPrice >= composite_vah && currentPrice <= composite_vah * 1.001;
+    // Guard: Skip if DVA not available yet (daily profile still building)
+    if (!dva_vah || !dva_val || !dva_poc) return null;
+
+    // Check if price is at DVA VAH (fade short setup)
+    const atVAH = currentPrice >= dva_vah && currentPrice <= dva_vah * 1.001;
     
-    // Check if price is at composite VAL (fade long setup)
-    const atVAL = currentPrice <= composite_val && currentPrice >= composite_val * 0.999;
+    // Check if price is at DVA VAL (fade long setup)
+    const atVAL = currentPrice <= dva_val && currentPrice >= dva_val * 0.999;
 
     if (!atVAH && !atVAL) return null;
 
@@ -150,10 +155,10 @@ export class HighProbabilitySetupRecognizer {
     const lackOfParticipation = orderFlowSignals.find((s) => s.signal_type === "LACK_OF_PARTICIPATION");
 
     if (atVAH && (exhaustion?.direction === "BEARISH" || lackOfParticipation?.direction === "BEARISH")) {
-      // Fade from VAH (SHORT setup)
-      const entry = composite_vah;
-      const stop = composite_vah * 1.002; // 2 ticks above VAH
-      const target1 = composite_poc; // First target: POC
+      // Fade from DVA VAH (SHORT setup)
+      const entry = dva_vah;
+      const stop = dva_vah + 0.50; // 2 ticks above DVA VAH
+      const target1 = dva_poc; // First target: DVA POC
       const target2 = vwap; // Second target: VWAP
       
       const risk = stop - entry;
@@ -168,21 +173,21 @@ export class HighProbabilitySetupRecognizer {
         target_2: target2,
         confidence: 80,
         risk_reward_ratio: reward / risk,
-        context_reason: `Price at CVA VAH (${composite_vah.toFixed(2)}). Composite POC at ${composite_poc.toFixed(2)}. High probability mean reversion to value.`,
+        context_reason: `Price at DVA VAH (${dva_vah.toFixed(2)}). Daily POC at ${dva_poc.toFixed(2)}. High probability mean reversion to value.`,
         orderflow_confirmation: exhaustion 
           ? `${exhaustion.signal_type}: ${exhaustion.description}` 
           : "Lack of participation confirming weakness",
-        invalidation_criteria: `Price closes above ${stop.toFixed(2)} (VAH + 2 ticks)`,
+        invalidation_criteria: `Price closes above ${stop.toFixed(2)} (DVA VAH + 2 ticks)`,
         timestamp: Date.now(),
         active: true,
       };
     }
 
     if (atVAL && (exhaustion?.direction === "BULLISH" || lackOfParticipation?.direction === "BULLISH")) {
-      // Fade from VAL (LONG setup)
-      const entry = composite_val;
-      const stop = composite_val * 0.998; // 2 ticks below VAL
-      const target1 = composite_poc;
+      // Fade from DVA VAL (LONG setup)
+      const entry = dva_val;
+      const stop = dva_val - 0.50; // 2 ticks below DVA VAL
+      const target1 = dva_poc;
       const target2 = vwap;
       
       const risk = entry - stop;
@@ -197,11 +202,11 @@ export class HighProbabilitySetupRecognizer {
         target_2: target2,
         confidence: 80,
         risk_reward_ratio: reward / risk,
-        context_reason: `Price at CVA VAL (${composite_val.toFixed(2)}). Composite POC at ${composite_poc.toFixed(2)}. High probability mean reversion to value.`,
+        context_reason: `Price at DVA VAL (${dva_val.toFixed(2)}). Daily POC at ${dva_poc.toFixed(2)}. High probability mean reversion to value.`,
         orderflow_confirmation: exhaustion 
           ? `${exhaustion.signal_type}: ${exhaustion.description}` 
           : "Lack of participation confirming strength",
-        invalidation_criteria: `Price closes below ${stop.toFixed(2)} (VAL - 2 ticks)`,
+        invalidation_criteria: `Price closes below ${stop.toFixed(2)} (DVA VAL - 2 ticks)`,
         timestamp: Date.now(),
         active: true,
       };
@@ -213,28 +218,45 @@ export class HighProbabilitySetupRecognizer {
   /**
    * Detect Value Area Breakout Setup
    * 
-   * Price breaking above VAH or below VAL with initiative buying/selling
-   * Confirms new directional move (NOT mean reversion)
+   * VADEERA PRO METHODOLOGY: Use DVA (Daily Value Area) for intraday breakouts
+   * - DVA breakouts = Initiative trading beyond today's value
+   * - CVA breakouts = Major multi-day directional moves (higher confidence)
+   * - Boost confidence when breaking BOTH DVA and CVA simultaneously
    */
   private detectValueAreaBreakout(context: MarketContext): TradeRecommendation | null {
-    const { currentPrice, compositeProfile, orderFlowSignals } = context;
-    const { composite_vah, composite_val, composite_poc } = compositeProfile;
+    const { currentPrice, volumeProfile, compositeProfile, orderFlowSignals } = context;
+    const { vah: dva_vah, val: dva_val, poc: dva_poc } = volumeProfile; // DVA = Daily Value Area
+    const { composite_vah: cva_vah, composite_val: cva_val } = compositeProfile; // CVA = Composite Value Area
+
+    // Guard: Skip if DVA not available yet (daily profile still building)
+    if (!dva_vah || !dva_val || !dva_poc) return null;
 
     // Check for initiative trading signals
     const initiativeBuying = orderFlowSignals.find((s) => s.signal_type === "INITIATIVE_BUYING");
     const initiativeSelling = orderFlowSignals.find((s) => s.signal_type === "INITIATIVE_SELLING");
     const stackedImbalance = orderFlowSignals.find((s) => s.signal_type === "STACKED_IMBALANCE");
 
-    // Breakout above VAH (LONG setup)
-    const aboveVAH = currentPrice > composite_vah * 1.001;
-    if (aboveVAH && (initiativeBuying || (stackedImbalance?.direction === "BULLISH"))) {
+    // Breakout above DVA VAH (LONG setup)
+    const aboveDVA_VAH = currentPrice > dva_vah * 1.001;
+    const aboveCVA_VAH = currentPrice > cva_vah * 1.001; // Major breakout confirmation
+    
+    if (aboveDVA_VAH && (initiativeBuying || (stackedImbalance?.direction === "BULLISH"))) {
       const entry = currentPrice;
-      const stop = composite_vah; // Stop at VAH (rejection = failed breakout)
-      const target1 = entry + (entry - composite_poc) * 0.5; // Project POC-to-VAH distance
-      const target2 = entry + (entry - composite_poc); // Full projection
+      const stop = dva_vah; // Stop at DVA VAH (rejection = failed breakout)
+      const target1 = entry + (entry - dva_poc) * 0.5; // Project DVA POC-to-VAH distance
+      const target2 = entry + (entry - dva_poc); // Full projection
       
       const risk = entry - stop;
       const reward = target2 - entry;
+      
+      // Boost confidence if breaking BOTH DVA and CVA (major breakout)
+      const baseConfidence = 75;
+      const confidenceBoost = aboveCVA_VAH ? 10 : 0;
+      const finalConfidence = baseConfidence + confidenceBoost;
+      
+      const contextReason = aboveCVA_VAH
+        ? `Breakout above DVA VAH (${dva_vah.toFixed(2)}) AND CVA VAH (${cva_vah.toFixed(2)}). Major multi-day breakout confirmed.`
+        : `Breakout above DVA VAH (${dva_vah.toFixed(2)}). Initiative buying confirms new business.`;
       
       return {
         setup_type: "VA_BREAKOUT_LONG",
@@ -243,28 +265,39 @@ export class HighProbabilitySetupRecognizer {
         stop_loss: stop,
         target_1: target1,
         target_2: target2,
-        confidence: 75,
+        confidence: finalConfidence,
         risk_reward_ratio: reward / risk,
-        context_reason: `Breakout above CVA VAH (${composite_vah.toFixed(2)}). Initiative buying confirms new business.`,
+        context_reason: contextReason,
         orderflow_confirmation: initiativeBuying 
           ? initiativeBuying.description 
           : stackedImbalance?.description || "Strong buy imbalances",
-        invalidation_criteria: `Price closes back below VAH (${composite_vah.toFixed(2)})`,
+        invalidation_criteria: `Price closes back below DVA VAH (${dva_vah.toFixed(2)})`,
         timestamp: Date.now(),
         active: true,
       };
     }
 
-    // Breakout below VAL (SHORT setup)
-    const belowVAL = currentPrice < composite_val * 0.999;
-    if (belowVAL && (initiativeSelling || (stackedImbalance?.direction === "BEARISH"))) {
+    // Breakout below DVA VAL (SHORT setup)
+    const belowDVA_VAL = currentPrice < dva_val * 0.999;
+    const belowCVA_VAL = currentPrice < cva_val * 0.999; // Major breakout confirmation
+    
+    if (belowDVA_VAL && (initiativeSelling || (stackedImbalance?.direction === "BEARISH"))) {
       const entry = currentPrice;
-      const stop = composite_val;
-      const target1 = entry - (composite_poc - entry) * 0.5;
-      const target2 = entry - (composite_poc - entry);
+      const stop = dva_val;
+      const target1 = entry - (dva_poc - entry) * 0.5;
+      const target2 = entry - (dva_poc - entry);
       
       const risk = stop - entry;
       const reward = entry - target2;
+      
+      // Boost confidence if breaking BOTH DVA and CVA (major breakout)
+      const baseConfidence = 75;
+      const confidenceBoost = belowCVA_VAL ? 10 : 0;
+      const finalConfidence = baseConfidence + confidenceBoost;
+      
+      const contextReason = belowCVA_VAL
+        ? `Breakout below DVA VAL (${dva_val.toFixed(2)}) AND CVA VAL (${cva_val.toFixed(2)}). Major multi-day breakout confirmed.`
+        : `Breakout below DVA VAL (${dva_val.toFixed(2)}). Initiative selling confirms new business.`;
       
       return {
         setup_type: "VA_BREAKOUT_SHORT",
@@ -273,13 +306,13 @@ export class HighProbabilitySetupRecognizer {
         stop_loss: stop,
         target_1: target1,
         target_2: target2,
-        confidence: 75,
+        confidence: finalConfidence,
         risk_reward_ratio: reward / risk,
-        context_reason: `Breakout below CVA VAL (${composite_val.toFixed(2)}). Initiative selling confirms new business.`,
+        context_reason: contextReason,
         orderflow_confirmation: initiativeSelling 
           ? initiativeSelling.description 
           : stackedImbalance?.description || "Strong sell imbalances",
-        invalidation_criteria: `Price closes back above VAL (${composite_val.toFixed(2)})`,
+        invalidation_criteria: `Price closes back above DVA VAL (${dva_val.toFixed(2)})`,
         timestamp: Date.now(),
         active: true,
       };
