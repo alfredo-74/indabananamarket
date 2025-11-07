@@ -1919,6 +1919,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const clientIp = req.ip || req.connection?.remoteAddress || 'unknown';
     const authKey = req.headers['x-safety-auth-key'];
     
+    // TRUSTED IP: Allow requests from the Chromebook IBKR bridge (user's local machine)
+    const TRUSTED_IPS = ['172.31.73.162']; // Chromebook IP running Python IBKR bridge
+    if (TRUSTED_IPS.includes(clientIp)) {
+      console.log(`[SECURITY] ✅ TRUSTED IP: Allowing request to ${req.path} from ${clientIp}`);
+      return next();
+    }
+    
     // Local-only bypass: Trust localhost requests ONLY if explicitly enabled
     if (SAFETY_AUTH_MODE === "local-only") {
       const isLocalhost = clientIp === '127.0.0.1' || 
