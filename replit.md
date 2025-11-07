@@ -91,3 +91,71 @@ The backend is a Node.js Express.js server written in TypeScript, providing REST
 - **Frontend**: React, TypeScript, Vite, Radix UI, shadcn/ui, Tailwind CSS, TanStack Query, Chart.js (`chartjs-chart-financial`, `chartjs-adapter-date-fns`).
 - **Backend**: Node.js, Express.js, TypeScript, WebSockets (`ws`), Drizzle ORM, `@neondatabase/serverless`.
 - **Python Bridge**: `ib_insync`.
+
+## Testing & Validation (November 2025)
+
+### End-to-End Trading System Test Results
+
+**Date**: November 7, 2025  
+**Test Scope**: Complete order execution flow from signal generation to IBKR execution and position reconciliation
+
+#### ✅ Components Verified Working
+1. **Order Queue System**: Successfully creates and queues pending orders
+2. **IBKR Bridge Polling**: Python bridge correctly polls `/api/pending-orders` every ~2 seconds
+3. **Order Execution**: IBKR successfully fills orders (confirmed: order_id 109 filled)
+4. **Position Reconciliation**: Accurate position tracking and sync with IBKR account
+5. **Safety Systems**: All safety checks active and functioning correctly
+6. **Real-Time Data**: Market data, DOM updates, account data streaming correctly
+7. **Auto-Trading Orchestrator**: Correctly evaluating setups with 75% confidence threshold
+
+#### ⚠️ Critical Issue Identified: Order Confirmation Auth Bug
+
+**Problem**: IBKR bridge order confirmations fail authentication when posting to `/api/order-confirmation`
+
+**Symptoms**:
+- Orders execute successfully at IBKR ✅
+- Filled orders are **not persisted** to database ❌
+- Auth rejection: "Key mismatch (length: 58 vs 64)" ❌
+
+**Root Cause**: The local Python bridge running on Chromebook has a **truncated SAFETY_AUTH_KEY** (58 characters instead of 64)
+
+**Impact**:
+- Risk controls blind to live exposure
+- Daily P&L tracking incomplete
+- Order tracking table (`orderTracking`) not populated
+- Reconciliation partially degraded
+
+**Status**: 🔴 **PRODUCTION BLOCKER** - Must be fixed before 30-day automated trading session
+
+**Fix Required**: Update `SAFETY_AUTH_KEY` on local Chromebook environment to match the full 64-character key from Replit secrets vault
+
+**How to Fix on Local Chromebook**:
+1. Get the full 64-character `SAFETY_AUTH_KEY` from Replit Secrets (Tools → Secrets in Replit UI)
+2. Update your local environment where Python bridge runs:
+   ```bash
+   # Add to ~/.bashrc or your shell config
+   export SAFETY_AUTH_KEY="<full-64-character-key>"
+   ```
+3. Restart Python bridge: `python server/ibkr_bridge_local.py`
+4. Verify fix by checking logs for successful order confirmations (HTTP 200 instead of 401)
+
+**Verification Steps After Fix**:
+1. Execute a test trade
+2. Check IBKR fills the order
+3. Confirm `/api/order-confirmation` returns HTTP 200 (not 401)
+4. Verify trade appears in database: `SELECT * FROM "orderTracking" ORDER BY timestamp DESC LIMIT 1;`
+5. Confirm no auth rejection errors in server logs
+
+#### Security Fixes Applied During Testing
+1. **Removed** unauthenticated `/api/test-trade` endpoint (security vulnerability)
+2. **Restored** `MIN_CONFIDENCE` to production value (75%)
+3. **Removed** temporary test logging from orchestrator
+
+#### System Readiness Assessment
+- **Core Trading Flow**: ✅ Fully operational
+- **Safety Systems**: ✅ Active and enforcing rules
+- **Data Streaming**: ✅ Real-time updates working
+- **Database Persistence**: ⚠️ Blocked by auth key mismatch
+- **Production Ready**: 🔴 **NO** - Auth bug must be fixed first
+
+**Recommendation**: Fix SAFETY_AUTH_KEY on Chromebook, verify order confirmations succeed, then begin 30-day production monitoring period.
