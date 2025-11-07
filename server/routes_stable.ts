@@ -1027,6 +1027,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // REMOVED - Test endpoint was security vulnerability (unauthenticated trade execution)
+
   // Initialize system status with $2,000 starting capital (default before IBKR connection)
   // NOTE: Capital will be updated from IBKR account balance when connection is established
   // IMPORTANT: Preserve auto_trading_enabled if it exists in database
