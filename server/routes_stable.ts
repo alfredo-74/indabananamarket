@@ -220,6 +220,232 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   }
 
+  // Trade Reconciliation System
+  // Ensures database trades stay in sync with IBKR actual positions
+  async function reconcileTrades(currentMarketPrice: number) {
+    try {
+      const position = await storage.getPosition();
+      const trades = await storage.getTrades();
+      
+      // Find all OPEN trades
+      const openTrades = trades.filter(t => t.status === "OPEN");
+      
+      // Calculate net position from database trades
+      const netPosition = openTrades.reduce((sum, t) => {
+        return sum + (t.type === "BUY" ? t.contracts || 0 : -(t.contracts || 0));
+      }, 0);
+      
+      const ibkrPosition = position?.contracts || 0;
+      
+      console.log(`[RECONCILIATION] Running: IBKR position=${ibkrPosition}, DB net position=${netPosition}, Open trades=${openTrades.length}, Market price=${currentMarketPrice.toFixed(2)}`);
+      
+      // CASE 1: IBKR shows flat position (0 contracts) but we have OPEN trades, close them
+      if (ibkrPosition === 0 && openTrades.length > 0) {
+        console.log(`[RECONCILIATION] ⚙️ IBKR position is FLAT but database has ${openTrades.length} OPEN trades - auto-closing`);
+        
+        for (const trade of openTrades) {
+          // Validate entry_price exists before calculating P&L
+          if (!trade.entry_price || trade.entry_price === 0) {
+            console.log(`[RECONCILIATION] ⚠️ Cannot calculate P&L for trade ${trade.id} - missing valid entry_price. Closing with $0 P&L.`);
+            await storage.updateTrade(trade.id, {
+              exit_price: currentMarketPrice,
+              pnl: 0,
+              status: "CLOSED",
+              orderflow_signal: "Auto-closed via reconciliation (IBKR flat, no entry price)"
+            });
+            continue;
+          }
+          
+          // Calculate P&L with validated entry price
+          const isLong = trade.type === "BUY";
+          const pnl = isLong 
+            ? (currentMarketPrice - trade.entry_price) * (trade.contracts || 1) * 5 // MES multiplier
+            : (trade.entry_price - currentMarketPrice) * (trade.contracts || 1) * 5;
+          
+          // Update trade to CLOSED
+          await storage.updateTrade(trade.id, {
+            exit_price: currentMarketPrice,
+            pnl: pnl,
+            status: "CLOSED",
+            orderflow_signal: "Auto-closed via reconciliation (IBKR flat)"
+          });
+          
+          console.log(`[RECONCILIATION] ✅ Closed ${trade.type} ${trade.contracts}x @ ${trade.entry_price.toFixed(2)} → ${currentMarketPrice.toFixed(2)}, P&L: ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)}`);
+        }
+      }
+      
+      // CASE 2: IBKR has a non-zero position but database doesn't match
+      if (ibkrPosition !== 0 && netPosition !== ibkrPosition) {
+        console.log(`[RECONCILIATION] ⚠️ Position mismatch: IBKR ${ibkrPosition} contracts, Database ${netPosition} net from ${openTrades.length} trades`);
+        
+        const positionDelta = ibkrPosition - netPosition;
+        const absIBKR = Math.abs(ibkrPosition);
+        const absDB = Math.abs(netPosition);
+        
+        // Sub-case A: IBKR position magnitude > DB position (manual entry detected)
+        if (absIBKR > absDB && Math.sign(ibkrPosition) === Math.sign(netPosition || ibkrPosition)) {
+          console.log(`[RECONCILIATION] 🔄 Manual ENTRY detected: Creating ${Math.abs(positionDelta)} contract trade`);
+          
+          // Calculate the true incremental entry price by backing out existing exposure
+          // Formula: new_entry = (ibkr_avg * ibkr_qty - Σ existing_entry * existing_qty) / delta_qty
+          let incrementalEntryPrice = currentMarketPrice; // Fallback to current market price
+          
+          if (position?.entry_price && position.entry_price > 0) {
+            const ibkrBlendedAvg = position.entry_price;
+            const ibkrTotalQty = absIBKR;
+            const deltaQty = Math.abs(positionDelta);
+            
+            // Calculate total existing exposure from DB trades
+            const existingExposure = openTrades.reduce((sum, t) => {
+              const qty = t.contracts || 1;
+              const entryPrice = t.entry_price || 0;
+              return sum + (entryPrice * qty);
+            }, 0);
+            
+            // Back out the incremental entry price
+            // new_entry = (ibkr_avg * ibkr_qty - existing_exposure) / delta_qty
+            const totalExposure = ibkrBlendedAvg * ibkrTotalQty;
+            incrementalEntryPrice = (totalExposure - existingExposure) / deltaQty;
+            
+            // Sanity check: if calculated price is extreme or negative, fall back to current market price
+            if (incrementalEntryPrice <= 0 || incrementalEntryPrice < 1000 || incrementalEntryPrice > 15000) {
+              console.log(`[RECONCILIATION] ⚠️ Calculated entry price ${incrementalEntryPrice.toFixed(2)} looks invalid, using current market price ${currentMarketPrice.toFixed(2)}`);
+              incrementalEntryPrice = currentMarketPrice;
+            } else {
+              console.log(`[RECONCILIATION] 💡 Computed incremental entry: ${incrementalEntryPrice.toFixed(2)} (IBKR avg: ${ibkrBlendedAvg.toFixed(2)}, existing exposure: $${existingExposure.toFixed(2)})`);
+            }
+          }
+          
+          const newTrade: NewTrade = {
+            timestamp: Date.now(),
+            type: positionDelta > 0 ? "BUY" : "SELL",
+            entry_price: incrementalEntryPrice,
+            contracts: Math.abs(positionDelta),
+            regime: "UNKNOWN",
+            cumulative_delta: 0,
+            status: "OPEN",
+            orderflow_signal: "Manual IB entry detected via reconciliation"
+          };
+          
+          await storage.createTrade(newTrade);
+          console.log(`[RECONCILIATION] ✅ Created ${newTrade.type} ${newTrade.contracts}x @ ${newTrade.entry_price.toFixed(2)}`);
+        }
+        // Sub-case B: IBKR position magnitude < DB position (manual partial close detected)
+        else if (absIBKR < absDB) {
+          const contractsToClose = absDB - absIBKR;
+          console.log(`[RECONCILIATION] 🔄 Manual PARTIAL CLOSE detected: Closing ${contractsToClose} contracts`);
+          
+          let remainingToClose = contractsToClose;
+          for (const trade of openTrades) {
+            if (remainingToClose <= 0) break;
+            
+            const tradeSize = trade.contracts || 1;
+            const closeSize = Math.min(tradeSize, remainingToClose);
+            
+            // Validate entry_price
+            if (!trade.entry_price || trade.entry_price === 0) {
+              console.log(`[RECONCILIATION] ⚠️ Cannot calculate P&L for trade ${trade.id} - missing valid entry_price. Skipping.`);
+              continue;
+            }
+            
+            // Calculate P&L for the partial close
+            const isLong = trade.type === "BUY";
+            const pnl = isLong 
+              ? (currentMarketPrice - trade.entry_price) * closeSize * 5
+              : (trade.entry_price - currentMarketPrice) * closeSize * 5;
+            
+            // If closing entire trade, mark it CLOSED
+            if (closeSize >= tradeSize) {
+              await storage.updateTrade(trade.id, {
+                exit_price: currentMarketPrice,
+                pnl: pnl,
+                status: "CLOSED",
+                orderflow_signal: "Manual close via reconciliation"
+              });
+              console.log(`[RECONCILIATION] ✅ Closed entire ${trade.type} ${closeSize}x @ ${trade.entry_price.toFixed(2)} → ${currentMarketPrice.toFixed(2)}, P&L: ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)}`);
+            }
+            // If closing partial trade, create new CLOSED trade for closed portion and reduce original
+            else {
+              // Create a new CLOSED trade for the portion that was closed
+              const closedTrade: NewTrade = {
+                timestamp: Date.now(),
+                type: trade.type,
+                entry_price: trade.entry_price,
+                exit_price: currentMarketPrice,
+                contracts: closeSize,
+                pnl: pnl,
+                regime: trade.regime || "UNKNOWN",
+                cumulative_delta: trade.cumulative_delta || 0,
+                status: "CLOSED",
+                orderflow_signal: "Manual partial close via reconciliation"
+              };
+              
+              await storage.createTrade(closedTrade);
+              
+              // Reduce the original trade's contract count
+              const remainingContracts = tradeSize - closeSize;
+              await storage.updateTrade(trade.id, {
+                contracts: remainingContracts
+              });
+              
+              console.log(`[RECONCILIATION] ✅ Partial close: ${trade.type} ${closeSize}/${tradeSize}x @ ${trade.entry_price.toFixed(2)} → ${currentMarketPrice.toFixed(2)}, P&L: ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)} (${remainingContracts} contracts remaining)`);
+            }
+            
+            remainingToClose -= closeSize;
+          }
+        }
+        // Sub-case C: Position direction reversal (close all, then open opposite)
+        else {
+          console.log(`[RECONCILIATION] 🔄 Position REVERSAL detected: IBKR ${ibkrPosition}, DB ${netPosition}`);
+          
+          // Close all existing trades
+          for (const trade of openTrades) {
+            if (!trade.entry_price || trade.entry_price === 0) {
+              await storage.updateTrade(trade.id, {
+                exit_price: currentMarketPrice,
+                pnl: 0,
+                status: "CLOSED",
+                orderflow_signal: "Closed via position reversal (no entry price)"
+              });
+              continue;
+            }
+            
+            const isLong = trade.type === "BUY";
+            const pnl = isLong 
+              ? (currentMarketPrice - trade.entry_price) * (trade.contracts || 1) * 5
+              : (trade.entry_price - currentMarketPrice) * (trade.contracts || 1) * 5;
+            
+            await storage.updateTrade(trade.id, {
+              exit_price: currentMarketPrice,
+              pnl: pnl,
+              status: "CLOSED",
+              orderflow_signal: "Closed via position reversal"
+            });
+            
+            console.log(`[RECONCILIATION] ✅ Closed ${trade.type} ${trade.contracts}x @ ${trade.entry_price.toFixed(2)} → ${currentMarketPrice.toFixed(2)}, P&L: ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)}`);
+          }
+          
+          // Create new position
+          const newTrade: NewTrade = {
+            timestamp: Date.now(),
+            type: ibkrPosition > 0 ? "BUY" : "SELL",
+            entry_price: position?.entry_price || currentMarketPrice,
+            contracts: Math.abs(ibkrPosition),
+            regime: "UNKNOWN",
+            cumulative_delta: 0,
+            status: "OPEN",
+            orderflow_signal: "Manual position reversal via reconciliation"
+          };
+          
+          await storage.createTrade(newTrade);
+          console.log(`[RECONCILIATION] ✅ Created ${newTrade.type} ${newTrade.contracts}x @ ${newTrade.entry_price.toFixed(2)}`);
+        }
+      }
+    } catch (error) {
+      console.error('[RECONCILIATION] Error reconciling trades:', error);
+    }
+  }
+
   // HTTP endpoint for IBKR bridge (more reliable than WebSocket for external connections)
   let bridgeLastHeartbeat = Date.now(); // Initialize to now to prevent "never connected" spam on startup
   let lastStatusUpdate = 0; // Throttle database status updates
@@ -561,7 +787,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       else if (message.type === 'account_data') {
         // Handle account data from IBKR
-        const { account_balance, net_liquidation, available_funds, unrealized_pnl, realized_pnl, daily_pnl } = message;
+        const { account_balance, net_liquidation, available_funds, unrealized_pnl, realized_pnl, daily_pnl, position } = message;
         const status = await storage.getSystemStatus();
         
         if (status) {
@@ -572,6 +798,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.setSystemStatus(status);
           
           console.log(`[ACCOUNT] Balance: $${account_balance?.toFixed(2)}, NetLiq: $${net_liquidation?.toFixed(2)}, Daily P&L: ${daily_pnl >= 0 ? '+' : ''}$${daily_pnl?.toFixed(2)}`);
+        }
+        
+        // Run trade reconciliation to sync database with IBKR position
+        const marketData = await storage.getMarketData();
+        if (marketData) {
+          await reconcileTrades(marketData.last_price);
+        }
+        
+        // If IBKR sends position data, update our position tracking
+        if (position !== undefined && marketData) {
+          const currentPosition = await storage.getPosition();
+          await storage.setPosition({
+            contracts: position,
+            entry_price: currentPosition?.entry_price || null,
+            current_price: marketData.last_price,
+            unrealized_pnl: unrealized_pnl || 0,
+            realized_pnl: 0,
+            side: position > 0 ? "LONG" : position < 0 ? "SHORT" : "FLAT",
+          });
         }
         
         res.json({ type: 'ack' });

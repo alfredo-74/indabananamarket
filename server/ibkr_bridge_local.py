@@ -363,6 +363,7 @@ class IBKRBridgeV2:
                 "unrealized_pnl": self.unrealized_pnl,
                 "realized_pnl": self.realized_pnl,
                 "daily_pnl": self.daily_pnl,
+                "position": self.current_position,  # Include current position for trade reconciliation
                 "timestamp": int(datetime.now().timestamp() * 1000)
             }
             
