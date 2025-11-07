@@ -58,6 +58,14 @@ The backend is a Node.js Express.js server written in TypeScript, providing REST
     - Multi-Layered Safety Checks and Readiness Guards.
     - Fail-Safe Architecture with server refusing to start if initialization fails or `SAFETY_AUTH_KEY` is missing.
     - Security features: `SAFETY_AUTH_KEY` requirement for server startup and critical endpoints, input validation, and security logging.
+- **Trade Reconciliation System**: Production-ready automatic trade synchronization with IBKR (runs every ~15 seconds). Features include:
+    - **CASE 1 - Auto-Close**: When IBKR position is flat (0) but DB has OPEN trades → automatically closes all with validated P&L calculation.
+    - **CASE 2A - Manual Entry**: When IBKR position increases → computes true incremental entry price using formula `(ibkr_avg * ibkr_qty - Σ existing_entry * existing_qty) / delta_qty` to avoid blended-price drift.
+    - **CASE 2B - Manual Partial Close**: When IBKR position decreases → creates new CLOSED trade for closed portion with correct P&L, reduces original OPEN trade's contract count.
+    - **CASE 2C - Position Reversal**: When position direction flips → closes all existing trades, creates new opposite position.
+    - **P&L Validation**: Entry price validated before P&L calculation with sanity checks ($1000-$15000 range for ES/MES), falls back to market price on failures.
+    - **Trade Splitting**: Multi-contract trades are properly split on partial closes to maintain accurate position tracking.
+    - **IBKR Position Streaming**: Python bridge enhanced to include position data in account_data messages for continuous reconciliation.
 - **IBKR Bridge Connection Fix**: Implemented a fix to ensure stable "Connected" status by updating `bridgeLastHeartbeat` for all message types.
 - **CVA Historical Data Recovery**: Automated recovery of missing daily profiles by fetching historical 5-minute bars from IBKR and rebuilding Market/Volume Profiles.
 
