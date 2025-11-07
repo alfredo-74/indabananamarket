@@ -55,13 +55,17 @@ class IBKRBridgeV2:
         
         print(f"🚀 Bridge LOCAL initialized - Will forward data to: {self.replit_url}", file=sys.stderr)
     
-    async def connect(self):
-        """Connect to IBKR Paper Trading via IB Gateway"""
+    async def connect(self, retry_count=0, max_retries=10):
+        """Connect to IBKR Paper Trading via IB Gateway with retry logic"""
         try:
-            print("Connecting to IB Gateway on port 4002...", file=sys.stderr)
+            if retry_count == 0:
+                print("Connecting to IB Gateway on port 4002...", file=sys.stderr)
+            else:
+                print(f"🔄 Retry attempt {retry_count}/{max_retries}...", file=sys.stderr)
+                
             await self.ib.connectAsync('127.0.0.1', self.port, clientId=1)
             self.connected = True
-            print("✅ Connected to IBKR Paper Trading", file=sys.stderr)
+            print("✅ CONNECTED to IBKR Paper Trading", file=sys.stderr)
             
             # Set up ES futures contract for DISPLAY
             self.display_contract = Future('ES', exchange='CME')
@@ -109,9 +113,17 @@ class IBKRBridgeV2:
             return True
             
         except Exception as e:
-            print(f"❌ Connection failed: {e}", file=sys.stderr)
             self.connected = False
-            return False
+            
+            if retry_count < max_retries:
+                wait_time = min(2 ** retry_count, 30)  # Exponential backoff, max 30s
+                print(f"❌ Connection failed: {e}", file=sys.stderr)
+                print(f"⏳ Waiting {wait_time}s before retry...", file=sys.stderr)
+                await asyncio.sleep(wait_time)
+                return await self.connect(retry_count + 1, max_retries)
+            else:
+                print(f"❌ DISCONNECTED - Max retries ({max_retries}) exceeded: {e}", file=sys.stderr)
+                return False
     
     async def _request_positions(self):
         """Request current portfolio positions"""
@@ -457,6 +469,12 @@ class IBKRBridgeV2:
         
         while self.connected:
             try:
+                # Connection health check - detect IBKR disconnection
+                if not self.ib.isConnected():
+                    print("❌ DISCONNECTED - IBKR connection lost", file=sys.stderr)
+                    self.connected = False
+                    break
+                
                 current_time = datetime.now().timestamp()
                 
                 # Fetch account data every 30 seconds
@@ -608,7 +626,7 @@ class IBKRBridgeV2:
             print("👋 Disconnected from IBKR", file=sys.stderr)
 
 async def main():
-    """Main entry point"""
+    """Main entry point with auto-reconnect"""
     import argparse
     import os
     
@@ -622,7 +640,7 @@ async def main():
     args = parser.parse_args()
     
     print("=" * 70, file=sys.stderr)
-    print("🏎️  IBKR BRIDGE - LOCAL MODE", file=sys.stderr)
+    print("🏎️  IBKR BRIDGE - LOCAL MODE (AUTO-RECONNECT ENABLED)", file=sys.stderr)
     print("=" * 70, file=sys.stderr)
     print(f"🔗 Local URL: {LOCAL_URL}", file=sys.stderr)
     if not args.skip_historical:
@@ -630,21 +648,48 @@ async def main():
     print("=" * 70, file=sys.stderr)
     
     bridge = IBKRBridgeV2(LOCAL_URL)
+    reconnect_attempts = 0
+    max_reconnects = 999  # Effectively infinite
     
     try:
-        # Connect to IBKR
-        if not await bridge.connect():
-            print("❌ Failed to connect to IBKR", file=sys.stderr)
-            return
-        
-        # Send historical data for CVA (unless skipped)
-        if not args.skip_historical:
-            await bridge.send_historical_data(days=args.historical_days)
-        else:
-            print("⏭️  Skipping historical data fetch", file=sys.stderr)
-        
-        # Start streaming real-time data
-        await bridge.stream_market_data()
+        while reconnect_attempts < max_reconnects:
+            try:
+                # Connect to IBKR with retry logic
+                if not await bridge.connect():
+                    print("❌ Failed to connect to IBKR after retries", file=sys.stderr)
+                    reconnect_attempts += 1
+                    wait_time = min(30, 5 * reconnect_attempts)
+                    print(f"⏳ Waiting {wait_time}s before full reconnect attempt {reconnect_attempts}...", file=sys.stderr)
+                    await asyncio.sleep(wait_time)
+                    continue
+                
+                # Reset reconnect counter on successful connection
+                reconnect_attempts = 0
+                
+                # Send historical data for CVA (unless skipped)
+                if not args.skip_historical:
+                    await bridge.send_historical_data(days=args.historical_days)
+                else:
+                    print("⏭️  Skipping historical data fetch", file=sys.stderr)
+                
+                # Start streaming real-time data (this blocks until disconnect)
+                await bridge.stream_market_data()
+                
+                # If we reach here, connection was lost
+                print("⚠️ Connection lost - attempting reconnect...", file=sys.stderr)
+                bridge.disconnect()
+                reconnect_attempts += 1
+                await asyncio.sleep(5)
+                
+            except KeyboardInterrupt:
+                raise  # Bubble up to outer handler
+            except Exception as e:
+                print(f"❌ Error in main loop: {e}", file=sys.stderr)
+                bridge.disconnect()
+                reconnect_attempts += 1
+                wait_time = min(30, 5 * reconnect_attempts)
+                print(f"⏳ Waiting {wait_time}s before reconnect...", file=sys.stderr)
+                await asyncio.sleep(wait_time)
         
     except KeyboardInterrupt:
         print("\n⏹️ Stopping bridge...", file=sys.stderr)
