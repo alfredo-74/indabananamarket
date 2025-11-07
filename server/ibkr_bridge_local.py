@@ -20,8 +20,8 @@ import nest_asyncio
 
 nest_asyncio.apply()
 
-# Local backend URL (Node.js server running on your Chromebook)
-LOCAL_URL = "http://localhost:5000"
+# Backend URL - reads from REPLIT_URL environment variable, defaults to localhost
+LOCAL_URL = os.environ.get('REPLIT_URL', 'http://localhost:5000')
 
 class IBKRBridgeV2:
     def __init__(self, replit_url: str):
