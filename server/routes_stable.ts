@@ -26,6 +26,7 @@ import { OpeningDriveDetector } from "./opening_drive_detector";
 import { EightyPercentRuleDetector } from "./eighty_percent_rule_detector";
 import { ValueShiftDetector } from "./value_shift_detector";
 import { ProductionSafetyManager } from "./production_safety_manager";
+import { AutoTradingOrchestrator } from "./auto_trading_orchestrator";
 import type { OrderFlowSettings } from "./orderflow_strategy";
 import type {
   SystemStatus,
@@ -122,19 +123,48 @@ const defaultOrderFlowSettings: OrderFlowSettings = {
 
 const autoTrader = new AutoTrader(defaultOrderFlowSettings); // Order flow-based trading strategy
 
+// Order execution queue for IBKR bridge (defined here for orchestrator initialization)
+interface PendingOrder {
+  id: string;
+  action: "BUY" | "SELL" | "CLOSE";
+  quantity: number;
+  timestamp: number;
+  status: "PENDING" | "EXECUTED" | "FAILED" | "EXPIRED";
+  result?: any;
+}
+
+const pendingOrders: Map<string, PendingOrder> = new Map();
+
 // Production Safety Manager - Critical safety features for real money trading
 // MUST be initialized before processing any trades to prevent race conditions
 let safetyManager: ProductionSafetyManager | null = null;
 let safetyManagerReady = false;
 
-// Initialize safety manager and wait for it to be ready
+// Auto-Trading Orchestrator - Event-driven auto-trading orchestration
+let orchestrator: AutoTradingOrchestrator | null = null;
+let orchestratorReady = false;
+
+// Initialize safety manager and orchestrator
 (async () => {
   try {
     safetyManager = await ProductionSafetyManager.create(storage);
     safetyManagerReady = true;
     console.log('[SAFETY] ✅ Production Safety Manager initialized and ready');
+    
+    // Initialize orchestrator only if safety manager initialized successfully
+    if (safetyManagerReady && safetyManager) {
+      orchestrator = new AutoTradingOrchestrator(storage, autoTrader, safetyManager, pendingOrders);
+      orchestratorReady = true;
+      console.log('[ORCHESTRATOR] ✅ Auto-Trading Orchestrator initialized and ready');
+    } else {
+      console.error('[ORCHESTRATOR] ❌ FATAL: Cannot initialize without safety manager');
+      process.exit(1);
+    }
   } catch (error) {
     console.error('[SAFETY] ❌ FATAL: Failed to initialize Production Safety Manager:', error);
+    // Ensure flags are not set on failure
+    safetyManagerReady = false;
+    orchestratorReady = false;
     process.exit(1); // Cannot trade safely without safety manager
   }
 })();
@@ -147,18 +177,6 @@ let ibkrConnected = false;
 // Using current ES price levels (Dec 2024) - display ES prices, trade MES
 let mockPrice = 6004.0;  // ES contract pricing for display
 let mockTick = 0;
-
-// Order execution queue for IBKR bridge
-interface PendingOrder {
-  id: string;
-  action: "BUY" | "SELL";
-  quantity: number;
-  timestamp: number;
-  status: "PENDING" | "EXECUTED" | "FAILED";
-  result?: any;
-}
-
-const pendingOrders: Map<string, PendingOrder> = new Map();
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
@@ -277,6 +295,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log(`[ABSORPTION] ${absorption.side} @ ${absorption.price.toFixed(2)} - Ratio: ${absorption.ratio.toFixed(2)}:1`);
         }
         
+        // CRITICAL: Trigger auto-trading orchestrator on EVERY tick (not just candle completion)
+        // The 1s debounce timer inside orchestrator absorbs high-frequency ticks
+        if (orchestratorReady && orchestrator) {
+          orchestrator.onMarketDataUpdate();
+        }
+        
         // 4. Process tick through footprint analyzer (PRO Course Stage 3)
         const completedFootprintBar = footprintAnalyzer.processTick(tapeTick);
         if (completedFootprintBar) {
@@ -350,7 +374,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           if (allCandles.length > 0) {
             const vwap = vwapCalculator.calculate(allCandles);
             await storage.setVWAPData(vwap);
-            console.log(`[VWAP] Recalculated from ${allCandles.length} candles - VWAP: ${vwap.vwap?.toFixed(2) || 'N/A'}, Upper: ${vwap.upper_band?.toFixed(2) || 'N/A'}, Lower: ${vwap.lower_band?.toFixed(2) || 'N/A'}`);
+            console.log(`[VWAP] Recalculated from ${allCandles.length} candles - VWAP: ${vwap.vwap?.toFixed(2) || 'N/A'}, Upper: ${vwap.sd1_upper?.toFixed(2) || 'N/A'}, Lower: ${vwap.sd1_lower?.toFixed(2) || 'N/A'}`);
             
             // Broadcast VWAP update to clients
             broadcast({

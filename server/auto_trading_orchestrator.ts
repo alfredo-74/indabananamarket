@@ -168,9 +168,11 @@ export class AutoTradingOrchestrator {
   
   /**
    * Generate unique signal ID for idempotency
+   * Handles missing or short reason strings safely
    */
   private generateSignalId(signal: TradeSignal): string {
-    return `${signal.action}_${signal.entry_price?.toFixed(2)}_${signal.reason.substring(0, 20)}`;
+    const reason = (signal.reason || 'NO_REASON').substring(0, 20);
+    return `${signal.action}_${signal.entry_price?.toFixed(2)}_${reason}`;
   }
   
   /**
