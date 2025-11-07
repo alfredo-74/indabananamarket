@@ -19,6 +19,7 @@ The frontend is built with React 18, TypeScript, and Vite, utilizing Radix UI, s
     - Value Area Display including CVA, DVA, and POC levels.
     - Daily Hypothesis for pre-market trade plans.
     - System Status showing account balance, P&L, and connection indicators.
+    - **12-Window Grid Layout**: Draggable windows with dual-ref system (`dragRef` for event handling, `parentRef` for z-index management) ensuring windows remain visible during drag operations.
 - **Classic Trading Dashboard**: A secondary interface at `/classic` providing Time & Sales, Chart.js-based charts with VWAP bands, and a DOM.
 
 ### Backend
