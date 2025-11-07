@@ -1,0 +1,122 @@
+alfredo@penguin:~$ node --version
+v24.11.0
+alfredo@penguin:~$ cd ~/Bananas
+npm install
+
+added 102 packages, and audited 586 packages in 2s
+
+72 packages are looking for funding
+  run `npm fund` for details
+
+8 vulnerabilities (3 low, 5 moderate)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+alfredo@penguin:~/Bananas$ export DATABASE_URL="postgresql://neondb_owner:npg_J2Frqdvh7RSf@ep-plain-queen-a6b6tize.us-west-2.aws.neon.tech/neondb?sslmode=require"
+export SAFETY_AUTH_KEY="295d67de43a97a278f18d9891a2e7fc24fc829f37fd7dd357cd9dadfd9c03605"
+export SESSION_SECRET="Zanzara"
+alfredo@penguin:~/Bananas$ npm run dev
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+✓ Bridge HTTP endpoint initialized at /api/bridge/data
+[SAFETY] ✅ Safety configuration loaded from database: {
+  max_drawdown_gbp: undefined,
+  max_position_size: 1,
+  trading_fence_enabled: true,
+  position_reconciliation_enabled: true,
+  reject_replay_cooldown_minutes: 30,
+  circuit_breaker_enabled: true
+}
+[SAFETY] ✅ Production Safety Manager initialized and ready
+✅ Safety authentication key validated
+7:10:40 PM [express] serving on port 5000
+✓ Composite profile initialized
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+[BRIDGE] Received message type: portfolio_update
+[PORTFOLIO] Position update: 0 contracts, uPnL: 0.00
+7:10:59 PM [express] POST /api/bridge/data 200 in 707ms :: {"type":"ack"}
+✓ IBKR Bridge connected - real data flowing
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-10-29: 90 bars
+[CVA] Added 2025-10-29 to composite - POC: 6889.75, VAH: 6937.50, VAL: 6887.00
+[DB] ✅ Persisted daily profile for 2025-10-29
+[VWAP] Pre-initialized from 90 candles - VWAP: 6920.54
+7:11:00 PM [express] POST /api/bridge/data 200 in 882ms :: {"type":"ack"}
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-10-30: 90 bars
+[CVA] Added 2025-10-30 to composite - POC: 6853.75, VAH: 6896.50, VAL: 6853.75
+[DB] ✅ Persisted daily profile for 2025-10-30
+[VWAP] Pre-initialized from 100 candles - VWAP: 6881.48
+7:11:00 PM [express] POST /api/bridge/data 200 in 187ms :: {"type":"ack"}
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-10-31: 90 bars
+[CVA] Added 2025-10-31 to composite - POC: 6872.00, VAH: 6899.50, VAL: 6871.00
+[DB] ✅ Persisted daily profile for 2025-10-31
+[VWAP] Pre-initialized from 100 candles - VWAP: 6870.66
+7:11:01 PM [express] POST /api/bridge/data 200 in 185ms :: {"type":"ack"}
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-11-03: 90 bars
+[CVA] Added 2025-11-03 to composite - POC: 6885.25, VAH: 6888.00, VAL: 6873.75
+[DB] ✅ Persisted daily profile for 2025-11-03
+[VWAP] Pre-initialized from 100 candles - VWAP: 6884.14
+7:11:01 PM [express] POST /api/bridge/data 200 in 245ms :: {"type":"ack"}
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-11-04: 90 bars
+[CVA] Added 2025-11-04 to composite - POC: 6803.50, VAH: 6830.50, VAL: 6798.25
+[DB] ✅ Persisted daily profile for 2025-11-04
+[VWAP] Pre-initialized from 100 candles - VWAP: 6802.18
+7:11:01 PM [express] POST /api/bridge/data 200 in 184ms :: {"type":"ack"}
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-11-05: 90 bars
+[CVA] Added 2025-11-05 to composite - POC: 6824.25, VAH: 6843.75, VAL: 6792.75
+[DB] ✅ Persisted daily profile for 2025-11-05
+[VWAP] Pre-initialized from 100 candles - VWAP: 6825.50
+7:11:01 PM [express] POST /api/bridge/data 200 in 184ms :: {"type":"ack"}
+[BRIDGE] Received message type: historical_bars
+[CVA] Processing 2025-11-06: 57 bars
+[CVA] Added 2025-11-06 to composite - POC: 6760.50, VAH: 6778.00, VAL: 6738.25
+✓ IBKR Bridge connected - real data flowing
+[DB] ✅ Persisted daily profile for 2025-11-06
+[VWAP] Pre-initialized from 100 candles - VWAP: 6764.51
+7:11:01 PM [express] POST /api/bridge/data 200 in 182ms :: {"type":"ack"}
+[BRIDGE] Received message type: account_data
+[ACCOUNT] Balance: $1792.34, NetLiq: $1792.34, Daily P&L: +$0.00
+7:11:02 PM [express] POST /api/bridge/data 200 in 512ms :: {"type":"ack"}
+[BRIDGE] Received message type: account_data
+[ACCOUNT] Balance: $1792.34, NetLiq: $1792.34, Daily P&L: +$0.00
+7:11:03 PM [express] POST /api/bridge/data 200 in 516ms :: {"type":"ack"}
+[BRIDGE] Received message type: portfolio_update
+[PORTFOLIO] Position update: 0 contracts, uPnL: 0.00
+7:11:03 PM [express] POST /api/bridge/data 200 in 688ms :: {"type":"ack"}
+7:11:03 PM [express] GET /api/pending-orders 200 in 1ms :: []
+✓ IBKR Bridge connected - real data flowing
+7:11:04 PM [express] POST /api/bridge/data 200 in 857ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+7:11:04 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+7:11:05 PM [express] GET /api/pending-orders 200 in 0ms :: []
+7:11:05 PM [express] POST /api/bridge/data 200 in 344ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+7:11:05 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+✓ IBKR Bridge connected - real data flowing
+7:11:06 PM [express] POST /api/bridge/data 200 in 342ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+7:11:06 PM [express] POST /api/bridge/data 200 in 0ms :: {"type":"ack"}
+7:11:07 PM [express] POST /api/bridge/data 200 in 392ms :: {"type":"ack"}
+[BRIDGE] Received message type: dom
+7:11:07 PM [express] POST /api/bridge/data 200 in 1ms :: {"type":"ack"}
+7:11:07 PM [express] GET /api/pending-orders 200 in 0ms :: []

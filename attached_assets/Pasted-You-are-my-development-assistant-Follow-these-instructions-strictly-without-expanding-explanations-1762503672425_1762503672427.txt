@@ -1,0 +1,40 @@
+You are my development assistant. Follow these instructions strictly, without expanding explanations unless I ask.
+
+GOAL: Fix and streamline my IBKR trading system for consistent operation.
+
+PRIORITY TASKS (execute in this order):
+
+1. **Check Environment**
+   - Identify whether the current session is running in Replit’s dev environment or from my local ChromeOS Flex folder.
+   - Print the absolute path of the current working directory and confirm the active environment.
+
+2. **Startup Script (for dummies)**
+   - Create a clear `start.sh` script that:
+     a. Activates the correct environment (virtual env or Replit runner)
+     b. Launches the IBKR connector and the trading engine
+     c. Displays clear terminal feedback (e.g., "System running", "Connection OK")
+     d. Handles automatic reconnection if localhost disconnects.
+
+3. **Fix Localhost Disconnect Issue**
+   - Diagnose why the IBKR localhost connection keeps turning off/on.
+   - Add a stable reconnection routine or a retry loop with a short delay and clear logs.
+   - Make sure the connector keeps the session alive unless manually stopped.
+
+4. **Clean System Root**
+   - Delete or archive any unused or duplicate files, especially from old IBKR connector builds.
+   - Keep only the active local version required for current operations.
+   - Maintain a clean folder structure (e.g., `/src`, `/data`, `/logs`, `/config`, `/archive`).
+
+5. **Static vs Dynamic Data Logic Review**
+   - Review the system logic to check if the code distinguishes between static and dynamic data as described in the Vadeera course.
+   - If not, implement or note how to integrate that distinction (e.g., static = configs/market rules; dynamic = live price data, positions, etc.).
+
+6. **Output**
+   - After completing all steps, print a summary of:
+     - Environment type
+     - Path to `start.sh`
+     - Number of files removed/kept
+     - Connection test result
+     - Whether static/dynamic data logic exists or needs addition
+
+Keep responses short, technical, and actionable. Do not overexplain.
