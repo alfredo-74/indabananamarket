@@ -120,7 +120,8 @@ function GridWindow({
   windowId,
   onDragStart,
   onDragStop,
-  testId = ""
+  testId = "",
+  colSpan = 1
 }: { 
   title: string; 
   children: React.ReactNode; 
@@ -129,11 +130,14 @@ function GridWindow({
   onDragStart: (id: string) => void;
   onDragStop: (id: string, col: number, row: number) => void;
   testId?: string;
+  colSpan?: number;
 }) {
   const containerWidth = typeof window !== 'undefined' ? window.innerWidth : 1920;
   const containerHeight = typeof window !== 'undefined' ? window.innerHeight - 144 : 1080;
   const winWidth = (containerWidth - MARGIN * 2 - GAP * (GRID_COLS - 1)) / GRID_COLS;
   const winHeight = (containerHeight - MARGIN * 2 - GAP * (GRID_ROWS - 1)) / GRID_ROWS;
+  
+  const actualWidth = winWidth * colSpan + GAP * (colSpan - 1);
   
   const handleStart = useCallback(() => {
     onDragStart(windowId);
@@ -154,7 +158,7 @@ function GridWindow({
         position: 'absolute',
         left: `${MARGIN + gridPosition.col * (winWidth + GAP)}px`,
         top: `${MARGIN + gridPosition.row * (winHeight + GAP)}px`,
-        width: `${winWidth}px`,
+        width: `${actualWidth}px`,
         height: `${winHeight}px`,
       }}
     >
@@ -1021,51 +1025,58 @@ export default function F1CommandCenter() {
           onDragStop={handleDragStop}
           title="TRADE HISTORY"
           testId="window-trades"
+          colSpan={4}
         >
-          <div className="space-y-1 overflow-y-auto max-h-full">
+          <div className="overflow-y-auto max-h-full">
             {trades && trades.length > 0 ? (
-              <div className="space-y-1">
-                {trades.slice(0, 10).reverse().map((trade: any) => (
+              <div className="space-y-0.5">
+                <div className="grid grid-cols-7 gap-2 pb-1 border-b border-green-900/40 text-[9px] text-gray-500 font-bold">
+                  <div>TIME</div>
+                  <div>TYPE</div>
+                  <div className="text-right">ENTRY</div>
+                  <div className="text-right">EXIT</div>
+                  <div className="text-right">QTY</div>
+                  <div className="text-right">P&L</div>
+                  <div className="text-center">STATUS</div>
+                </div>
+                {trades.slice(0, 15).reverse().map((trade: any) => (
                   <div 
                     key={trade.id} 
-                    className={`p-1.5 rounded border text-[9px] ${
+                    className={`grid grid-cols-7 gap-2 p-1 rounded text-[9px] items-center ${
                       trade.status === "OPEN" 
-                        ? "bg-blue-950/30 border-blue-800" 
+                        ? "bg-blue-950/20" 
                         : trade.pnl >= 0 
-                        ? "bg-green-950/30 border-green-800"
-                        : "bg-red-950/30 border-red-800"
+                        ? "bg-green-950/20"
+                        : "bg-red-950/20"
                     }`}
                     data-testid={`trade-${trade.id}`}
                   >
-                    <div className="flex items-center justify-between mb-0.5">
-                      <span className={`font-bold ${
-                        trade.type === "BUY" ? "text-green-400" : "text-red-400"
-                      }`}>
-                        {trade.type} {trade.contracts}x
-                      </span>
-                      <span className="text-gray-500">
-                        {new Date(trade.timestamp).toLocaleTimeString()}
-                      </span>
+                    <div className="text-gray-400 tabular-nums">
+                      {new Date(trade.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                     </div>
-                    <div className="flex items-center justify-between text-gray-400">
-                      <span>Entry: {trade.entry_price?.toFixed(2)}</span>
-                      {trade.exit_price && (
-                        <span>Exit: {trade.exit_price?.toFixed(2)}</span>
-                      )}
+                    <div className={`font-bold ${
+                      trade.type === "BUY" ? "text-green-400" : "text-red-400"
+                    }`}>
+                      {trade.type}
                     </div>
-                    <div className="flex items-center justify-between mt-0.5">
-                      <span className={`font-bold ${
-                        trade.status === "OPEN" ? "text-blue-400" : "text-gray-500"
-                      }`}>
-                        {trade.status}
-                      </span>
-                      {trade.pnl !== null && trade.pnl !== 0 && (
-                        <span className={`font-bold ${
-                          trade.pnl >= 0 ? "text-green-400" : "text-red-400"
-                        }`}>
-                          {trade.pnl >= 0 ? "+" : ""}£{trade.pnl.toFixed(2)}
-                        </span>
-                      )}
+                    <div className="text-right text-cyan-400 tabular-nums">
+                      {trade.entry_price?.toFixed(2)}
+                    </div>
+                    <div className="text-right text-gray-400 tabular-nums">
+                      {trade.exit_price?.toFixed(2) || "--"}
+                    </div>
+                    <div className="text-right text-gray-400 tabular-nums">
+                      {trade.contracts}
+                    </div>
+                    <div className={`text-right font-bold tabular-nums ${
+                      trade.pnl >= 0 ? "text-green-400" : "text-red-400"
+                    }`}>
+                      {trade.pnl !== null && trade.pnl !== 0 ? `${trade.pnl >= 0 ? "+" : ""}£${trade.pnl.toFixed(2)}` : "--"}
+                    </div>
+                    <div className={`text-center font-bold ${
+                      trade.status === "OPEN" ? "text-blue-400" : "text-gray-500"
+                    }`}>
+                      {trade.status}
                     </div>
                   </div>
                 ))}
