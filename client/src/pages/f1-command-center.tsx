@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import Draggable from "react-draggable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TrendingUp, TrendingDown, AlertTriangle, Zap, Target, Power, Move, RefreshCw } from "lucide-react";
@@ -21,6 +20,72 @@ const GRID_COLS = 4;
 const GRID_ROWS = 3;
 const GAP = 12;
 const MARGIN = 12;
+
+function useDraggable(
+  onDragStart: () => void,
+  onDragStop: (x: number, y: number) => void
+) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isDraggingRef = useRef(false);
+  const startPosRef = useRef({ x: 0, y: 0 });
+  const currentPosRef = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const handlePointerDown = (e: PointerEvent) => {
+      if (e.button !== 0) return;
+      
+      isDraggingRef.current = true;
+      const rect = element.getBoundingClientRect();
+      startPosRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      currentPosRef.current = { x: rect.left, y: rect.top };
+      
+      element.setPointerCapture(e.pointerId);
+      onDragStart();
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!isDraggingRef.current) return;
+      
+      e.preventDefault();
+      const newX = e.clientX - startPosRef.current.x;
+      const newY = e.clientY - startPosRef.current.y;
+      
+      currentPosRef.current = { x: newX, y: newY };
+      requestAnimationFrame(() => {
+        if (element) {
+          element.style.transform = `translate(${newX - parseInt(element.style.left || '0')}px, ${newY - parseInt(element.style.top || '0')}px)`;
+        }
+      });
+    };
+
+    const handlePointerUp = (e: PointerEvent) => {
+      if (!isDraggingRef.current) return;
+      
+      isDraggingRef.current = false;
+      element.releasePointerCapture(e.pointerId);
+      element.style.transform = '';
+      
+      onDragStop(currentPosRef.current.x, currentPosRef.current.y);
+    };
+
+    element.addEventListener('pointerdown', handlePointerDown);
+    element.addEventListener('pointermove', handlePointerMove);
+    element.addEventListener('pointerup', handlePointerUp);
+    element.addEventListener('pointercancel', handlePointerUp);
+
+    return () => {
+      element.removeEventListener('pointerdown', handlePointerDown);
+      element.removeEventListener('pointermove', handlePointerMove);
+      element.removeEventListener('pointerup', handlePointerUp);
+      element.removeEventListener('pointercancel', handlePointerUp);
+    };
+  }, [onDragStart, onDragStop]);
+
+  return ref;
+}
 
 function GridWindow({ 
   title, 
@@ -44,38 +109,38 @@ function GridWindow({
   const winWidth = (containerWidth - MARGIN * 2 - GAP * (GRID_COLS - 1)) / GRID_COLS;
   const winHeight = (containerHeight - MARGIN * 2 - GAP * (GRID_ROWS - 1)) / GRID_ROWS;
   
+  const dragRef = useDraggable(
+    () => onDragStart(windowId),
+    (x, y) => {
+      const col = Math.max(0, Math.min(GRID_COLS - 1, Math.round((x - MARGIN) / (winWidth + GAP))));
+      const row = Math.max(0, Math.min(GRID_ROWS - 1, Math.round((y - MARGIN) / (winHeight + GAP))));
+      onDragStop(windowId, col, row);
+    }
+  );
+  
   return (
     <div
       style={{
         position: 'absolute',
-        left: MARGIN + gridPosition.col * (winWidth + GAP),
-        top: MARGIN + gridPosition.row * (winHeight + GAP),
-        width: winWidth,
-        height: winHeight,
+        left: `${MARGIN + gridPosition.col * (winWidth + GAP)}px`,
+        top: `${MARGIN + gridPosition.row * (winHeight + GAP)}px`,
+        width: `${winWidth}px`,
+        height: `${winHeight}px`,
       }}
     >
-      <Draggable
-        onStart={() => onDragStart(windowId)}
-        onStop={(_e, data) => {
-          const col = Math.max(0, Math.min(GRID_COLS - 1, Math.round((data.x - MARGIN) / (winWidth + GAP))));
-          const row = Math.max(0, Math.min(GRID_ROWS - 1, Math.round((data.y - MARGIN) / (winHeight + GAP))));
-          onDragStop(windowId, col, row);
-        }}
-        bounds="parent"
+      <div 
+        ref={dragRef}
+        className="bg-gray-950/95 backdrop-blur-sm border-2 border-green-900/40 rounded-sm overflow-hidden cursor-move h-full w-full touch-none"
+        data-testid={testId}
       >
-        <div 
-          className="bg-gray-950/95 backdrop-blur-sm border-2 border-green-900/40 rounded-sm overflow-hidden cursor-move h-full w-full"
-          data-testid={testId}
-        >
-          <div className="px-2 py-1 bg-green-950/30 border-b border-green-900/40 flex items-center gap-2">
-            <Move className="h-3 w-3 text-green-600" />
-            <div className="text-[10px] text-green-500 uppercase tracking-wider font-bold">{title}</div>
-          </div>
-          <div className="p-2 h-[calc(100%-32px)] overflow-y-auto">
-            {children}
-          </div>
+        <div className="px-2 py-1 bg-green-950/30 border-b border-green-900/40 flex items-center gap-2">
+          <Move className="h-3 w-3 text-green-600" />
+          <div className="text-[10px] text-green-500 uppercase tracking-wider font-bold">{title}</div>
         </div>
-      </Draggable>
+        <div className="p-2 h-[calc(100%-32px)] overflow-y-auto">
+          {children}
+        </div>
+      </div>
     </div>
   );
 }
