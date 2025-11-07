@@ -139,6 +139,16 @@ export class ProductionSafetyManager {
       const currentContracts = currentPosition?.contracts || 0;
       const currentSide = currentPosition?.side || "FLAT";
       
+      // Determine if this is opening or closing
+      const isOpening = 
+        (currentSide === "FLAT") ||
+        (currentSide === "LONG" && action === "BUY") ||
+        (currentSide === "SHORT" && action === "SELL");
+      
+      const isClosing = 
+        (currentSide === "LONG" && action === "SELL") ||
+        (currentSide === "SHORT" && action === "BUY");
+      
       // Calculate new position
       let newContracts = currentContracts;
       if (action === "BUY") {
@@ -152,27 +162,57 @@ export class ProductionSafetyManager {
       // Update position in database
       await this.storage.setPosition({
         contracts: Math.abs(newContracts),
-        entry_price: filled_price,
+        entry_price: isOpening ? filled_price : (currentPosition?.entry_price || filled_price),
         current_price: filled_price,
         unrealized_pnl: 0,
         realized_pnl: currentPosition?.realized_pnl || 0,
         side: newSide,
       });
       
-      // Create OPEN trade record
-      await this.storage.createTrade({
-        timestamp: Date.now(),
-        type: action,
-        entry_price: filled_price,
-        contracts: quantity,
-        regime: signal.regime || "UNKNOWN",
-        cumulative_delta: signal.cumulative_delta || 0,
-        status: "OPEN",
-        orderflow_signal: signal.description || `Order ${confirmation.order_id}`
-      });
+      if (isClosing) {
+        // Close existing OPEN trades
+        const openTrades = await this.storage.getTrades();
+        const tradesToClose = openTrades.filter(t => t.status === "OPEN");
+        
+        for (const trade of tradesToClose) {
+          const pnl = (action === "SELL" ? 1 : -1) * (filled_price - trade.entry_price) * trade.contracts * 5;
+          
+          await this.storage.addTrade({
+            timestamp: trade.timestamp,
+            type: trade.type,
+            entry_price: trade.entry_price,
+            exit_price: filled_price,
+            contracts: trade.contracts,
+            pnl: pnl,
+            duration_ms: Date.now() - trade.timestamp,
+            regime: trade.regime || "UNKNOWN",
+            cumulative_delta: trade.cumulative_delta || 0,
+            status: "CLOSED",
+            orderflow_signal: trade.orderflow_signal
+          });
+          
+          console.log(`[SAFETY] 📝 Trade CLOSED: ${trade.type} ${trade.contracts}x @ ${trade.entry_price.toFixed(2)} → ${filled_price.toFixed(2)}, P&L: ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)}`);
+        }
+      } else if (isOpening) {
+        // Create new OPEN trade
+        await this.storage.addTrade({
+          timestamp: Date.now(),
+          type: action,
+          entry_price: filled_price,
+          exit_price: null,
+          contracts: quantity,
+          pnl: null,
+          duration_ms: null,
+          regime: signal.regime || "UNKNOWN",
+          cumulative_delta: signal.cumulative_delta || 0,
+          status: "OPEN",
+          orderflow_signal: signal.description || `Order ${confirmation.order_id}`
+        });
+        
+        console.log(`[SAFETY] 📝 Trade created: ${action} ${quantity}x @ ${filled_price.toFixed(2)} [OPEN]`);
+      }
       
-      console.log(`[SAFETY] 📊 Position updated: ${newSide} ${Math.abs(newContracts)}x @ ${filled_price.toFixed(2)}`);
-      console.log(`[SAFETY] 📝 Trade created: ${action} ${quantity}x @ ${filled_price.toFixed(2)} [OPEN]`);
+      console.log(`[SAFETY] 📊 Position updated: ${newSide} ${Math.abs(newContracts)}x`);
     }
   }
 

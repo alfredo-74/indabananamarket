@@ -1,0 +1,763 @@
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6700.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6700.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6700.75
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1835.57, NetLiq=$1835.57, DailyPnL=$0.00
+📤 Account data sent: Balance=$1835.57, Daily PnL=$0.00
+📤 Tick sent: ES @ 6700.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33513.12
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33513.12 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33513.12
+📤 Tick sent: ES @ 6700.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6700.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6699.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6699.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6699.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33513.12
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33513.12 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33513.12
+📤 Tick sent: ES @ 6699.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6699.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6699.50
+📤 DOM update sent (10 bids, 10 asks)
+❌ HTTP 502: <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Hmm... We couldn&#39;t reach this app</title>
+  <l
+❌ DOM HTTP 502: <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Hmm... We couldn&#39;t reach this app</title>
+  <l
+📤 Tick sent: ES @ 6699.25
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33513.12
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33513.12 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33513.12
+📤 Tick sent: ES @ 6699.50
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1835.57, NetLiq=$1835.57, DailyPnL=$0.00
+📤 Account data sent: Balance=$1835.57, Daily PnL=$0.00
+📤 Tick sent: ES @ 6699.50
+📤 DOM update sent (10 bids, 10 asks)
+❌ Request failed: ReadTimeout: HTTPSConnectionPool(host='ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev', port=443): Read timed out. (read timeout=1)
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6698.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33513.12
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33513.12 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33513.12
+📤 Tick sent: ES @ 6697.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6698.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6698.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6697.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6696.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33513.12
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33513.12 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33513.12
+📤 Tick sent: ES @ 6696.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6697.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6697.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6696.75
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1835.57, NetLiq=$1835.57, DailyPnL=$0.00
+📤 Account data sent: Balance=$1835.57, Daily PnL=$0.00
+📤 Tick sent: ES @ 6697.00
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33513.12
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33513.12 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33513.12
+📤 Tick sent: ES @ 6697.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6696.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6695.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6695.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6696.00
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33513.12
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33513.12 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33513.12
+📤 Tick sent: ES @ 6695.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6695.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6695.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6696.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6696.00
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33513.12
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33513.12 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33513.12
+📤 Tick sent: ES @ 6696.00
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1835.57, NetLiq=$1835.57, DailyPnL=$0.00
+📤 Account data sent: Balance=$1835.57, Daily PnL=$0.00
+📤 Tick sent: ES @ 6695.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6696.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6696.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33513.12
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33513.12 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33513.12
+📤 Tick sent: ES @ 6697.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6696.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6697.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6696.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6696.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33513.12
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33513.12 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33513.12
+📤 Tick sent: ES @ 6696.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6696.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6696.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6695.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6695.75
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1818.41, NetLiq=$1818.41, DailyPnL=$0.00
+📤 Account data sent: Balance=$1818.41, Daily PnL=$0.00
+Current positions: 1
+  - MES: 1.0 @ 33513.12
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33513.12 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33513.12
+📤 Tick sent: ES @ 6695.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6695.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6694.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6694.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33513.12
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33513.12 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33513.12
+📤 Tick sent: ES @ 6694.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6694.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6694.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6694.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6694.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33513.12
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33513.12 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33513.12
+📤 Tick sent: ES @ 6695.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6694.50
+📤 DOM update sent (10 bids, 10 asks)
+❌ HTTP 502: <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Hmm... We couldn&#39;t reach this app</title>
+  <l
+❌ DOM HTTP 502: <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Hmm... We couldn&#39;t reach this app</title>
+  <l
+💰 Account: Balance=$1818.41, NetLiq=$1818.41, DailyPnL=$0.00
+📤 Account data sent: Balance=$1818.41, Daily PnL=$0.00
+📤 Tick sent: ES @ 6693.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33513.12
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33513.12 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33513.12
+📤 Tick sent: ES @ 6693.25
+📤 DOM update sent (10 bids, 10 asks)
+❌ Request failed: ReadTimeout: HTTPSConnectionPool(host='ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev', port=443): Read timed out. (read timeout=1)
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6692.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6692.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33513.12
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33513.12 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33513.12
+📤 Tick sent: ES @ 6693.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6692.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6692.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6692.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6692.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33513.12
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33513.12 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33513.12
+📤 Tick sent: ES @ 6693.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6693.25
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1818.41, NetLiq=$1818.41, DailyPnL=$0.00
+📤 Account data sent: Balance=$1818.41, Daily PnL=$0.00
+📤 Tick sent: ES @ 6693.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6692.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33513.12
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33513.12 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33513.12
+📤 Tick sent: ES @ 6692.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6692.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6692.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6692.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6691.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33513.12
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33513.12 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33513.12
+📤 Tick sent: ES @ 6691.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6691.50
+📤 DOM update sent (10 bids, 10 asks)
+🔔 Executing pending order: SELL 1 MES (ID: order_1762541410512_2qt91kbdz)
+📝 New order: 113 - SELL 1
+📝 Order placed: SELL 1 MES
+✅ Order order_1762541410512_2qt91kbdz executed successfully
+📤 Tick sent: ES @ 6690.75
+📤 DOM update sent (10 bids, 10 asks)
+📋 Order 113 status: PreSubmitted
+📊 Position update: MES 0 @ None
+📋 Order 113 status: Filled
+✅ Order filled: SELL 1.0 @ 6690.75
+📊 Position update: MES 0 @ None
+📊 Position update: MES 0 @ None
+📤 Portfolio update sent: POS=0, uPnL=$-21.35
+📤 Portfolio update sent: POS=0, uPnL=$-21.35
+📤 Portfolio update sent: POS=0, uPnL=$-21.35
+⚠️ Order confirmation failed: 113 - HTTP 500
+📤 Tick sent: ES @ 6690.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6690.50
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1794.16, NetLiq=$1794.16, DailyPnL=$0.00
+📤 Account data sent: Balance=$1794.16, Daily PnL=$0.00
+📤 Tick sent: ES @ 6690.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6688.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.75
+📤 DOM update sent (10 bids, 10 asks)
+📊 Position update: MES 0 @ None
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+📤 Tick sent: ES @ 6690.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6690.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6690.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6691.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6691.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6691.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6691.50
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1794.16, NetLiq=$1794.16, DailyPnL=$0.00
+📤 Account data sent: Balance=$1794.16, Daily PnL=$0.00
+📤 Tick sent: ES @ 6690.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6690.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6690.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+❌ HTTP 502: <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Hmm... We couldn&#39;t reach this app</title>
+  <l
+❌ DOM HTTP 502: <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Hmm... We couldn&#39;t reach this app</title>
+  <l
+📤 Tick sent: ES @ 6691.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6690.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6690.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6690.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6690.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6690.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.75
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1794.16, NetLiq=$1794.16, DailyPnL=$0.00
+📤 Account data sent: Balance=$1794.16, Daily PnL=$0.00
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6689.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6689.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.00
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6689.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.75
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1794.16, NetLiq=$1794.16, DailyPnL=$0.00
+📤 Account data sent: Balance=$1794.16, Daily PnL=$0.00
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6689.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.25
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6690.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.00
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6688.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.00
+📤 DOM update sent (10 bids, 10 asks)
+❌ HTTP 502: <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Hmm... We couldn&#39;t reach this app</title>
+  <l
+❌ DOM HTTP 502: <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Hmm... We couldn&#39;t reach this app</title>
+  <l
+💰 Account: Balance=$1794.16, NetLiq=$1794.16, DailyPnL=$0.00
+⚠️ Account data update failed: 502
+📤 Tick sent: ES @ 6689.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6689.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.00
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6689.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6688.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.25
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1794.16, NetLiq=$1794.16, DailyPnL=$0.00
+📤 Account data sent: Balance=$1794.16, Daily PnL=$0.00
+📤 Tick sent: ES @ 6689.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6688.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6688.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.00
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6688.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.50
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1794.13, NetLiq=$1794.13, DailyPnL=$0.00
+📤 Account data sent: Balance=$1794.13, Daily PnL=$0.00
+📤 Tick sent: ES @ 6688.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.00
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6687.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6687.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6687.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6687.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6687.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.00
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6688.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.25
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1794.13, NetLiq=$1794.13, DailyPnL=$0.00
+📤 Account data sent: Balance=$1794.13, Daily PnL=$0.00
+📤 Tick sent: ES @ 6688.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6687.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6686.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6686.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6687.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6686.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6686.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6687.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6688.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.75
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1794.13, NetLiq=$1794.13, DailyPnL=$0.00
+📤 Account data sent: Balance=$1794.13, Daily PnL=$0.00
+📤 Tick sent: ES @ 6689.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6688.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6689.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6689.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6690.00
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6691.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6691.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6692.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6692.00
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6693.25
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1794.13, NetLiq=$1794.13, DailyPnL=$0.00
+📤 Account data sent: Balance=$1794.13, Daily PnL=$0.00
+📤 Tick sent: ES @ 6693.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6695.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6694.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+📤 Tick sent: ES @ 6695.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6695.00
+📤 DOM update sent (10 bids, 10 asks)
+🔔 Executing pending order: BUY 1 MES (ID: order_1762541718514_6qdyyl5c0)
+📝 New order: 114 - BUY 1
+📝 Order placed: BUY 1 MES
+✅ Order order_1762541718514_6qdyyl5c0 executed successfully
+📤 Tick sent: ES @ 6695.75
+📤 DOM update sent (10 bids, 10 asks)
+📋 Order 114 status: PreSubmitted
+📊 Position update: MES 1 @ 33481.25
+📋 Order 114 status: Filled
+✅ Order filled: BUY 1.0 @ 6696.25
+📊 Position update: MES 1 @ 33481.87
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33481.87 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33481.87 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+📤 Tick sent: ES @ 6697.25
+📤 DOM update sent (10 bids, 10 asks)
+⚠️ Order confirmation failed: 114 - HTTP 500
+Current positions: 1
+  - MES: 1.0 @ 33481.87
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33481.87 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33481.87
+📤 Tick sent: ES @ 6698.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6698.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6697.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6697.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6697.50
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1791.83, NetLiq=$1791.83, DailyPnL=$0.00
+📤 Account data sent: Balance=$1791.83, Daily PnL=$0.00
+Current positions: 1
+  - MES: 1.0 @ 33481.87
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33481.87 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33481.87
+📤 Tick sent: ES @ 6697.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6697.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6697.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6698.00
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33481.87
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33481.87 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33481.87
+📤 Tick sent: ES @ 6698.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6698.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6698.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6697.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6697.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33481.87
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33481.87 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33481.87
+📤 Tick sent: ES @ 6697.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6697.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6696.00
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1791.83, NetLiq=$1791.83, DailyPnL=$0.00
+📤 Account data sent: Balance=$1791.83, Daily PnL=$0.00
+📤 Tick sent: ES @ 6696.00
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33481.87
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33481.87 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33481.87
+📤 Tick sent: ES @ 6696.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6697.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6697.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6697.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6697.25
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33481.87
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33481.87 (outside valid range 1000-15000)
+⚠️ REJECTING corrupt data - BLOCKING position update until valid data received
+✅ MES/ES position: 1 @ 33481.87
+📤 Tick sent: ES @ 6697.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6698.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6696.75
+📤 DOM update sent (10 bids, 10 asks)

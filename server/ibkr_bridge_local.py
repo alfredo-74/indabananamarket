@@ -389,12 +389,12 @@ class IBKRBridgeV2:
             market_price = self.last_price if self.last_price > 0 else (self.entry_price or 0)
             
             # CRITICAL SANITY CHECK #1: Absolute range check for ES/MES
-            # ES/MES trade between 1000-15000 under normal conditions
+            # ES trades between 1000-15000, MES trades between 5000-75000 (ES × 5)
             # Anything outside this range is corrupt data from IBKR
             validated_entry_price = self.entry_price
             if self.entry_price:
-                if self.entry_price < 1000 or self.entry_price > 15000:
-                    print(f"⚠️ CORRUPT ENTRY PRICE DETECTED: {self.entry_price} (outside valid range 1000-15000)", file=sys.stderr)
+                if self.entry_price < 1000 or self.entry_price > 75000:
+                    print(f"⚠️ CORRUPT ENTRY PRICE DETECTED: {self.entry_price} (outside valid range 1000-75000)", file=sys.stderr)
                     print(f"⚠️ REJECTING corrupt data - BLOCKING position update until valid data received", file=sys.stderr)
                     return  # Don't send this update at all - wait for valid data
                 

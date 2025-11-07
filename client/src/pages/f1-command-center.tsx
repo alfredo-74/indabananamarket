@@ -371,7 +371,6 @@ export default function F1CommandCenter() {
     'value-shift': { col: 1, row: 2 },
     'system-status': { col: 2, row: 2 },
     'account': { col: 3, row: 2 },
-    'trades': { col: 0, row: 3 },
   });
 
   const [draggingId, setDraggingId] = useState<string | null>(null);
@@ -1054,76 +1053,46 @@ export default function F1CommandCenter() {
                 -£{maxDrawdown.toFixed(2)}
               </span>
             </div>
-          </div>
-        </GridWindow>
-
-        <GridWindow
-          windowId="trades"
-          gridPosition={windowPositions['trades']}
-          onDragStart={handleDragStart}
-          onDragStop={handleDragStop}
-          title="TRADE HISTORY"
-          testId="window-trades"
-          colSpan={4}
-        >
-          <div className="overflow-y-auto max-h-full">
-            {trades && trades.length > 0 ? (
-              <div className="space-y-0.5">
-                <div className="grid grid-cols-7 gap-2 pb-1 border-b border-green-900/40 text-[9px] text-gray-500 font-bold">
-                  <div>TIME</div>
-                  <div>TYPE</div>
-                  <div className="text-right">ENTRY</div>
-                  <div className="text-right">EXIT</div>
-                  <div className="text-right">QTY</div>
-                  <div className="text-right">P&L</div>
-                  <div className="text-center">STATUS</div>
+            
+            {trades && trades.length > 0 && (
+              <>
+                <div className="border-t border-gray-800 pt-1 mt-1"></div>
+                <div className="text-gray-500 text-[9px] font-bold mb-0.5">RECENT TRADES</div>
+                <div className="space-y-0.5 max-h-24 overflow-y-auto">
+                  {trades.slice(0, 5).reverse().map((trade: any) => (
+                    <div 
+                      key={trade.id} 
+                      className={`grid grid-cols-4 gap-1 p-0.5 rounded text-[8px] ${
+                        trade.status === "OPEN" 
+                          ? "bg-blue-950/30" 
+                          : trade.pnl >= 0 
+                          ? "bg-green-950/30"
+                          : "bg-red-950/30"
+                      }`}
+                      data-testid={`trade-${trade.id}`}
+                    >
+                      <div className={`font-bold ${
+                        trade.type === "BUY" ? "text-green-400" : "text-red-400"
+                      }`}>
+                        {trade.type}
+                      </div>
+                      <div className="text-right text-cyan-400 tabular-nums">
+                        {trade.entry_price?.toFixed(2)}
+                      </div>
+                      <div className={`text-right font-bold tabular-nums ${
+                        trade.pnl >= 0 ? "text-green-400" : "text-red-400"
+                      }`}>
+                        {trade.pnl !== null && trade.pnl !== 0 ? `${trade.pnl >= 0 ? "+" : ""}£${trade.pnl.toFixed(2)}` : "--"}
+                      </div>
+                      <div className={`text-center font-bold ${
+                        trade.status === "OPEN" ? "text-blue-400" : "text-gray-500"
+                      }`}>
+                        {trade.status}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                {trades.slice(0, 15).reverse().map((trade: any) => (
-                  <div 
-                    key={trade.id} 
-                    className={`grid grid-cols-7 gap-2 p-1 rounded text-[9px] items-center ${
-                      trade.status === "OPEN" 
-                        ? "bg-blue-950/20" 
-                        : trade.pnl >= 0 
-                        ? "bg-green-950/20"
-                        : "bg-red-950/20"
-                    }`}
-                    data-testid={`trade-${trade.id}`}
-                  >
-                    <div className="text-gray-400 tabular-nums">
-                      {new Date(trade.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-                    </div>
-                    <div className={`font-bold ${
-                      trade.type === "BUY" ? "text-green-400" : "text-red-400"
-                    }`}>
-                      {trade.type}
-                    </div>
-                    <div className="text-right text-cyan-400 tabular-nums">
-                      {trade.entry_price?.toFixed(2)}
-                    </div>
-                    <div className="text-right text-gray-400 tabular-nums">
-                      {trade.exit_price?.toFixed(2) || "--"}
-                    </div>
-                    <div className="text-right text-gray-400 tabular-nums">
-                      {trade.contracts}
-                    </div>
-                    <div className={`text-right font-bold tabular-nums ${
-                      trade.pnl >= 0 ? "text-green-400" : "text-red-400"
-                    }`}>
-                      {trade.pnl !== null && trade.pnl !== 0 ? `${trade.pnl >= 0 ? "+" : ""}£${trade.pnl.toFixed(2)}` : "--"}
-                    </div>
-                    <div className={`text-center font-bold ${
-                      trade.status === "OPEN" ? "text-blue-400" : "text-gray-500"
-                    }`}>
-                      {trade.status}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center text-gray-600 py-6 text-[10px]">
-                No trades yet
-              </div>
+              </>
             )}
           </div>
         </GridWindow>
