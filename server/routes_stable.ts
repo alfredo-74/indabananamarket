@@ -195,7 +195,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // HTTP endpoint for IBKR bridge (more reliable than WebSocket for external connections)
   let bridgeLastHeartbeat = Date.now(); // Initialize to now to prevent "never connected" spam on startup
   let lastStatusUpdate = 0; // Throttle database status updates
-  const BRIDGE_TIMEOUT_MS = 30000; // 30 seconds without data = disconnected (allows quiet market periods)
+  const BRIDGE_TIMEOUT_MS = 60000; // 60 seconds without data = disconnected (allows quiet market periods + slower tick intervals)
 
   app.post('/api/bridge/data', async (req, res) => {
     try {
