@@ -1,252 +1,286 @@
 #!/usr/bin/env python3
 """
-IBKR Real-Time Level II Bridge - Forwards IBKR data to Replit backend
-Connects to Interactive Brokers and streams market data, DOM, and portfolio updates via HTTP POST
+IBKR Bridge - Connects local IB Gateway to Replit Trading System
+WITH REAL-TIME LEVEL II DOM DATA
+
+This script runs on YOUR computer (ChromeOS Linux) and:
+1. Connects to IB Gateway running locally
+2. Subscribes to ES futures REAL-TIME market data + Level II DOM
+3. Forwards the data to your Replit trading system via HTTP
+
+Usage:
+    python3 ibkr_bridge_REAL_TIME_LEVEL2.py https://your-replit-url
+
+Requirements:
+    pip install ib_insync requests
 """
-
-# ============================================================================
-# CONFIGURATION - Change MODE to switch between dev and production
-# ============================================================================
-MODE = "production"  # Options: "dev" or "production"
-
-# Backend URLs for each mode
-BACKEND_URLS = {
-    "dev": "http://localhost:5000",
-    "production": "https://inthabananamarket.replit.app"
-}
-# ============================================================================
 
 import asyncio
 import json
+import logging
 import sys
-import os
 import requests
 from datetime import datetime
-from ib_insync import IB, Future, MarketOrder, util
-import nest_asyncio
+from ib_insync import *
 
-nest_asyncio.apply()
+# Setup logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+def get_front_month_contract():
+    """
+    Calculate the front month ES futures contract.
+    ES futures roll quarterly: March (3), June (6), September (9), December (12)
+    """
+    now = datetime.now()
+    year = now.year
+    month = now.month
+    
+    # Quarterly months for ES
+    quarterly_months = [3, 6, 9, 12]
+    
+    # Find next quarterly month
+    next_month = None
+    for qm in quarterly_months:
+        if month < qm:
+            next_month = qm
+            break
+    
+    # If no future month this year, roll to March next year
+    if next_month is None:
+        year += 1
+        next_month = 3
+    
+    # Format as YYYYMM (e.g., 202503 for March 2025)
+    contract_month = f"{year}{next_month:02d}"
+    
+    logger.info(f"📅 Calculated front month contract: ES {contract_month}")
+    return contract_month
 
 class IBKRBridge:
-    def __init__(self, replit_url: str):
+    def __init__(self):
         self.ib = IB()
-        self.connected = False
-        self.replit_url = replit_url.rstrip('/')
-        self.display_contract = None  # ES contract for price display
-        self.trade_contract = None    # MES contract for actual trading
-        self.last_price = 0.0
-        self.bid = 0.0
-        self.ask = 0.0
-        self.volume = 0
-        self.port = 4002  # IB Gateway paper trading port
+        self.replit_url = None
+        self.es_contract = None
+        self.running = False
+        self.session = requests.Session()
         
-        # Portfolio tracking
-        self.current_position = 0
-        self.entry_price = None
-        self.unrealized_pnl = 0.0
-        self.realized_pnl = 0.0
-        
-        # Level II DOM data
-        self.dom_bids = []
-        self.dom_asks = []
-        
-        print(f"Bridge initialized - Will forward data to: {self.replit_url}", file=sys.stderr)
-    
-    async def connect(self):
-        """Connect to IBKR Paper Trading via IB Gateway"""
+    async def connect_to_ibkr(self):
+        """Connect to local IB Gateway"""
         try:
-            print("Connecting to IB Gateway on port 4002...", file=sys.stderr)
-            await self.ib.connectAsync('127.0.0.1', self.port, clientId=1)
-            self.connected = True
-            print("✅ Connected to IBKR Paper Trading", file=sys.stderr)
+            logger.info("=" * 60)
+            logger.info("Connecting to IB Gateway - LIVE account on port 4002")
+            logger.info("(As instructed by IBKR support)")
+            logger.info("=" * 60)
+            logger.info("Connecting to IB Gateway on 127.0.0.1:4002...")
+            await self.ib.connectAsync('127.0.0.1', 4002, clientId=1)
+            logger.info("✓ Connected to IB Gateway (LIVE account via port 4002)")
             
-            # Set up ES futures contract for DISPLAY
-            self.display_contract = Future('ES', exchange='CME')
-            display_contracts = await self.ib.qualifyContractsAsync(self.display_contract)
+            # Get front month contract automatically
+            contract_month = get_front_month_contract()
             
-            if display_contracts:
-                self.display_contract = sorted(display_contracts, key=lambda c: c.lastTradeDateOrContractMonth)[0]
-                print(f"✅ ES display contract: {self.display_contract.lastTradeDateOrContractMonth}", file=sys.stderr)
-            else:
-                self.display_contract = Future('ES', '202503', 'CME')
-                await self.ib.qualifyContractsAsync(self.display_contract)
+            # Try with calculated contract month first
+            self.es_contract = Future('ES', contract_month, 'CME')
             
-            # Set up MES futures contract for TRADING
-            self.trade_contract = Future('MES', exchange='CME')
-            trade_contracts = await self.ib.qualifyContractsAsync(self.trade_contract)
+            try:
+                contracts = await self.ib.qualifyContractsAsync(self.es_contract)
+                if contracts:
+                    self.es_contract = contracts[0]
+                    logger.info(f"✓ Contract qualified: ES {contract_month}")
+                else:
+                    # Fallback: let IB Gateway auto-select
+                    logger.info("⚠ Calculated contract not found, using auto-select...")
+                    self.es_contract = Future('ES', '', 'CME')
+                    contracts = await self.ib.qualifyContractsAsync(self.es_contract)
+                    if contracts:
+                        self.es_contract = contracts[0]
+                        logger.info(f"✓ Contract auto-selected: {self.es_contract}")
+                    else:
+                        raise Exception("Could not qualify any ES contract")
+            except Exception as e:
+                logger.warning(f"Contract qualification issue: {e}")
+                # Try one more time with empty contract month (IB auto-select)
+                self.es_contract = Future('ES', '', 'CME')
+                contracts = await self.ib.qualifyContractsAsync(self.es_contract)
+                if contracts:
+                    self.es_contract = contracts[0]
+                    logger.info(f"✓ Contract auto-selected (fallback): {self.es_contract}")
+                else:
+                    raise Exception("Failed to qualify ES contract")
             
-            if trade_contracts:
-                self.trade_contract = sorted(trade_contracts, key=lambda c: c.lastTradeDateOrContractMonth)[0]
-                print(f"✅ MES trading contract: {self.trade_contract.lastTradeDateOrContractMonth}", file=sys.stderr)
-            else:
-                self.trade_contract = Future('MES', '202503', 'CME')
-                await self.ib.qualifyContractsAsync(self.trade_contract)
+            # Request REAL-TIME market data (now that account is funded)
+            self.ib.reqMarketDataType(1)  # 1 = Live (real-time)
+            logger.info("✓ Requesting REAL-TIME market data with funded account")
             
-            # Request REAL-TIME Level II market data
-            self.ib.reqMarketDataType(1)  # 1 = real-time data
+            # Subscribe to basic market data with real-time volume (tick 233)
+            self.ib.reqMktData(self.es_contract, '233', False, False)
+            logger.info("✓ Subscribed to real-time market data feed")
             
-            # Subscribe to ES market data
-            self.ib.reqMktData(self.display_contract, '', False, False)
+            # Subscribe to Level II DOM (10 levels deep)
+            self.ib.reqMktDepth(self.es_contract, 10)
+            logger.info("✓ Subscribed to Level II DOM (10 levels)")
             
-            # Subscribe to Level II DOM (Depth of Market)
-            self.ib.reqMktDepth(self.display_contract, numRows=10)
+            # Setup tick callback
+            self.ib.pendingTickersEvent += self.on_tick
             
-            # Set up event handlers
-            self.ib.updateEvent += self._on_dom_update
-            self.ib.newOrderEvent += self._on_order_update
-            self.ib.orderStatusEvent += self._on_order_status
+            # Setup DOM callback for order book updates
+            self.ib.updateEvent += self.on_dom_update
             
-            # Subscribe to position updates
-            self.ib.positionEvent += self._on_position_update
-            self.ib.pnlEvent += self._on_pnl_update
-            
-            # Request current positions
-            await self._request_positions()
+            # Setup error handler
+            self.ib.errorEvent += self.on_error
             
             return True
-            
         except Exception as e:
-            print(f"❌ Connection failed: {e}", file=sys.stderr)
-            self.connected = False
+            logger.error(f"Failed to connect to IB Gateway: {e}")
+            logger.error("Make sure IB Gateway is running with:")
+            logger.error("  - LIVE account mode (fredpaper74)")
+            logger.error("  - API enabled")
+            logger.error("  - Port 4002 (as instructed by IBKR support)")
             return False
     
-    async def _request_positions(self):
-        """Request current portfolio positions"""
+    def send_to_replit(self, data):
+        """Send data to Replit via HTTP POST"""
         try:
-            positions = self.ib.positions()
-            print(f"Current positions: {len(positions)}", file=sys.stderr)
-            
-            for pos in positions:
-                print(f"  - {pos.contract.symbol}: {pos.position} @ {pos.avgCost}", file=sys.stderr)
-                if pos.contract.symbol in ['MES', 'ES']:
-                    self.current_position = int(pos.position)
-                    self.entry_price = float(pos.avgCost)
-                    await self._forward_portfolio_update()
-            
-            # Request account summary for P&L
-            account_values = self.ib.accountSummary()
-            for item in account_values:
-                if item.tag == 'UnrealizedPnL':
-                    self.unrealized_pnl = float(item.value)
-                elif item.tag == 'RealizedPnL':
-                    self.realized_pnl = float(item.value)
-            
-            if self.current_position != 0:
-                await self._forward_portfolio_update()
-                
-        except Exception as e:
-            print(f"Error requesting positions: {e}", file=sys.stderr)
-    
-    def _on_position_update(self, position):
-        """Handle position updates from IBKR"""
-        try:
-            if position.contract.symbol in ['MES', 'ES']:
-                self.current_position = int(position.position)
-                self.entry_price = float(position.avgCost) if position.avgCost else None
-                print(f"📊 Position update: {position.contract.symbol} {self.current_position} @ {self.entry_price}", file=sys.stderr)
-                asyncio.create_task(self._forward_portfolio_update())
-        except Exception as e:
-            print(f"Error in position update handler: {e}", file=sys.stderr)
-    
-    def _on_pnl_update(self, pnl):
-        """Handle P&L updates from IBKR"""
-        try:
-            if pnl.unrealizedPnL and not util.isNan(pnl.unrealizedPnL):
-                self.unrealized_pnl = float(pnl.unrealizedPnL)
-            if pnl.realizedPnL and not util.isNan(pnl.realizedPnL):
-                self.realized_pnl = float(pnl.realizedPnL)
-            asyncio.create_task(self._forward_portfolio_update())
-        except Exception as e:
-            print(f"Error in P&L update handler: {e}", file=sys.stderr)
-    
-    def _on_order_update(self, trade):
-        """Handle new order events"""
-        try:
-            print(f"📝 New order: {trade.order.orderId} - {trade.order.action} {trade.order.totalQuantity}", file=sys.stderr)
-        except Exception as e:
-            print(f"Error in order update handler: {e}", file=sys.stderr)
-    
-    def _on_order_status(self, trade):
-        """Handle order status changes"""
-        try:
-            status = trade.orderStatus.status
-            print(f"📋 Order {trade.order.orderId} status: {status}", file=sys.stderr)
-            
-            # When order is filled, positions will update automatically via _on_position_update
-            if status == 'Filled':
-                print(f"✅ Order filled: {trade.order.action} {trade.order.totalQuantity} @ {trade.orderStatus.avgFillPrice}", file=sys.stderr)
-                
-        except Exception as e:
-            print(f"Error in order status handler: {e}", file=sys.stderr)
-    
-    async def _forward_portfolio_update(self):
-        """Forward portfolio updates to Replit backend"""
-        try:
-            # Calculate market price for unrealized P&L
-            market_price = self.last_price if self.last_price > 0 else (self.entry_price or 0)
-            
-            data = {
-                "type": "portfolio",
-                "position": self.current_position,
-                "average_cost": self.entry_price if self.entry_price else 0,
-                "unrealized_pnl": self.unrealized_pnl,
-                "realized_pnl": self.realized_pnl,
-                "market_price": market_price
-            }
-            
-            response = requests.post(
+            response = self.session.post(
                 f"{self.replit_url}/api/bridge/data",
                 json=data,
-                timeout=2
+                timeout=5
             )
-            
-            if response.status_code == 200:
-                print(f"📤 Portfolio update sent: POS={self.current_position}, uPnL=${self.unrealized_pnl:.2f}", file=sys.stderr)
-            else:
-                print(f"⚠️ Portfolio update failed: {response.status_code}", file=sys.stderr)
-                
+            return response.status_code == 200
         except Exception as e:
-            print(f"Error forwarding portfolio update: {e}", file=sys.stderr)
+            logger.error(f"Failed to send data to Replit: {e}")
+            return False
     
-    def _on_dom_update(self):
-        """Handler for DOM updates"""
+    def on_error(self, reqId, errorCode, errorString, contract):
+        """Handle IBKR errors"""
+        if errorCode == 354 or errorCode == 10168:
+            # Market data subscription error
+            logger.error(f"⚠ ERROR {errorCode}: {errorString}")
+            logger.error("")
+            logger.error("❌ Market data subscription not accessible")
+            logger.error("📋 TROUBLESHOOTING CHECKLIST:")
+            logger.error("   1. ✓ Live account funded (required by IBKR)")
+            logger.error("   2. ✓ Data sharing enabled in Client Portal")
+            logger.error("   3. ⚠ Wait 5-10 minutes after funding for IBKR systems to update")
+            logger.error("   4. ⚠ Restart IB Gateway after funding settles")
+            logger.error("   5. If still failing, contact IBKR support")
+            logger.error("")
+        elif errorCode == 2119:
+            # Just connecting to data farm - informational only
+            logger.info(f"Market data farm connecting...")
+        elif errorCode in [2104, 2106, 2158]:
+            # Connection OK messages - informational
+            pass
+        else:
+            # Log other errors
+            logger.info(f"IBKR Error {errorCode}: {errorString}")
+    
+    def on_tick(self, tickers):
+        """Called when new tick data arrives from IB Gateway"""
+        for ticker in tickers:
+            if ticker.contract == self.es_contract:
+                self.forward_tick(ticker)
+    
+    def forward_tick(self, ticker):
+        """Forward tick data to Replit"""
         try:
-            if not self.connected or not self.display_contract:
-                return
+            # Extract relevant data
+            last_price = ticker.last if not util.isNan(ticker.last) else ticker.close
             
-            ticker = self.ib.ticker(self.display_contract)
+            if util.isNan(last_price):
+                return  # No valid price yet
+            
+            data = {
+                'type': 'market_data',
+                'symbol': 'ES',
+                'last_price': float(last_price),
+                'bid': float(ticker.bid) if not util.isNan(ticker.bid) else None,
+                'ask': float(ticker.ask) if not util.isNan(ticker.ask) else None,
+                'bid_size': int(ticker.bidSize) if not util.isNan(ticker.bidSize) else None,
+                'ask_size': int(ticker.askSize) if not util.isNan(ticker.askSize) else None,
+                'volume': int(ticker.volume) if not util.isNan(ticker.volume) else None,
+                'timestamp': datetime.now().isoformat()
+            }
+            
+            # Send to Replit
+            if self.send_to_replit(data):
+                logger.info(f"📊 ES @ {last_price:.2f} → Sent to Replit")
+            
+        except Exception as e:
+            logger.error(f"Error forwarding tick: {e}")
+    
+    def on_dom_update(self):
+        """Handle Level II DOM updates"""
+        try:
+            # Get the ticker object for our contract
+            ticker = self.ib.ticker(self.es_contract)
             
             if ticker and hasattr(ticker, 'domBids') and hasattr(ticker, 'domAsks'):
-                self.dom_bids = [(level.price, level.size) for level in ticker.domBids if level.price > 0]
-                self.dom_asks = [(level.price, level.size) for level in ticker.domAsks if level.price > 0]
+                if ticker.domBids and ticker.domAsks:
+                    # Build DOM data
+                    dom_data = {
+                        'type': 'dom_update',
+                        'symbol': 'ES',
+                        'bids': [[level.price, level.size] for level in ticker.domBids[:10]],
+                        'asks': [[level.price, level.size] for level in ticker.domAsks[:10]],
+                        'timestamp': datetime.now().isoformat()
+                    }
+                    
+                    # Send DOM update to Replit
+                    self.send_to_replit(dom_data)
+                    logger.info(f"📊 DOM: {len(dom_data['bids'])} bids, {len(dom_data['asks'])} asks → Sent to Replit")
+                
         except Exception as e:
-            print(f"Error updating DOM: {e}", file=sys.stderr)
+            logger.error(f"Error forwarding DOM: {e}")
     
-    async def send_historical_data(self, days: int = 5):
-        """Fetch and send historical data for CVA calculation"""
+    def get_mes_contract(self):
+        """Get MES contract for trading"""
+        # MES (Micro E-mini S&P 500) uses same contract months as ES
+        contract_month = get_front_month_contract()
+        mes_contract = Future('MES', contract_month, 'CME')
+        return mes_contract
+    
+    def poll_pending_orders(self):
+        """Check for pending orders from Replit"""
         try:
-            print(f"📊 Fetching {days} days of historical data...", file=sys.stderr)
+            response = self.session.get(f"{self.replit_url}/api/pending-orders", timeout=5)
+            if response.status_code == 200:
+                return response.json()
+            return []
+        except Exception as e:
+            logger.error(f"Error polling orders: {e}")
+            return []
+    
+    async def fetch_and_send_historical_data(self, days=5):
+        """Fetch 5 days of historical data and send to Replit to build CVA"""
+        try:
+            logger.info(f"📊 Fetching {days} days of historical 5-min bars for CVA initialization...")
             
+            # Request historical data from IBKR
             bars = await self.ib.reqHistoricalDataAsync(
-                self.display_contract,
-                endDateTime='',
-                durationStr=f'{days} D',
+                self.es_contract,
+                endDateTime='',  # Most recent data
+                durationStr=f'{days} D',  # Trading days (excludes weekends)
                 barSizeSetting='5 mins',
                 whatToShow='TRADES',
-                useRTH=True,
+                useRTH=True,  # Regular Trading Hours only (9:30 AM - 4:00 PM ET)
                 formatDate=1
             )
             
             if not bars:
-                print("⚠️ No historical data returned", file=sys.stderr)
+                logger.warning("⚠ No historical data received from IBKR")
                 return
             
-            print(f"✅ Received {len(bars)} bars", file=sys.stderr)
+            logger.info(f"✓ Received {len(bars)} bars from IBKR")
             
-            # Group by date
+            # Group bars by trading date
             daily_bars = {}
             for bar in bars:
                 date_str = bar.date.strftime('%Y-%m-%d')
+                
                 if date_str not in daily_bars:
                     daily_bars[date_str] = []
                 
@@ -259,146 +293,166 @@ class IBKRBridge:
                     "volume": int(bar.volume)
                 })
             
-            # Send each day's data
+            # Convert to list and sort by date
+            days_data = []
             for date in sorted(daily_bars.keys()):
-                data = {
-                    "type": "historical_bars",
+                days_data.append({
                     "date": date,
                     "bars": daily_bars[date]
-                }
-                
-                response = requests.post(
-                    f"{self.replit_url}/api/bridge/data",
-                    json=data,
-                    timeout=5
+                })
+            
+            logger.info(f"✓ Grouped into {len(days_data)} trading days")
+            
+            # Send to Replit CVA initialization endpoint
+            try:
+                response = self.session.post(
+                    f"{self.replit_url}/api/bridge/initialize-cva",
+                    json={"days": days_data},
+                    timeout=30
                 )
                 
                 if response.status_code == 200:
-                    print(f"✅ Sent {date}: {len(daily_bars[date])} bars", file=sys.stderr)
+                    result = response.json()
+                    if result.get('success'):
+                        cva = result.get('cva', {})
+                        logger.info(f"✅ CVA initialized successfully!")
+                        logger.info(f"   Days: {cva.get('days_included')}/5")
+                        logger.info(f"   POC: {cva.get('composite_poc', 0):.2f}")
+                        logger.info(f"   VAH: {cva.get('composite_vah', 0):.2f}")
+                        logger.info(f"   VAL: {cva.get('composite_val', 0):.2f}")
+                    else:
+                        logger.warning(f"⚠ CVA initialization failed: {result.get('error')}")
                 else:
-                    print(f"⚠️ Failed to send {date}: {response.status_code}", file=sys.stderr)
-            
-            print(f"🎉 Historical data upload complete - {len(daily_bars)} days sent", file=sys.stderr)
-            
-        except Exception as e:
-            print(f"❌ Error sending historical data: {e}", file=sys.stderr)
-            import traceback
-            traceback.print_exc(file=sys.stderr)
-    
-    async def stream_market_data(self):
-        """Stream real-time market data and DOM to Replit"""
-        print("🚀 Starting real-time data stream...", file=sys.stderr)
-        
-        while self.connected:
-            try:
-                ticker = self.ib.ticker(self.display_contract)
-                
-                # Update local values
-                if ticker and ticker.last and not util.isNan(ticker.last):
-                    self.last_price = float(ticker.last)
-                if ticker and ticker.bid and not util.isNan(ticker.bid):
-                    self.bid = float(ticker.bid)
-                if ticker and ticker.ask and not util.isNan(ticker.ask):
-                    self.ask = float(ticker.ask)
-                if ticker and ticker.volume and not util.isNan(ticker.volume):
-                    self.volume = int(ticker.volume)
-                
-                # Send market data
-                market_data = {
-                    "type": "market_data",
-                    "symbol": "ES",
-                    "last_price": self.last_price,
-                    "bid": self.bid,
-                    "ask": self.ask,
-                    "volume": self.volume,
-                    "timestamp": int(datetime.now().timestamp() * 1000)
-                }
-                
-                requests.post(
-                    f"{self.replit_url}/api/bridge/data",
-                    json=market_data,
-                    timeout=1
-                )
-                
-                # Send DOM data
-                if self.dom_bids or self.dom_asks:
-                    dom_data = {
-                        "type": "dom",
-                        "bids": self.dom_bids[:10],
-                        "asks": self.dom_asks[:10],
-                        "timestamp": int(datetime.now().timestamp() * 1000)
-                    }
-                    
-                    requests.post(
-                        f"{self.replit_url}/api/bridge/data",
-                        json=dom_data,
-                        timeout=1
-                    )
-                
-                await asyncio.sleep(0.5)  # 500ms updates
-                
+                    logger.warning(f"⚠ CVA endpoint returned status {response.status_code}")
             except Exception as e:
-                if "Connection" in str(e):
-                    print(f"⚠️ Connection error (Replit may be restarting): {e}", file=sys.stderr)
-                await asyncio.sleep(1)
-    
-    async def place_order(self, action: str, quantity: int):
-        """Place a market order"""
-        try:
-            order = MarketOrder(action, quantity)
-            trade = self.ib.placeOrder(self.trade_contract, order)
-            print(f"📝 Order placed: {action} {quantity} MES", file=sys.stderr)
-            return {"success": True, "order_id": trade.order.orderId}
+                logger.error(f"❌ Failed to send historical data to Replit: {e}")
+                
         except Exception as e:
-            print(f"❌ Order failed: {e}", file=sys.stderr)
-            return {"success": False, "error": str(e)}
+            logger.error(f"❌ Historical data fetch failed: {e}")
+            import traceback
+            traceback.print_exc()
     
-    def disconnect(self):
-        """Disconnect from IBKR"""
-        if self.connected:
-            self.ib.disconnect()
-            self.connected = False
-            print("👋 Disconnected from IBKR", file=sys.stderr)
-
-async def main():
-    """Main entry point"""
-    # Use MODE configuration or command-line argument
-    if len(sys.argv) >= 2:
-        replit_url = sys.argv[1]
-        print(f"🔗 Using command-line URL: {replit_url}", file=sys.stderr)
-    else:
-        # Auto-select URL based on MODE
-        if MODE not in BACKEND_URLS:
-            print(f"❌ Invalid MODE: '{MODE}'. Must be 'dev' or 'production'", file=sys.stderr)
-            sys.exit(1)
+    async def execute_order(self, order):
+        """Execute order via IBKR on MES contract"""
+        try:
+            logger.info(f"🔄 Executing {order['action']} {order['quantity']} MES (ID: {order['id']})")
+            
+            # Get MES contract
+            mes_contract = self.get_mes_contract()
+            contracts = await self.ib.qualifyContractsAsync(mes_contract)
+            if not contracts:
+                raise Exception("Could not qualify MES contract")
+            mes_contract = contracts[0]
+            
+            # Create market order
+            from ib_insync import MarketOrder
+            ib_order = MarketOrder(order['action'], order['quantity'])
+            
+            # Place order
+            trade = self.ib.placeOrder(mes_contract, ib_order)
+            
+            # Wait for fill (with timeout)
+            for _ in range(10):  # Wait up to 10 seconds
+                await asyncio.sleep(1)
+                if trade.orderStatus.status in ['Filled', 'Cancelled', 'ApiCancelled']:
+                    break
+            
+            result = {
+                'order_id': trade.order.orderId,
+                'status': trade.orderStatus.status,
+                'filled': trade.orderStatus.filled,
+                'avg_fill_price': trade.orderStatus.avgFillPrice,
+            }
+            
+            # Report result back to Replit
+            self.send_to_replit({
+                'type': 'order_result',
+                'orderId': order['id'],
+                'status': 'EXECUTED' if trade.orderStatus.status == 'Filled' else 'FAILED',
+                'result': result
+            })
+            
+            logger.info(f"✅ Order executed: {order['action']} {order['quantity']} MES @ {trade.orderStatus.avgFillPrice:.2f}")
+            
+        except Exception as e:
+            logger.error(f"❌ Order execution failed: {e}")
+            # Report failure
+            self.send_to_replit({
+                'type': 'order_result',
+                'orderId': order['id'],
+                'status': 'FAILED',
+                'result': {'error': str(e)}
+            })
+    
+    async def run(self, replit_url):
+        """Main run loop"""
+        self.running = True
+        self.replit_url = replit_url.rstrip('/')  # Remove trailing slash if present
         
-        replit_url = BACKEND_URLS[MODE]
-        print(f"🔗 Running in {MODE.upper()} mode", file=sys.stderr)
-        print(f"🔗 Backend URL: {replit_url}", file=sys.stderr)
+        print("\n" + "="*60)
+        print("IBKR BRIDGE - REAL-TIME Level II Data Forwarder + Order Execution")
+        print("="*60)
+        print(f"\n🌐 Replit URL: {replit_url}")
+        print()
         
-        if MODE == "production" and "YOUR-PUBLISHED-APP" in replit_url:
-            print("⚠️  WARNING: Production mode selected but URL not configured!", file=sys.stderr)
-            print("⚠️  Please edit the script and replace 'YOUR-PUBLISHED-APP' with your actual URL", file=sys.stderr)
-            sys.exit(1)
-    
-    bridge = IBKRBridge(replit_url)
-    
-    try:
-        # Connect to IBKR
-        if not await bridge.connect():
-            print("❌ Failed to connect to IBKR", file=sys.stderr)
+        # Connect to IB Gateway
+        if not await self.connect_to_ibkr():
             return
         
-        # Send historical data for CVA
-        await bridge.send_historical_data(days=5)
+        # Send handshake to Replit
+        logger.info(f"Connecting to Replit at {replit_url}...")
+        if self.send_to_replit({'type': 'handshake', 'source': 'ibkr_bridge', 'timestamp': datetime.now().isoformat()}):
+            logger.info("✓ Connected to Replit trading system")
+        else:
+            logger.error("Failed to connect to Replit - check the URL and try again")
+            return
         
-        # Start streaming real-time data
-        await bridge.stream_market_data()
+        # Fetch historical data to initialize CVA
+        logger.info("\n" + "="*60)
+        logger.info("INITIALIZING COMPOSITE VALUE AREA (CVA)")
+        logger.info("="*60)
+        await self.fetch_and_send_historical_data(days=5)
         
-    except KeyboardInterrupt:
-        print("\n⏹️ Stopping bridge...", file=sys.stderr)
-    finally:
-        bridge.disconnect()
+        print("\n" + "="*60)
+        print("✓ BRIDGE ACTIVE - Forwarding ES + DOM & Executing Orders")
+        print("Press Ctrl+C to stop")
+        print("="*60 + "\n")
+        
+        try:
+            # Keep running
+            order_poll_counter = 0
+            while self.running:
+                await asyncio.sleep(1)
+                
+                # Poll for orders every 2 seconds
+                order_poll_counter += 1
+                if order_poll_counter >= 2:
+                    order_poll_counter = 0
+                    pending_orders = self.poll_pending_orders()
+                    for order in pending_orders:
+                        await self.execute_order(order)
+                
+                # Check connections
+                if not self.ib.isConnected():
+                    logger.error("Lost connection to IB Gateway")
+                    break
+                    
+        except KeyboardInterrupt:
+            print("\n\n⚠ Bridge stopped by user")
+        finally:
+            self.running = False
+            self.ib.disconnect()
+            logger.info("✓ Disconnected from IB Gateway")
+
+async def main():
+    if len(sys.argv) < 2:
+        print("Usage: python3 ibkr_bridge_REAL_TIME_LEVEL2.py <replit-url>")
+        print("Example: python3 ibkr_bridge_REAL_TIME_LEVEL2.py https://your-app.replit.dev")
+        sys.exit(1)
+    
+    replit_url = sys.argv[1]
+    bridge = IBKRBridge()
+    await bridge.run(replit_url)
 
 if __name__ == '__main__':
     asyncio.run(main())
