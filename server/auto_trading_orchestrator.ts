@@ -185,13 +185,28 @@ export class AutoTradingOrchestrator {
       // Step 4: Generate PRO methodology trade recommendations (90% - CONTEXT)
       const recommendations = this.setupRecognizer.generateRecommendations(context);
       
-      // Filter for high-confidence active setups
+      // Filter for high-confidence active setups that MATCH hypothesis direction (PRO 90% rule)
       const validSetups = recommendations
-        .filter(r => r.active && r.confidence >= this.MIN_CONFIDENCE)
+        .filter(r => {
+          // Must be active and meet minimum confidence
+          if (!r.active || r.confidence < this.MIN_CONFIDENCE) return false;
+          
+          // CRITICAL: Only trade in direction aligned with daily hypothesis
+          if (hypothesis.bias === 'BEARISH' && r.direction === 'LONG') {
+            console.log(`[PRO-90/10] ❌ Rejected ${r.setup_type} - LONG conflicts with BEARISH hypothesis`);
+            return false;
+          }
+          if (hypothesis.bias === 'BULLISH' && r.direction === 'SHORT') {
+            console.log(`[PRO-90/10] ❌ Rejected ${r.setup_type} - SHORT conflicts with BULLISH hypothesis`);
+            return false;
+          }
+          
+          return true;
+        })
         .sort((a, b) => b.confidence - a.confidence);
       
       if (validSetups.length === 0) {
-        return; // No high-confidence setups available
+        return; // No high-confidence setups available that match hypothesis
       }
       
       // Step 5: Get the best setup and apply order flow confirmation (10% - ORDER FLOW)
