@@ -1,0 +1,280 @@
+alfredo@penguin:~$ cd ~/Bananas
+
+# Download the updated bridge file from Replit first
+# (Use the file download option in Replit UI for server/ibkr_bridge_local.py)
+
+# Then set BOTH environment variables:
+export REPLIT_URL="https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev"
+export SAFETY_AUTH_KEY="<your-safety-key-from-replit-secrets>"
+
+# Launch the bridge
+python3 server/ibkr_bridge_local.py
+======================================================================
+🏎️  IBKR BRIDGE - LOCAL MODE (AUTO-RECONNECT ENABLED)
+======================================================================
+🔗 Local URL: https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
+📊 Historical data: 7 days
+======================================================================
+✅ SAFETY_AUTH_KEY loaded (37 chars)
+🚀 Bridge LOCAL initialized - Will forward data to: https://ee197047-83ec-40d0-a112-c38e62a21590-00-2lvxbobtxixs9.kirk.replit.dev
+Connecting to IB Gateway on port 4002...
+✅ CONNECTED to IBKR Paper Trading
+Ambiguous contract: Future(symbol='ES', exchange='CME'), possibles are [Contract(secType='FUT', conId=495512563, symbol='ES', lastTradeDateOrContractMonth='20251219', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ5', tradingClass='ES'), Contract(secType='FUT', conId=515416632, symbol='ES', lastTradeDateOrContractMonth='20261218', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ6', tradingClass='ES'), Contract(secType='FUT', conId=586139767, symbol='ES', lastTradeDateOrContractMonth='20271217', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ7', tradingClass='ES'), Contract(secType='FUT', conId=649180661, symbol='ES', lastTradeDateOrContractMonth='20270617', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM7', tradingClass='ES'), Contract(secType='FUT', conId=649180666, symbol='ES', lastTradeDateOrContractMonth='20280317', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH8', tradingClass='ES'), Contract(secType='FUT', conId=649180671, symbol='ES', lastTradeDateOrContractMonth='20260918', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU6', tradingClass='ES'), Contract(secType='FUT', conId=649180675, symbol='ES', lastTradeDateOrContractMonth='20280915', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU8', tradingClass='ES'), Contract(secType='FUT', conId=649180678, symbol='ES', lastTradeDateOrContractMonth='20260618', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM6', tradingClass='ES'), Contract(secType='FUT', conId=649180681, symbol='ES', lastTradeDateOrContractMonth='20270917', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU7', tradingClass='ES'), Contract(secType='FUT', conId=649180684, symbol='ES', lastTradeDateOrContractMonth='20270319', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH7', tradingClass='ES'), Contract(secType='FUT', conId=649180690, symbol='ES', lastTradeDateOrContractMonth='20280616', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM8', tradingClass='ES'), Contract(secType='FUT', conId=649180695, symbol='ES', lastTradeDateOrContractMonth='20260320', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH6', tradingClass='ES'), Contract(secType='FUT', conId=654503299, symbol='ES', lastTradeDateOrContractMonth='20281215', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ8', tradingClass='ES'), Contract(secType='FUT', conId=672387437, symbol='ES', lastTradeDateOrContractMonth='20290316', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH9', tradingClass='ES'), Contract(secType='FUT', conId=691171642, symbol='ES', lastTradeDateOrContractMonth='20290615', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM9', tradingClass='ES'), Contract(secType='FUT', conId=711280049, symbol='ES', lastTradeDateOrContractMonth='20290921', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU9', tradingClass='ES'), Contract(secType='FUT', conId=730283071, symbol='ES', lastTradeDateOrContractMonth='20291221', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ9', tradingClass='ES'), Contract(secType='FUT', conId=750150169, symbol='ES', lastTradeDateOrContractMonth='20300315', multiplier='50', exchange='CME', currency='USD', localSymbol='ESH0', tradingClass='ES'), Contract(secType='FUT', conId=770561177, symbol='ES', lastTradeDateOrContractMonth='20300621', multiplier='50', exchange='CME', currency='USD', localSymbol='ESM0', tradingClass='ES'), Contract(secType='FUT', conId=793356200, symbol='ES', lastTradeDateOrContractMonth='20300920', multiplier='50', exchange='CME', currency='USD', localSymbol='ESU0', tradingClass='ES'), Contract(secType='FUT', conId=815824241, symbol='ES', lastTradeDateOrContractMonth='20301220', multiplier='50', exchange='CME', currency='USD', localSymbol='ESZ0', tradingClass='ES')]
+Ambiguous contract: Future(symbol='MES', exchange='CME'), possibles are [Contract(secType='FUT', conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), Contract(secType='FUT', conId=750150186, symbol='MES', lastTradeDateOrContractMonth='20260320', multiplier='5', exchange='CME', currency='USD', localSymbol='MESH6', tradingClass='MES'), Contract(secType='FUT', conId=770561194, symbol='MES', lastTradeDateOrContractMonth='20260618', multiplier='5', exchange='CME', currency='USD', localSymbol='MESM6', tradingClass='MES'), Contract(secType='FUT', conId=793356217, symbol='MES', lastTradeDateOrContractMonth='20260918', multiplier='5', exchange='CME', currency='USD', localSymbol='MESU6', tradingClass='MES'), Contract(secType='FUT', conId=815824257, symbol='MES', lastTradeDateOrContractMonth='20261218', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ6', tradingClass='MES')]
+✅ Event handlers registered
+Current positions: 1
+  - MES: 1.0 @ 33521.87
+📤 Portfolio update sent: POS=1, uPnL=$11.64
+✅ MES/ES position: 1 @ 33521.87
+📊 Fetching 7 days of historical data...
+✅ Received 600 bars
+✅ Sent 2025-10-30: 90 bars
+✅ Sent 2025-10-31: 90 bars
+✅ Sent 2025-11-03: 90 bars
+✅ Sent 2025-11-04: 90 bars
+✅ Sent 2025-11-05: 90 bars
+✅ Sent 2025-11-06: 90 bars
+✅ Sent 2025-11-07: 60 bars
+🎉 Historical data upload complete - 7 days sent
+🚀 Starting real-time data stream...
+💰 Account: Balance=$1827.64, NetLiq=$1827.64, DailyPnL=$0.00
+📤 Account data sent: Balance=$1827.64, Daily PnL=$0.00
+💰 Account: Balance=$1827.64, NetLiq=$1827.64, DailyPnL=$0.00
+📤 Account data sent: Balance=$1827.64, Daily PnL=$0.00
+Current positions: 1
+  - MES: 1.0 @ 33521.87
+📤 Portfolio update sent: POS=1, uPnL=$11.64
+✅ MES/ES position: 1 @ 33521.87
+📤 Tick sent: ES @ 6707.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6707.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6707.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6707.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33521.87
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33521.87 vs market 6707.75 (ratio: 5.00x)
+⚠️ REJECTING corrupt data - BLOCKING position update
+✅ MES/ES position: 1 @ 33521.87
+📤 Tick sent: ES @ 6707.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6707.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6706.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6707.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6707.00
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33521.87
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33521.87 vs market 6707.0 (ratio: 5.00x)
+⚠️ REJECTING corrupt data - BLOCKING position update
+✅ MES/ES position: 1 @ 33521.87
+📤 Tick sent: ES @ 6707.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6707.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6708.25
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1827.64, NetLiq=$1827.64, DailyPnL=$0.00
+📤 Account data sent: Balance=$1827.64, Daily PnL=$0.00
+📤 Tick sent: ES @ 6708.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: 1.0 @ 33521.87
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33521.87 vs market 6708.5 (ratio: 5.00x)
+⚠️ REJECTING corrupt data - BLOCKING position update
+✅ MES/ES position: 1 @ 33521.87
+📤 Tick sent: ES @ 6708.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6710.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6710.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6710.50
+📤 DOM update sent (10 bids, 10 asks)
+🔔 Executing pending order: SELL 1 MES (ID: order_1762543808601_rc0ptd73s)
+📝 New order: 127 - SELL 1
+📝 Order placed: SELL 1 MES
+✅ Order order_1762543808601_rc0ptd73s executed successfully
+📤 Tick sent: ES @ 6709.75
+📤 DOM update sent (10 bids, 10 asks)
+📋 Order 127 status: PreSubmitted
+📊 Position update: MES 0 @ None
+📋 Order 127 status: Filled
+✅ Order filled: SELL 1.0 @ 6710.0
+📊 Position update: MES 0 @ None
+📊 Position update: MES 0 @ None
+📤 Portfolio update sent: POS=0, uPnL=$11.64
+📤 Portfolio update sent: POS=0, uPnL=$11.64
+📤 Portfolio update sent: POS=0, uPnL=$11.64
+⚠️ Order confirmation failed: 127 - HTTP 500
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+🔔 Executing pending order: SELL 1 MES (ID: order_1762543811699_npfaxdpxk)
+📝 New order: 128 - SELL 1
+📝 Order placed: SELL 1 MES
+✅ Order order_1762543811699_npfaxdpxk executed successfully
+🔔 Executing pending order: SELL 1 MES (ID: order_1762543812551_3z59j7gwq)
+📝 New order: 129 - SELL 1
+📝 Order placed: SELL 1 MES
+✅ Order order_1762543812551_3z59j7gwq executed successfully
+📤 Tick sent: ES @ 6710.50
+📤 DOM update sent (10 bids, 10 asks)
+📋 Order 128 status: PreSubmitted
+📊 Position update: MES -1 @ 33551.25
+📋 Order 128 status: Filled
+✅ Order filled: SELL 1.0 @ 6710.25
+📊 Position update: MES -1 @ 33550.63
+📋 Order 129 status: Inactive
+Error 201, reqId 129: Order rejected - reason:The Available Funds in your Commodities segment are insufficient to cover the change in the margin <br>requirements in your Commodities segment should this order execute. In order to obtain the desired position, <br>your Commodities Net Liquidation Value [1823.68 GBP]  must exceed the new total initial Margin of [2340.60 <br>GBP].
+Canceled order: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=129, clientId=1, permId=376314074, action='SELL', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=129, status='Cancelled', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=376314074, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 7, 19, 30, 11, 826052, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 7, 19, 30, 13, 817068, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 7, 19, 30, 13, 817068, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 129: Order rejected - reason:The Available Funds in your Commodities segment are insufficient to cover the change in the margin <br>requirements in your Commodities segment should this order execute. In order to obtain the desired position, <br>your Commodities Net Liquidation Value [1823.68 GBP]  must exceed the new total initial Margin of [2340.60 <br>GBP].', errorCode=201)], advancedError='')
+📋 Order 129 status: Cancelled
+⚠️ Order cancelled: 129
+📋 Order 129 status: Inactive
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33550.63 vs market 6710.5 (ratio: 5.00x)
+⚠️ REJECTING corrupt data - BLOCKING position update
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33550.63 vs market 6710.5 (ratio: 5.00x)
+⚠️ REJECTING corrupt data - BLOCKING position update
+📤 Tick sent: ES @ 6711.00
+📤 DOM update sent (10 bids, 10 asks)
+⚠️ Order confirmation failed: 128 - HTTP 500
+✅ Order confirmation sent: 129 - CANCELLED
+📤 Tick sent: ES @ 6711.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6711.50
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1835.66, NetLiq=$1835.66, DailyPnL=$0.00
+📤 Account data sent: Balance=$1835.66, Daily PnL=$0.00
+Current positions: 1
+  - MES: -1.0 @ 33550.63
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33550.63 vs market 6711.5 (ratio: 5.00x)
+⚠️ REJECTING corrupt data - BLOCKING position update
+✅ MES/ES position: -1 @ 33550.63
+📤 Tick sent: ES @ 6711.75
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6711.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6711.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6712.00
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: -1.0 @ 33550.63
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33550.63 vs market 6712.0 (ratio: 5.00x)
+⚠️ REJECTING corrupt data - BLOCKING position update
+✅ MES/ES position: -1 @ 33550.63
+📤 Tick sent: ES @ 6712.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6712.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6712.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6712.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6712.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: -1.0 @ 33550.63
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33550.63 vs market 6712.75 (ratio: 5.00x)
+⚠️ REJECTING corrupt data - BLOCKING position update
+✅ MES/ES position: -1 @ 33550.63
+📤 Tick sent: ES @ 6713.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6714.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6714.75
+📤 DOM update sent (10 bids, 10 asks)
+💰 Account: Balance=$1835.66, NetLiq=$1835.66, DailyPnL=$0.00
+📤 Account data sent: Balance=$1835.66, Daily PnL=$0.00
+📤 Tick sent: ES @ 6714.75
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: -1.0 @ 33550.63
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33550.63 vs market 6714.75 (ratio: 5.00x)
+⚠️ REJECTING corrupt data - BLOCKING position update
+✅ MES/ES position: -1 @ 33550.63
+Current positions: 1
+  - MES: 1.0 @ 33521.87📤 Tick sent: ES @ 6714.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6714.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6713.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6713.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6713.50
+📤 DOM update sent (10 bids, 10 asks)
+Current positions: 1
+  - MES: -1.0 @ 33550.63
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33550.63 vs market 6713.5 (ratio: 5.00x)
+⚠️ REJECTING corrupt data - BLOCKING position update
+✅ MES/ES position: -1 @ 33550.63
+📤 Tick sent: ES @ 6714.25
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6714.00
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6713.50
+📤 DOM update sent (10 bids, 10 asks)
+📤 Tick sent: ES @ 6714.00
+📤 DOM update sent (10 bids, 10 asks)
+🔔 Executing pending order: BUY 1 MES (ID: order_1762543880175_440yb26g2)
+📝 New order: 130 - BUY 1
+📝 Order placed: BUY 1 MES
+✅ Order order_1762543880175_440yb26g2 executed successfully
+📤 Tick sent: ES @ 6714.75
+📤 DOM update sent (10 bids, 10 asks)
+📋 Order 130 status: PreSubmitted
+📊 Position update: MES 0 @ None
+📋 Order 130 status: Filled
+✅ Order filled: BUY 1.0 @ 6714.75
+📊 Position update: MES 0 @ None
+📊 Position update: MES 0 @ None
+📤 Portfolio update sent: POS=0, uPnL=$-1.19
+📤 Portfolio update sent: POS=0, uPnL=$-1.19
+📤 Portfolio update sent: POS=0, uPnL=$-1.19
+⚠️ Order confirmation failed: 130 - HTTP 500
+💰 Account: Balance=$1835.66, NetLiq=$1835.66, DailyPnL=$0.00
+📤 Account data sent: Balance=$1835.66, Daily PnL=$0.00
+Current positions: 0
+📤 Portfolio update sent: POS=0, uPnL=$0.00
+✅ No MES/ES position - FLAT
+🔔 Executing pending order: BUY 1 MES (ID: order_1762543882315_8bn4n3bis)
+📝 New order: 131 - BUY 1
+📝 Order placed: BUY 1 MES
+✅ Order order_1762543882315_8bn4n3bis executed successfully
+🔔 Executing pending order: BUY 1 MES (ID: order_1762543883789_e3fwe63rm)
+📝 New order: 132 - BUY 1
+📝 Order placed: BUY 1 MES
+✅ Order order_1762543883789_e3fwe63rm executed successfully
+🔔 Executing pending order: BUY 1 MES (ID: order_1762543884163_tamjw0pz2)
+📝 New order: 133 - BUY 1
+📝 Order placed: BUY 1 MES
+✅ Order order_1762543884163_tamjw0pz2 executed successfully
+📤 Tick sent: ES @ 6716.25
+📤 DOM update sent (10 bids, 10 asks)
+📋 Order 131 status: PreSubmitted
+📊 Position update: MES 1 @ 33581.25
+📋 Order 131 status: Filled
+✅ Order filled: BUY 1.0 @ 6716.25
+📊 Position update: MES 1 @ 33581.87
+📋 Order 132 status: Inactive
+Error 201, reqId 132: Order rejected - reason:The Available Funds in your Commodities segment are insufficient to cover the change in the margin <br>requirements in your Commodities segment should this order execute. In order to obtain the desired position, <br>your Commodities Net Liquidation Value [1804.69 GBP]  must exceed the new total initial Margin of [2484.77 <br>GBP].
+Canceled order: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=132, clientId=1, permId=376314077, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=132, status='Cancelled', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=376314077, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 7, 19, 31, 25, 248512, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 7, 19, 31, 27, 824295, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 7, 19, 31, 27, 824295, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 132: Order rejected - reason:The Available Funds in your Commodities segment are insufficient to cover the change in the margin <br>requirements in your Commodities segment should this order execute. In order to obtain the desired position, <br>your Commodities Net Liquidation Value [1804.69 GBP]  must exceed the new total initial Margin of [2484.77 <br>GBP].', errorCode=201)], advancedError='')
+📋 Order 132 status: Cancelled
+⚠️ Order cancelled: 132
+📋 Order 132 status: Inactive
+📋 Order 133 status: Inactive
+Error 201, reqId 133: Order rejected - reason:The Available Funds in your Commodities segment are insufficient to cover the change in the margin <br>requirements in your Commodities segment should this order execute. In order to obtain the desired position, <br>your Commodities Net Liquidation Value [1804.69 GBP]  must exceed the new total initial Margin of [2484.77 <br>GBP].
+Canceled order: Trade(contract=Future(conId=730283085, symbol='MES', lastTradeDateOrContractMonth='20251219', multiplier='5', exchange='CME', currency='USD', localSymbol='MESZ5', tradingClass='MES'), order=MarketOrder(orderId=133, clientId=1, permId=376314078, action='BUY', totalQuantity=1.0, lmtPrice=0.0, auxPrice=0.0), orderStatus=OrderStatus(orderId=133, status='Cancelled', filled=0.0, remaining=1.0, avgFillPrice=0.0, permId=376314078, parentId=0, lastFillPrice=0.0, clientId=1, whyHeld='', mktCapPrice=0.0), fills=[], log=[TradeLogEntry(time=datetime.datetime(2025, 11, 7, 19, 31, 25, 864323, tzinfo=datetime.timezone.utc), status='PendingSubmit', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 7, 19, 31, 27, 824295, tzinfo=datetime.timezone.utc), status='Inactive', message='', errorCode=0), TradeLogEntry(time=datetime.datetime(2025, 11, 7, 19, 31, 27, 824295, tzinfo=datetime.timezone.utc), status='Cancelled', message='Error 201, reqId 133: Order rejected - reason:The Available Funds in your Commodities segment are insufficient to cover the change in the margin <br>requirements in your Commodities segment should this order execute. In order to obtain the desired position, <br>your Commodities Net Liquidation Value [1804.69 GBP]  must exceed the new total initial Margin of [2484.77 <br>GBP].', errorCode=201)], advancedError='')
+📋 Order 133 status: Cancelled
+⚠️ Order cancelled: 133
+📋 Order 133 status: Inactive
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33581.87 vs market 6716.25 (ratio: 5.00x)
+⚠️ REJECTING corrupt data - BLOCKING position update
+⚠️ CORRUPT ENTRY PRICE DETECTED: 33581.87 vs market 6716.25 (ratio: 5.00x)
+⚠️ REJECTING corrupt data - BLOCKI
