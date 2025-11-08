@@ -1068,7 +1068,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   await storage.setSystemStatus({
     ibkr_connected: false,
     market_data_active: false,
-    auto_trading_enabled: existingStatus?.auto_trading_enabled ?? true, // Default TRUE - PRO trading ready
+    auto_trading_enabled: existingStatus?.auto_trading_enabled ?? false, // Default FALSE - READ-ONLY monitoring mode
     last_update: Date.now(),
     capital: 2000, // Default fallback - will be replaced by real IBKR balance
     daily_pnl: 0,
