@@ -17,7 +17,7 @@ import type {
 } from "@shared/schema";
 
 const GRID_COLS = 4;
-const GRID_ROWS = 4;
+const GRID_ROWS = 3;
 const GAP = 12;
 const MARGIN = 12;
 
