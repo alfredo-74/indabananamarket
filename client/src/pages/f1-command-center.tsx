@@ -133,7 +133,7 @@ function GridWindow({
   colSpan?: number;
 }) {
   const containerWidth = typeof window !== 'undefined' ? window.innerWidth : 1920;
-  const containerHeight = typeof window !== 'undefined' ? window.innerHeight - 144 : 1080;
+  const containerHeight = typeof window !== 'undefined' ? window.innerHeight - 80 : 1080;
   const winWidth = (containerWidth - MARGIN * 2 - GAP * (GRID_COLS - 1)) / GRID_COLS;
   const winHeight = (containerHeight - MARGIN * 2 - GAP * (GRID_ROWS - 1)) / GRID_ROWS;
   
