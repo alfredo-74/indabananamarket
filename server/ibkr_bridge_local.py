@@ -388,20 +388,25 @@ class IBKRBridgeV2:
             # Calculate market price for unrealized P&L
             market_price = self.last_price if self.last_price > 0 else (self.entry_price or 0)
             
-            # CRITICAL SANITY CHECK: Absolute range check for ES/MES
-            # ES trades between 1000-15000, MES trades between 5000-75000 (ES × 5)
-            # Anything outside this range is corrupt data from IBKR
+            # CRITICAL FIX: IBKR MES Price Corruption Auto-Correction
+            # IBKR sometimes returns MES entry_price as (ES_price × 5) instead of ES_price
+            # Example: ES @ 6707, IBKR returns MES entry @ 33535 (6707 × 5) - WRONG!
+            # ES and MES trade at SAME price (e.g., both @ 6707), 5x is contract VALUE not price
             validated_entry_price = self.entry_price
-            if self.entry_price:
-                if self.entry_price < 1000 or self.entry_price > 75000:
-                    print(f"⚠️ CORRUPT ENTRY PRICE DETECTED: {self.entry_price} (outside valid range 1000-75000)", file=sys.stderr)
-                    print(f"⚠️ REJECTING corrupt data - BLOCKING position update until valid data received", file=sys.stderr)
-                    return  # Don't send this update at all - wait for valid data
+            if self.entry_price and market_price > 0:
+                # Check if entry_price is ~5x market_price (IBKR corruption bug)
+                price_ratio = abs(self.entry_price / market_price)
+                if 4.5 <= price_ratio <= 5.5:
+                    # Auto-correct: divide by 5 to get true price
+                    corrected_price = self.entry_price / 5
+                    print(f"🔧 IBKR MES PRICE BUG DETECTED - Auto-correcting: {self.entry_price:.2f} → {corrected_price:.2f}", file=sys.stderr)
+                    validated_entry_price = corrected_price
                 
-                # NOTE: We do NOT check ratio against market_price because:
-                # - self.entry_price is MES price (e.g., 33521)
-                # - market_price is ES price (e.g., 6707)
-                # - MES is exactly 5x ES, so ratio check would incorrectly flag valid data
+                # Sanity check: ES/MES trade between 1000-15000
+                if validated_entry_price < 1000 or validated_entry_price > 15000:
+                    print(f"⚠️ CORRUPT PRICE: {validated_entry_price:.2f} (outside 1000-15000 range)", file=sys.stderr)
+                    print(f"⚠️ BLOCKING position update - waiting for valid data", file=sys.stderr)
+                    return
             
             data = {
                 "type": "portfolio_update",

@@ -1,0 +1,66 @@
+⚙️ Replit Refactor Command — Market Monitor System
+
+Objective:
+Transform the current project into a market monitoring and signal visualization system, keeping only the IBKR live data stream. Remove all other functionalities, archive legacy files, and document the new system flow.
+
+1. IBKR Connection
+
+Preserve only the IBKR live market data stream.
+
+Remove all components related to order placement, execution, or auto-trading.
+
+Clean up any functions, modules, or scripts that perform trade actions, handle positions, or manage accounts beyond data reading.
+
+2. Remove Trading and Automation
+
+Delete or disable:
+
+Any autotrading logic, bots, or automated strategy scripts.
+
+All trading buttons or UI elements that trigger orders.
+
+All execution modules (buy/sell logic, order classes, broker bridges, etc.).
+
+The system must remain read-only — no trade execution or modification capabilities.
+
+3. Archive Legacy Content
+
+Move all outdated or unrelated files (including markdown descriptions, old strategies, or deprecated utilities) into a folder named /archive.
+
+Include timestamped notes or a brief comment in each archived file describing its original role.
+
+4. Interface & Layout
+
+Adjust layout so the interface fills the entire vertical page height.
+
+Retain the Account Window as a mockup only — no active trading controls.
+
+All other windows should focus on market visualization, signal monitoring, and analytics.
+
+5. Documentation Update
+
+Create a new markdown file named UPDATE_AND_FLOW.md at the project root.
+
+This file must contain:
+
+A description of the current system architecture (modules, data flow, and responsibilities).
+
+A step-by-step flow of how the system launches and operates.
+
+Clear instructions for running the updated system.
+
+A list of archived files and their previous functions.
+
+6. Deliverable Summary
+
+After refactoring, the system should:
+
+Display real-time market data from IBKR only.
+
+Provide signal visualization and monitoring features.
+
+Contain no trading, no automation, and no bridge dependencies beyond IBKR live data.
+
+Have all obsolete files organized in /archive.
+
+Be documented in UPDATE_AND_FLOW.md.
