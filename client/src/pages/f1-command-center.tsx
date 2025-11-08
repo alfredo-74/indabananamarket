@@ -121,7 +121,9 @@ function GridWindow({
   onDragStart,
   onDragStop,
   testId = "",
-  colSpan = 1
+  colSpan = 1,
+  containerWidth,
+  containerHeight
 }: { 
   title: string; 
   children: React.ReactNode; 
@@ -131,9 +133,9 @@ function GridWindow({
   onDragStop: (id: string, col: number, row: number) => void;
   testId?: string;
   colSpan?: number;
+  containerWidth: number;
+  containerHeight: number;
 }) {
-  const containerWidth = typeof window !== 'undefined' ? window.innerWidth : 1920;
-  const containerHeight = typeof window !== 'undefined' ? window.innerHeight - 80 : 1080;
   const winWidth = (containerWidth - MARGIN * 2 - GAP * (GRID_COLS - 1)) / GRID_COLS;
   const winHeight = (containerHeight - MARGIN * 2 - GAP * (GRID_ROWS - 1)) / GRID_ROWS;
   
@@ -374,6 +376,22 @@ export default function F1CommandCenter() {
   });
 
   const [draggingId, setDraggingId] = useState<string | null>(null);
+  
+  const gridContainerRef = useRef<HTMLDivElement>(null);
+  const [containerDimensions, setContainerDimensions] = useState({ width: 1920, height: 1000 });
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      if (gridContainerRef.current) {
+        const rect = gridContainerRef.current.getBoundingClientRect();
+        setContainerDimensions({ width: rect.width, height: rect.height });
+      }
+    };
+    
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
 
   const handleDragStart = (id: string) => {
     setDraggingId(id);
@@ -447,7 +465,7 @@ export default function F1CommandCenter() {
         </div>
       </div>
 
-      <div className="flex-1 relative overflow-hidden">
+      <div ref={gridContainerRef} className="flex-1 relative overflow-hidden">
         <GridWindow
           windowId="pressure"
           gridPosition={windowPositions['pressure']}
@@ -455,6 +473,8 @@ export default function F1CommandCenter() {
           onDragStop={handleDragStop}
           title="PRESSURE GAUGES"
           testId="window-pressure"
+          containerWidth={containerDimensions.width}
+          containerHeight={containerDimensions.height}
         >
           <div className="space-y-3">
             <div>
@@ -492,6 +512,8 @@ export default function F1CommandCenter() {
 
         <GridWindow
           windowId="orderflow"
+          containerWidth={containerDimensions.width}
+          containerHeight={containerDimensions.height}
           gridPosition={windowPositions['orderflow']}
           onDragStart={handleDragStart}
           onDragStop={handleDragStop}
@@ -551,6 +573,8 @@ export default function F1CommandCenter() {
 
         <GridWindow
           windowId="setups"
+          containerWidth={containerDimensions.width}
+          containerHeight={containerDimensions.height}
           gridPosition={windowPositions['setups']}
           onDragStart={handleDragStart}
           onDragStop={handleDragStop}
@@ -609,6 +633,8 @@ export default function F1CommandCenter() {
 
         <GridWindow
           windowId="opening-drive"
+          containerWidth={containerDimensions.width}
+          containerHeight={containerDimensions.height}
           gridPosition={windowPositions['opening-drive']}
           onDragStart={handleDragStart}
           onDragStop={handleDragStop}
@@ -644,6 +670,8 @@ export default function F1CommandCenter() {
 
         <GridWindow
           windowId="value-areas"
+          containerWidth={containerDimensions.width}
+          containerHeight={containerDimensions.height}
           gridPosition={windowPositions['value-areas']}
           onDragStart={handleDragStart}
           onDragStop={handleDragStop}
@@ -674,6 +702,8 @@ export default function F1CommandCenter() {
 
         <GridWindow
           windowId="footprint"
+          containerWidth={containerDimensions.width}
+          containerHeight={containerDimensions.height}
           gridPosition={windowPositions['footprint']}
           onDragStart={handleDragStart}
           onDragStop={handleDragStop}
@@ -712,6 +742,8 @@ export default function F1CommandCenter() {
 
         <GridWindow
           windowId="hypothesis"
+          containerWidth={containerDimensions.width}
+          containerHeight={containerDimensions.height}
           gridPosition={windowPositions['hypothesis']}
           onDragStart={handleDragStart}
           onDragStop={handleDragStop}
@@ -753,6 +785,8 @@ export default function F1CommandCenter() {
 
         <GridWindow
           windowId="eighty-percent"
+          containerWidth={containerDimensions.width}
+          containerHeight={containerDimensions.height}
           gridPosition={windowPositions['eighty-percent']}
           onDragStart={handleDragStart}
           onDragStop={handleDragStop}
@@ -791,6 +825,8 @@ export default function F1CommandCenter() {
 
         <GridWindow
           windowId="cva-levels"
+          containerWidth={containerDimensions.width}
+          containerHeight={containerDimensions.height}
           gridPosition={windowPositions['cva-levels']}
           onDragStart={handleDragStart}
           onDragStop={handleDragStop}
@@ -848,6 +884,8 @@ export default function F1CommandCenter() {
 
         <GridWindow
           windowId="value-shift"
+          containerWidth={containerDimensions.width}
+          containerHeight={containerDimensions.height}
           gridPosition={windowPositions['value-shift']}
           onDragStart={handleDragStart}
           onDragStop={handleDragStop}
@@ -889,6 +927,8 @@ export default function F1CommandCenter() {
 
         <GridWindow
           windowId="system-status"
+          containerWidth={containerDimensions.width}
+          containerHeight={containerDimensions.height}
           gridPosition={windowPositions['system-status']}
           onDragStart={handleDragStart}
           onDragStop={handleDragStop}
@@ -922,6 +962,8 @@ export default function F1CommandCenter() {
 
         <GridWindow
           windowId="account"
+          containerWidth={containerDimensions.width}
+          containerHeight={containerDimensions.height}
           gridPosition={windowPositions['account']}
           onDragStart={handleDragStart}
           onDragStop={handleDragStop}
