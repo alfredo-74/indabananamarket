@@ -917,18 +917,6 @@ export default function F1CommandCenter() {
                 </span>
               </div>
             </div>
-            
-            <Button
-              onClick={() => toggleAutoTradingMutation.mutate(!status?.auto_trading_enabled)}
-              disabled={toggleAutoTradingMutation.isPending}
-              size="sm"
-              variant={status?.auto_trading_enabled ? "destructive" : "default"}
-              className="w-full text-[10px] h-6"
-              data-testid="button-toggle-autotrading"
-            >
-              <Power className="h-3 w-3 mr-1" />
-              {status?.auto_trading_enabled ? "DISABLE" : "ENABLE"}
-            </Button>
           </div>
         </GridWindow>
 
@@ -974,20 +962,6 @@ export default function F1CommandCenter() {
               </span>
             </div>
             
-            {position && position.contracts !== 0 && (
-              <Button
-                onClick={() => closePositionMutation.mutate()}
-                disabled={closePositionMutation.isPending}
-                size="sm"
-                variant="destructive"
-                className="w-full text-[10px] h-6 mt-1"
-                data-testid="button-close-position"
-              >
-                <AlertTriangle className="h-3 w-3 mr-1" />
-                CLOSE POSITION
-              </Button>
-            )}
-            
             <Button
               onClick={() => forceSyncMutation.mutate()}
               disabled={forceSyncMutation.isPending}
@@ -999,31 +973,6 @@ export default function F1CommandCenter() {
               <RefreshCw className={`h-3 w-3 mr-1 ${forceSyncMutation.isPending ? 'animate-spin' : ''}`} />
               {forceSyncMutation.isPending ? "SYNCING..." : "FORCE SYNC"}
             </Button>
-
-            {position && position.contracts === 0 && (
-              <div className="grid grid-cols-2 gap-1 mt-1">
-                <Button
-                  onClick={() => testTradeMutation.mutate("BUY")}
-                  disabled={testTradeMutation.isPending}
-                  size="sm"
-                  variant="default"
-                  className="w-full text-[10px] h-6 bg-green-600 hover:bg-green-700"
-                  data-testid="button-test-buy"
-                >
-                  BUY 1
-                </Button>
-                <Button
-                  onClick={() => testTradeMutation.mutate("SELL")}
-                  disabled={testTradeMutation.isPending}
-                  size="sm"
-                  variant="default"
-                  className="w-full text-[10px] h-6 bg-red-600 hover:bg-red-700"
-                  data-testid="button-test-sell"
-                >
-                  SELL 1
-                </Button>
-              </div>
-            )}
             
             <div className="border-t border-gray-800 pt-1 mt-1"></div>
             
