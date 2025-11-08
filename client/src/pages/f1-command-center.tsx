@@ -444,10 +444,6 @@ export default function F1CommandCenter() {
             <div className={`h-4 w-4 rounded-full ${hasActiveSignals ? "bg-green-500 shadow-lg shadow-green-500/50 animate-pulse" : "bg-red-600"}`} />
             <span className="text-sm text-gray-400 uppercase tracking-wide font-bold">Signals</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className={`h-4 w-4 rounded-full ${status?.auto_trading_enabled ? "bg-green-500 shadow-lg shadow-green-500/50 animate-pulse" : "bg-gray-600"}`} />
-            <span className="text-sm text-gray-400 uppercase tracking-wide font-bold">Auto-Trading</span>
-          </div>
         </div>
       </div>
 
