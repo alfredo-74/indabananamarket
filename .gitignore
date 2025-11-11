@@ -80,4 +80,4 @@ coverage
 # Replit specific (keep for Replit, won't affect GitHub)
 .replit
 replit.nix
-.config/
+.config/archive/
