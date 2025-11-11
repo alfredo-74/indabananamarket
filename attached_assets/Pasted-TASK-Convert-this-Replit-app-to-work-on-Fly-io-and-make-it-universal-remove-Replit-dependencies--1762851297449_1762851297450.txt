@@ -1,0 +1,148 @@
+TASK: Convert this Replit app to work on Fly.io and make it universal (remove Replit dependencies)
+
+CONTEXT:
+I'm deploying this Express/Node.js app to Fly.io. The app was originally built for Replit but needs to work standalone on Fly.io infrastructure.
+
+CURRENT PROBLEM:
+Fly.io proxy cannot connect. Error: "[PC01] instance refused connection. is your app listening on 0.0.0.0:3000?"
+
+FILES TO MODIFY:
+1. package.json - Remove ALL Replit-specific packages
+2. vite.config.ts - Remove Replit vite plugins
+3. server/vite.ts - DELETE THIS FILE COMPLETELY (replaced by vite-dev.ts and vite-prod.ts)
+4. Move files to correct locations
+
+REQUIRED CHANGES:
+
+═══ 1. MOVE FILES TO CORRECT LOCATIONS ═══
+
+**CRITICAL:** I see these files in the ROOT directory:
+- vite-dev.ts
+- vite-prod.ts
+- index.ts
+
+These need to be MOVED into the server/ folder:
+- vite-dev.ts → server/vite-dev.ts
+- vite-prod.ts → server/vite-prod.ts  
+- index.ts → server/index.ts (REPLACE existing server/index.ts)
+
+═══ 2. DELETE OLD VITE FILE ═══
+
+**CRITICAL:** DELETE server/vite.ts completely
+- This old file is replaced by server/vite-dev.ts and server/vite-prod.ts
+- Keeping it will cause import conflicts
+- Make sure it's completely removed from the codebase
+
+═══ 3. UPDATE vite.config.ts ═══
+
+In the ROOT vite.config.ts file, REMOVE these Replit plugins:
+
+DELETE these imports:
+```typescript
+import { replitDevBanner } from '@replit/vite-plugin-dev-banner'
+import { replitCartographer } from '@replit/vite-plugin-cartographer'
+import { replitRuntimeErrorModal } from '@replit/vite-plugin-runtime-error-modal'
+```
+
+DELETE these from the plugins array:
+```typescript
+replitDevBanner(),
+replitCartographer(),
+replitRuntimeErrorModal(),
+```
+
+Keep only the essential plugins like:
+- @vitejs/plugin-react
+- @tailwindcss/vite (if present)
+
+═══ 4. REMOVE REPLIT DEPENDENCIES ═══
+
+In package.json, DELETE these from devDependencies:
+- @replit/vite-plugin-cartographer
+- @replit/vite-plugin-dev-banner
+- @replit/vite-plugin-runtime-error-modal
+
+═══ 5. FIX PORT CONFIGURATION ═══
+
+In server/index.ts (after moving it), find this line:
+```typescript
+const port = parseInt(process.env.PORT || '5000', 10);
+```
+
+CHANGE TO:
+```typescript
+const port = parseInt(process.env.PORT || '3000', 10);
+```
+
+═══ 6. VERIFY SERVER BINDING ═══
+
+Ensure server.listen() call looks like this:
+```typescript
+server.listen({
+  port,
+  host: "0.0.0.0",  // MUST be 0.0.0.0, NOT 127.0.0.1 or localhost
+  reusePort: true,
+}, () => {
+  log(`serving on port ${port}`);
+});
+```
+
+═══ 7. CHECK routes_stable.ts ═══
+
+Open server/routes_stable.ts and verify:
+- Does registerRoutes() return an HTTP server?
+- Does it call server.listen() INSIDE that file?
+- If YES → PROBLEM: Remove the listen() call from routes_stable.ts (server should only listen in index.ts)
+- If NO → OK: It just returns the server object
+
+═══ 8. VERIFY BUILD SCRIPT ═══
+
+In package.json, confirm build script includes ALL THREE files:
+```json
+"build": "vite build && esbuild server/index.ts server/vite-prod.ts server/vite-dev.ts --platform=node --packages=external --bundle --format=esm --outdir=dist"
+```
+
+═══ 9. CONFIRM PROPER IMPORTS ═══
+
+In server/index.ts, verify imports are:
+```typescript
+import { log } from "./vite-prod";  // NOT from "./vite"
+```
+
+And dynamic imports use:
+```typescript
+await import("./vite-dev")   // NOT "./vite"
+await import("./vite-prod")  // NOT "./vite"
+```
+
+VALIDATION CHECKLIST:
+After changes, verify:
+✓ Files moved from root to server/ folder (vite-dev.ts, vite-prod.ts, index.ts)
+✓ server/vite.ts is DELETED
+✓ server/vite-dev.ts exists
+✓ server/vite-prod.ts exists
+✓ server/index.ts exists and imports from "./vite-prod"
+✓ vite.config.ts has NO @replit plugins
+✓ No @replit packages in package.json
+✓ Default port is 3000
+✓ Server binds to 0.0.0.0
+✓ Build script compiles all three .ts files
+
+FINAL RESULT:
+The app should:
+✓ Start without crashing
+✓ Listen on 0.0.0.0:3000
+✓ Have NO @replit dependencies
+✓ Have NO old vite.ts file
+✓ Have clean vite.config.ts
+✓ Have all server files in server/ folder
+✓ Work on any cloud platform (Fly.io, Railway, Render, etc.)
+
+IMPORTANT NOTES:
+- Keep ALL functionality working
+- Only remove Replit-specific code
+- Don't remove essential dependencies like express, vite, react, etc.
+- The app uses vite-dev.ts for development and vite-prod.ts for production
+- Fly.io sets PORT=3000 automatically via fly.toml
+
+Please make these changes and show me what you modified.
