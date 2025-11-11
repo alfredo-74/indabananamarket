@@ -1,0 +1,82 @@
+TASK: Convert this Replit app to work on Fly.io and make it universal (remove Replit dependencies)
+
+CONTEXT:
+I'm deploying this Express/Node.js app to Fly.io. The app was originally built for Replit but needs to work standalone on Fly.io infrastructure.
+
+CURRENT PROBLEM:
+Fly.io proxy cannot connect. Error: "[PC01] instance refused connection. is your app listening on 0.0.0.0:3000?"
+
+FILES TO MODIFY:
+1. package.json - Remove ALL Replit-specific packages
+2. server/index.ts - Fix port binding
+3. server/vite.ts (if exists) - Remove Replit vite plugins
+4. vite.config.ts (if exists) - Remove Replit vite plugins
+5. Any other files importing @replit packages
+
+REQUIRED CHANGES:
+
+═══ 1. REMOVE REPLIT DEPENDENCIES ═══
+
+In package.json, DELETE these from devDependencies:
+- @replit/vite-plugin-cartographer
+- @replit/vite-plugin-dev-banner
+- @replit/vite-plugin-runtime-error-modal
+
+In vite.config.ts (or similar), REMOVE any imports like:
+- import { ... } from '@replit/vite-plugin-...'
+
+═══ 2. FIX PORT CONFIGURATION ═══
+
+In server/index.ts, find this line:
+```typescript
+const port = parseInt(process.env.PORT || '5000', 10);
+```
+
+CHANGE TO:
+```typescript
+const port = parseInt(process.env.PORT || '3000', 10);
+```
+
+═══ 3. VERIFY SERVER BINDING ═══
+
+Ensure server.listen() call looks like this:
+```typescript
+server.listen({
+  port,
+  host: "0.0.0.0",  // MUST be 0.0.0.0, NOT 127.0.0.1 or localhost
+  reusePort: true,
+}, () => {
+  log(`serving on port ${port}`);
+});
+```
+
+═══ 4. CHECK routes_stable.ts ═══
+
+Open server/routes_stable.ts and verify:
+- Does registerRoutes() return an HTTP server?
+- Does it call server.listen() INSIDE that file?
+- If YES → PROBLEM: Remove the listen() call from routes_stable.ts (server should only listen in index.ts)
+- If NO → OK: It just returns the server object
+
+═══ 5. VERIFY BUILD SCRIPT ═══
+
+In package.json, confirm build script includes ALL files:
+```json
+"build": "vite build && esbuild server/index.ts server/vite-prod.ts server/vite-dev.ts --platform=node --packages=external --bundle --format=esm --outdir=dist"
+```
+
+VALIDATION:
+After changes, the app should:
+✓ Start without crashing
+✓ Listen on 0.0.0.0:3000
+✓ Have NO @replit dependencies in package.json
+✓ Work on any cloud platform (Fly.io, Railway, Render, etc.)
+
+IMPORTANT NOTES:
+- Keep ALL functionality working
+- Only remove Replit-specific code
+- Don't remove essential dependencies like express, vite, react, etc.
+- The app uses vite-dev.ts for development and vite-prod.ts for production
+- Fly.io sets PORT=3000 automatically via fly.toml
+
+Please make these changes and show me what you modified.
