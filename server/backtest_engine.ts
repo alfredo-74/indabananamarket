@@ -22,7 +22,7 @@ export class BacktestEngine {
     const candleBuilder = new VolumetricCandleBuilder(60000);
     const vwapCalculator = new VWAPCalculator(params.vwap_lookback);
     const regimeDetector = new RegimeDetector(params.cd_threshold);
-    const autoTrader = new AutoTrader();
+    const autoTrader = new AutoTrader({ volumeThreshold: 100, imbalanceRatio: 1.5, minVolume: 50, maxPosition: 1, riskPercent: 1 });
 
     // Use real historical data if available, otherwise generate mock data
     let candles: VolumetricCandle[];
@@ -89,7 +89,7 @@ export class BacktestEngine {
         timestamp: currentCandle.timestamp,
       };
 
-      const signal = autoTrader.analyzeMarket(marketData, vwap, regime, position);
+      const signal = autoTrader.analyzeMarket(marketData, vwap, regime, position, null, null);
 
       // Execute trade if signal present
       if (signal.action !== "NONE" && signal.action !== "CLOSE") {

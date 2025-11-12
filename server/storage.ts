@@ -345,7 +345,7 @@ export class MemStorage implements IStorage {
             profile_type: insertData.profile_type,
             hvn_levels: hvnArray,
             lvn_levels: lvnArray,
-            profile_data: insertData.profile_data,
+            profile_data: insertData.profile_data || { levels: [], total_volume: 0, poc: 0, vah: 0, val: 0, hvn_levels: [], lvn_levels: [] },
           },
         });
       console.log(`[DB] ✅ Persisted daily profile for ${date}`);
