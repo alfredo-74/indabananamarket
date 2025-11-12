@@ -1,0 +1,50 @@
+alfredo@penguin:~/indabananamarket$ npm run dev
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+[dotenv@17.2.3] injecting env (0) from .env -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+✓ Bridge HTTP endpoint initialized at /api/bridge/data
+[SAFETY] ✅ Safety configuration loaded from database: {
+  max_drawdown_gbp: undefined,
+  max_position_size: 1,
+  trading_fence_enabled: true,
+  position_reconciliation_enabled: true,
+  reject_replay_cooldown_minutes: 30,
+  circuit_breaker_enabled: true
+}
+[SAFETY] ✅ Production Safety Manager initialized and ready
+[ORCHESTRATOR] ✅ Auto-Trading Orchestrator initialized (PRO 90/10 Rule)
+✅ Safety authentication key validated
+✓ Composite profile initialized
+10:37:28 AM [express] serving on port 3000
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+10:37:42 AM [express] GET /api/absorption-events 304 in 5ms :: []
+10:37:42 AM [express] GET /api/candles 304 in 1ms :: []
+10:37:42 AM [express] GET /api/trade-recommendations 304 in 7ms :: []
+10:37:42 AM [express] GET /api/orderflow-signals 304 in 2ms :: []
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+10:37:45 AM [express] GET /api/status 304 in 2ms :: {"ibkr_connected":true,"market_data_active":true,…
+10:37:45 AM [express] GET /api/volume-profile 304 in 0ms
+10:37:45 AM [express] GET /api/value-migration 304 in 2ms
+10:37:45 AM [express] GET /api/trade-recommendations 304 in 4ms :: []
+10:37:45 AM [express] GET /api/position 304 in 3ms :: {"contracts":0,"entry_price":null,"current_pric…
+10:37:46 AM [express] GET /api/position 304 in 3ms :: {"contracts":0,"entry_price":null,"current_pric…
+✓ IBKR Bridge connected - real data flowing
+10:37:47 AM [express] GET /api/position 304 in 3ms :: {"contracts":0,"entry_price":null,"current_pric…
+10:37:48 AM [express] GET /api/absorption-events 304 in 1ms :: []
+10:37:48 AM [express] GET /api/position 304 in 3ms :: {"contracts":0,"entry_price":null,"current_pric…
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+✓ IBKR Bridge connected - real data flowing
+
+
+
