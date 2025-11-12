@@ -21,7 +21,7 @@ import nest_asyncio
 nest_asyncio.apply()
 
 # Backend URL - reads from REPLIT_URL environment variable, defaults to localhost
-LOCAL_URL = os.environ.get('REPLIT_URL', 'http://localhost:5000')
+LOCAL_URL = os.environ.get('REPLIT_URL', 'http://localhost:3000')
 
 class IBKRBridgeV2:
     def __init__(self, replit_url: str):
