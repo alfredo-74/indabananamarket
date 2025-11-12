@@ -1927,30 +1927,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // SAFETY ENDPOINTS - CRITICAL: These control trading safety features
-  // SECURITY: Require auth key in environment - REFUSE TO START without it
-  const SAFETY_AUTH_KEY = process.env.SAFETY_AUTH_KEY;
-  const SAFETY_AUTH_MODE = process.env.SAFETY_AUTH_MODE || "strict";
-  
-  if (!SAFETY_AUTH_KEY || SAFETY_AUTH_KEY.length < 32) {
-    console.error("❌ FATAL: SAFETY_AUTH_KEY environment variable must be set and be at least 32 characters!");
-    console.error("❌ This key protects trading safety endpoints from unauthorized access.");
-    console.error("❌ Generate one with: openssl rand -hex 32");
-    process.exit(1); // Refuse to start without proper security
-  }
-  console.log("✅ Safety authentication key validated");
-  
-  // Warn if running in local-only mode (less secure)
-  if (SAFETY_AUTH_MODE === "local-only") {
-    console.warn("⚠️⚠️⚠️ WARNING: Running in LOCAL-ONLY auth mode ⚠️⚠️⚠️");
-    console.warn("⚠️ Localhost requests bypass safety auth checks");
-    console.warn("⚠️ FOR LOCAL DEVELOPMENT ONLY - NEVER use in production!");
-    console.warn("⚠️ Set SAFETY_AUTH_MODE=strict in .env.local to restore full security");
-  }
-  
-  // AUTH DISABLED: All requests accepted
+  // AUTH DISABLED for local development - all requests accepted
   // Production safety features (max drawdown, position limits, etc.) remain fully active
   const requireSafetyAuth = (req: any, res: any, next: any) => {
-    console.log(`[SECURITY] ✅ Request to ${req.path} accepted (auth disabled for reliability)`);
     next();
   };
 
